@@ -7,7 +7,7 @@ function App() {
       <div>
         <h1 className="text-6xl font-bold text-blue-500 mb-4">Home Page</h1>
         <Button colorScheme="teal" size="sm">
-          <Link to="/about" className="text-white">Go to About</Link>
+          <Link to="/about" className="text-white font-bold">Go to About</Link>
         </Button>
       </div>
     </div>

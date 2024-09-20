@@ -81,7 +81,7 @@ const ProdukHome: React.FC = () => {
   return (
     <div className="py-6 px-4 sm:py-10 sm:px-6">
       <VStack spacing={4} align="stretch">
-        <h1 className='text-center font-bold text-xl sm:text-2xl mb-2'>Jelajahi Riset & Inovasi ITERA</h1>
+        <h1 className='text-center font-bold text-xl sm:text-2xl'>Jelajahi Riset & Inovasi ITERA</h1>
         <h2 className='text-center text-sm mb-6'>Lihat Semua Inovasi yang ada di ITERA</h2>
 
         {/* Search Form */}
@@ -124,7 +124,7 @@ const ProdukHome: React.FC = () => {
 
         <div className="text-center mt-8">
           <Button colorScheme="red" variant='outline'>
-            <Link to="/" className="font-bold">Lihat Semua Inovasi</Link>
+            <Link to="/inovasi" className="font-bold">Lihat Semua Inovasi</Link>
           </Button>
         </div>
       </VStack>

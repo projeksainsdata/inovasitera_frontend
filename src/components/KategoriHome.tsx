@@ -7,6 +7,8 @@ const categories = [
   "TIK",
   "Sosial Humaniora",
   "Pendidikan",
+  "Seni Budaya",
+  "rekayasa Keteknikan"
 ]
 
 export default function CategoryGrid() {
@@ -14,8 +16,8 @@ export default function CategoryGrid() {
     <>
     <div className="min-h-screen mt-[200px]">
     <h1 className="text-center font-bold text-2xl mb-10">Kategory Inovasi</h1>
-    <div className="bg-orange-400 p-7 rounded-3xl max-w-3xl mx-auto">
-      <div className="grid grid-cols-3 gap-4">
+    <div className="bg-orange-400 p-7 mx-auto">
+      <div className="grid grid-cols-4 gap-4 px-[200px]">
         {categories.map((category, index) => (
           <div 
             key={index} 

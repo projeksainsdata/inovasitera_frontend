@@ -16,6 +16,11 @@
   animation: slide-down 0.5s forwards;
 }
 
+.sticky-sidebar {
+  position: sticky;
+  top: 100px;
+}
+
 @keyframes slide-down {
   from {
     transform: translateY(-100%);

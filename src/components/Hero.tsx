@@ -21,7 +21,7 @@ const Hero = () => {
         />
 
         {/* Content */}
-        <div className="px-6 md:px-20 md:mt-o mt-[-100px] z-20">
+        <div className="px-5 md:px-20 md:mt-0 mt-[-100px] z-20">
           <div className="text-left">
             <h1 className="text-2xl md:text-3xl font-bold text-black mb-2 md:mb-4">
               Pusat Implementasi Inovasi

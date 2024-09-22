@@ -67,19 +67,21 @@ const ProdukHome: React.FC = () => {
       <div className="bg-white rounded-lg p-4 mb-1 mt-3 flex text-center items-center justify-center">
         <img src={Produk} alt="produk" />
       </div>
-      <span className="inline-block bg-green-500 text-white text-xs font-semibold px-2 py-1 rounded-full mb-2">
-        {item.category}
-      </span>
-      <div className="flex items-center mb-2">
-        <span className="text-yellow-400 text-sm">{'★'.repeat(Math.floor(item.rating))}</span>
-        <span className="ml-2 text-xs text-gray-600">{item.rating.toFixed(1)} ({item.reviews})</span>
+      <div className='flex justify-between'>
+        <span className="inline-block bg-green-500 text-white text-xs font-semibold px-2 py-1 rounded-full mb-2">
+          {item.category}
+        </span>
+        <div className="flex items-center mb-2">
+          <span className="text-yellow-400 text-sm">{'★'.repeat(Math.floor(item.rating))}</span>
+          <span className="ml-2 text-xs text-gray-600">{item.rating.toFixed(1)} ({item.reviews})</span>
+        </div>
       </div>
       <h3 className="text-sm font-semibold line-clamp-3">{item.title}</h3>
     </div>
   );
 
   return (
-    <div className="py-6 px-4 sm:py-10 sm:px-6">
+    <div className="py-6 px-4 sm:py-10 sm:px-6 md:mt-0 mt-20">
       <VStack spacing={4} align="stretch">
         <h1 className='text-center font-bold text-xl sm:text-2xl'>Jelajahi Riset & Inovasi ITERA</h1>
         <h2 className='text-center text-sm mb-6'>Lihat Semua Inovasi yang ada di ITERA</h2>

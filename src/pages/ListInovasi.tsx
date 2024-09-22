@@ -12,12 +12,6 @@ const InnovationPage: React.FC = () => {
     setSearchQuery(event.target.value);
   };
 
-  const categories = [
-    { name: "Semua", count: 180 },
-    { name: "Pangan", count: 9 },
-    { name: "Kesehatan", count: 10 },
-  ];
-
   const innovations = [
     {
       category: "Pangan",
@@ -81,8 +75,8 @@ const InnovationPage: React.FC = () => {
       <HeroPage />
       <div className="min-h-screen relative z-20">
         {/* Header Section */}
-        <div className="py-8 text-center mt-[-300px]">
-          <h1 className="text-4xl font-bold text-red-500">Semua Inovasi</h1>
+        <div className="py-8 text-center md:mt-[-300px] mt-[-200px] px-8">
+          <h1 className="md:text-4xl text-2xl font-bold text-red-500">Semua Inovasi</h1>
           <div className="mt-7">
             <input
               type="text"
@@ -96,7 +90,7 @@ const InnovationPage: React.FC = () => {
 
         <div className="container mx-auto mt-8 px-4 flex flex-col md:flex-row mb-20 mt-[200px]">
           {/* Sidebar Categories */}
-          <CategorySidebar categories={categories} />
+          <CategorySidebar/>
 
           {/* Innovation Cards Section */}
           <main className="md:w-3/4 md:pl-6">

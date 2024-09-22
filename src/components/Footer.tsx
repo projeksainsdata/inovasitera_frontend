@@ -34,18 +34,15 @@ const Footer: React.FC = () => {
             <li>Seni dan Budaya</li>
             <li>Rekayasa Keteknikan</li>
           </ul>
-        </div>
-
-        {/* Batik Pattern */}
-        <div className="absolute right-0 bottom-0">
-          <img src={Batik} alt="Pattern" className="w-[150px] md:w-[300px]" />
-        </div>
+        </div>        
       </div>
-
       {/* Footer Text */}
       <div className="text-left mt-6 text-sm">
         PUSAT IMPLEMENTASI INOVASI ITERA. All Rights Reserved
       </div>
+      <div className="absolute right-0 bottom-0">
+          <img src={Batik} alt="Pattern" className="w-[150px] md:w-[300px]" />
+        </div>
     </footer>
   );
 };

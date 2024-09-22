@@ -72,10 +72,9 @@ const InnovationPage: React.FC = () => {
     },
   ];
 
-  // Calculate total number of pages
   const totalPages = Math.ceil(innovations.length / innovationsPerPage);
 
-  // Get the innovations for the current page
+
   const indexOfLastInnovation = currentPage * innovationsPerPage;
   const indexOfFirstInnovation = indexOfLastInnovation - innovationsPerPage;
   const currentInnovations = innovations.slice(
@@ -83,7 +82,7 @@ const InnovationPage: React.FC = () => {
     indexOfLastInnovation
   );
 
-  // Change page
+
   const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
 
   return (

@@ -14,7 +14,7 @@ const InnovationCard: React.FC<InnovationCardProps> = ({ category, rating, title
         <span className="bg-green-500 text-white text-xs font-semibold px-2 py-1 rounded-full">
           {category}
         </span>
-        <span className="text-sm text-yellow-500">★★★★ {rating}(20)</span>
+        <span className="text-sm text-yellow-500">★★★★ <span className="text-black">{rating}(20)</span></span>
       </div>
       <p className="text-sm font-bold">{title}</p>
     </div>

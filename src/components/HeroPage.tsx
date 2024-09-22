@@ -2,8 +2,7 @@ import hero from '../assets/HeroPage.png';
 
 const Hero = () => {
   return (
-    <div className="relative flex items-center w-full h-auto z-0"> {/* h-auto adjusts height based on content */}
-      {/* Image for desktop view */}
+    <div className="relative flex items-center w-full md:h-auto h-[300px] z-0"> 
       <img
         src={hero}
         alt="Desktop hero"

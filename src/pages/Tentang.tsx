@@ -10,7 +10,7 @@ const AboutPage: React.FC = () => {
     <>
     <Navbar/>
     <Hero/>
-    <h1 className='mt-[-200px] font-bold text-3xl relative z-40 px-20'>Tentang Inovasi Itera</h1>
+    <h1 className='md:mt-[-200px] mt-[-150px] font-bold md:text-3xl text-4xl relative z-40 md:px-20 px-10'>Tentang Inovasi Itera</h1>
     <div className="bg-white min-h-screen">
       <div className="container mx-auto px-4 md:px-8">
         {/* Title Section */}

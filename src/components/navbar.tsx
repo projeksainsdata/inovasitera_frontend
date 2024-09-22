@@ -13,7 +13,7 @@ const Navbar: React.FC = () => {
 
   return (
     <>
-        <nav className="navbar md:px-[200px] flex justify-center transition-all duration-300 fixed top-0 left-0 right-0 z-9999 py-3">
+        <nav className="navbar md:px-[200px] px-6 flex justify-center transition-all duration-300 fixed top-0 left-0 right-0 z-9999 py-3">
           <div className="rounded-full px-4 md:px-6 py-2 flex items-center justify-between max-w-7xl w-full transition-all duration-300 bg-white shadow">
             <div className="flex items-center">
               <Link to={'/'}>

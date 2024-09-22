@@ -1,4 +1,5 @@
 import { Swiper, SwiperSlide } from 'swiper/react';
+import { Pagination } from 'swiper/modules';
 import Produk from '../assets/Kategori1.png';
 import { Button, Input, VStack, InputGroup, InputRightElement } from '@chakra-ui/react';
 import { Link } from 'react-router-dom';
@@ -108,6 +109,8 @@ const ProdukHome: React.FC = () => {
         {/* Swiper Container */}
         <div className="relative">
           <Swiper
+            modules={[Pagination]}
+            // pagination={{ clickable: true }}
             spaceBetween={16}
             slidesPerView={1}
             breakpoints={{

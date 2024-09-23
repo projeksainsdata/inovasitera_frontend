@@ -4,6 +4,7 @@ import Login from './pages/Login';
 import { ChakraProvider } from '@chakra-ui/react';
 import ReactDOM from 'react-dom/client';
 import Tentang from './pages/Tentang';
+import DetailInovasi from './pages/DetailInovasi';
 import React from 'react';
 import App from './App';
 import './index.css'; 
@@ -18,6 +19,7 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
           <Route path="/tentang" element={<Tentang />} />
           <Route path="/inovasi" element={<ListInovasi />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/inovasi/:id" element={<DetailInovasi />} />
         </Routes>
       </Router>
     </ChakraProvider>

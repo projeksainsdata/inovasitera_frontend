@@ -1,6 +1,6 @@
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Pagination } from 'swiper/modules';
-import Produk from '../assets/Kategori1.png';
+import Produk from '../assets/TEKNIK.svg';
 import { Button, Input, VStack, InputGroup, InputRightElement } from '@chakra-ui/react';
 import { Link } from 'react-router-dom';
 import 'swiper/css';

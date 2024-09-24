@@ -1,14 +1,53 @@
-import Kategori1 from "../assets/Kategori1.png";
+import Pangan from "../assets/PANGAN.svg";
+import Kesehatan from "../assets/KESEHATAN.svg";
+import Energi from "../assets/ENERGI.svg";
+import TIK from "../assets/TIK.svg";
+import SosialHumaniora from "../assets/SOSHUM.svg";
+import Pendidikan from "../assets/PENDIDIKAN.svg";
+import SeniBudaya from "../assets/SENBUD.svg";
+import RekayasaKeteknikan from "../assets/TEKNIK.svg";
 
 const categories = [
-  "Pangan",
-  "Kesehatan",
-  "Energi",
-  "TIK",
-  "Sosial Humaniora",
-  "Pendidikan",
-  "Seni Budaya",
-  "Rekayasa Keteknikan",
+  {
+    name: "Pangan",
+    icon: Pangan, // Assuming the Pangan icon is imported or available
+    url: "/pangan",
+  },
+  {
+    name: "Kesehatan",
+    icon: Kesehatan, // Assuming the Kesehatan icon is imported or available
+    url: "/kesehatan",
+  },
+  {
+    name: "Energi",
+    icon: Energi, // Assuming the Energi icon is imported or available
+    url: "/energi",
+  },
+  {
+    name: "TIK",
+    icon: TIK, // Assuming the TIK icon is imported or available
+    url: "/tik",
+  },
+  {
+    name: "Sosial Humaniora",
+    icon: SosialHumaniora, // Assuming the SosialHumaniora icon is imported or available
+    url: "/sosial-humaniora",
+  },
+  {
+    name: "Pendidikan",
+    icon: Pendidikan, // Assuming the Pendidikan icon is imported or available
+    url: "/pendidikan",
+  },
+  {
+    name: "Seni Budaya",
+    icon: SeniBudaya, // Assuming the SeniBudaya icon is imported or available
+    url: "/seni-budaya",
+  },
+  {
+    name: "Rekayasa Keteknikan",
+    icon: RekayasaKeteknikan, // Assuming the RekayasaKeteknikan icon is imported or available
+    url: "/rekayasa-keteknikan",
+  },
 ];
 
 export default function CategoryGrid() {
@@ -24,10 +63,17 @@ export default function CategoryGrid() {
                 index >= 6 ? "col-span-2 sm:col-span-1" : ""
               }`}
             >
-              <div className="bg-teal-600 rounded-full p-2 mb-2">
-                <img src={Kategori1} width={50} className="md:w-[70px]" alt="Category Icon" />
+              <div className="rounded-full p-2 mb-2">
+                <img
+                  src={category.icon}
+                  width={50}
+                  className="md:w-[70px]"
+                  alt="Category Icon"
+                />
               </div>
-              <span className="text-center text-sm font-bold mt-2">{category}</span>
+              <span className="text-center text-sm font-bold mt-2">
+                {category.name}
+              </span>
             </div>
           ))}
         </div>

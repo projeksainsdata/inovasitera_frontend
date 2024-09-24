@@ -1,6 +1,7 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import ListInovasi from './pages/ListInovasi';
 import Login from './pages/Login';
+import Register from './pages/Register';
 import { ChakraProvider } from '@chakra-ui/react';
 import ReactDOM from 'react-dom/client';
 import Tentang from './pages/Tentang';
@@ -19,6 +20,7 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
           <Route path="/tentang" element={<Tentang />} />
           <Route path="/inovasi" element={<ListInovasi />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
           <Route path="/inovasi/:id" element={<DetailInovasi />} />
         </Routes>
       </Router>

@@ -10,7 +10,11 @@ import React from 'react';
 import App from './App';
 import './index.css'; 
 import './App.css';
+
 import KategoriesAdmin from './pages/admin/categories';
+
+import ForgotPassword from './pages/ForgotPassword';
+
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <React.StrictMode>
@@ -24,6 +28,7 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/inovasi/:id" element={<DetailInovasi />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
         </Routes>
       </Router>
     </ChakraProvider>

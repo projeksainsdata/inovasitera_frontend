@@ -6,7 +6,7 @@ import SosialHumaniora from "../assets/SOSHUM.svg";
 import Pendidikan from "../assets/PENDIDIKAN.svg";
 import SeniBudaya from "../assets/SENBUD.svg";
 import RekayasaKeteknikan from "../assets/TEKNIK.svg";
-
+import batik from "../assets/batikcategory.png";
 const categories = [
   {
     name: "Pangan",
@@ -53,15 +53,16 @@ const categories = [
 export default function CategoryGrid() {
   return (
     <div className="min-h-screen mt-[200px]">
-      <h1 className="text-center font-bold text-2xl mb-10">Kategori Inovasi</h1>
-      <div className="bg-orange-400 p-3 mx-auto">
+      <h1 className="text-center font-bold text-3xl mb-10">Kategori Inovasi</h1>
+      <div className="bg-orange-400 py-20 mx-auto">
+          <div className="absolute right-0">
+            <img src={batik} className="w-72"/>
+          </div>
         <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-4 px-0 md:px-[200px]">
           {categories.map((category, index) => (
             <div
               key={index}
-              className={`bg-white py-6 md:px-10 rounded-xl flex flex-col items-center justify-center ${
-                index >= 6 ? "col-span-2 sm:col-span-1" : ""
-              }`}
+              className="bg-white py-6 md:px-10 rounded-xl flex flex-col items-center justify-center z-10"
             >
               <div className="rounded-full p-2 mb-2">
                 <img

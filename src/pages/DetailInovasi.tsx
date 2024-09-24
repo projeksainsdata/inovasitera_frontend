@@ -1,9 +1,9 @@
 import { useState } from "react";
 import Navbar from "../components/navbar";
-import Footer from "../components/footer";
-import Rating from "../components/rating";
-import { Swiper, SwiperSlide } from "swiper/react";
-import { Pagination } from "swiper/modules";
+// import Footer from "../components/footer";
+// import Rating from "../components/rating";
+// import { Swiper, SwiperSlide } from "swiper/react";
+// import { Pagination } from "swiper/modules";
 import {
   Box,
   Text,

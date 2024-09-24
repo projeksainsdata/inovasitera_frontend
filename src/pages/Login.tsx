@@ -1,84 +1,121 @@
 import React from 'react';
-import Image from '../assets/ImageLogin.png';
-import Logo from '../assets/Logo1.png';
-import { Button } from '@chakra-ui/react';
+import { Formik, Field, Form, ErrorMessage } from 'formik';
+import * as Yup from 'yup';
+import {
+  Box,
+  Button,
+  FormControl,
+  FormLabel,
+  Input,
+  FormErrorMessage,
+  Flex,
+  Image,
+  Text,
+  Link as ChakraLink,
+} from '@chakra-ui/react';
 import { Link } from 'react-router-dom';
+import ImageLogin from '../assets/ImageLogin.png';
+import Logo from '../assets/Logo1.png';
 
 const LoginPage: React.FC = () => {
+  // Define the validation schema with Yup
+  const validationSchema = Yup.object({
+    email: Yup.string().email('Format email salah').required('Email diperlukan'),
+    password: Yup.string().min(6, 'Password minimal 6 karakter').required('Password diperlukan'),
+  });
+
   return (
-    <div className="h-screen flex items-center justify-center bg-gray-50">
-      <div className="w-full h-screen shadow-lg flex flex-col md:flex-row">
+    <Flex h="100vh" align="center" justify="center" bg="gray.50">
+      <Flex w="full" h="full" shadow="lg" direction={{ base: 'column', md: 'row' }}>
+        
         {/* Left Section - Image */}
-        <div className="md:w-6/12 w-full mt-[-200px]">
-          <img
-            src={Image}
+        <Box flex={1} display={{ base: 'none', md: 'block' }}>
+          <Image
+            src={ImageLogin}
             alt="Scientist working with a microscope"
-            className="object-cover object-bottom h-full w-full"
+            objectFit="cover"
+            objectPosition="bottom"
+            height="100%"
+            width="100%"
           />
-        </div>
+        </Box>
 
         {/* Right Section - Form */}
-        <div className="w-full md:w-6/12 flex flex-col justify-center p-6 md:p-10 bg-white rounded-t-[30px] md:rounded-none mt-[-20px]">
+        <Flex flex={1} direction="column" justify="center" p={{ base: 6, md: 10 }} bg="white" roundedTop={{ base: '30px', md: 'none' }}>
+          
           {/* Logo */}
-          <div className="flex mb-6 mt-10">
-            <img src={Logo} alt="Logo" width={70} />
-          </div>
+          <Box mb={6} mt={10}>
+            <Image src={Logo} alt="Logo" width={70} />
+          </Box>
 
-          <h2 className="text-left text-2xl font-bold text-gray-700 mb-2">
+          <Text fontSize="2xl" fontWeight="bold" color="gray.700" mb={2}>
             Masuk Kedalam Sistem
-          </h2>
-          <p className="text-left text-gray-500 mb-6">
+          </Text>
+          <Text color="gray.500" mb={6}>
             Untuk menggunakan sistem
-          </p>
+          </Text>
 
-          {/* Login Form */}
-          <form className="space-y-4">
-            <div>
-              <label htmlFor="email" className="block text-gray-700">
-                Email
-              </label>
-              <input
-                type="email"
-                id="email"
-                placeholder="example@gmail.com"
-                className="w-full px-4 py-2 mt-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-400"
-              />
-            </div>
+          {/* Formik form */}
+          <Formik
+            initialValues={{
+              email: '',
+              password: '',
+            }}
+            validationSchema={validationSchema}
+            onSubmit={(values) => {
+              console.log(values); // Handle form submission
+            }}
+          >
+            {({ errors, touched }) => (
+              <Form>
+                {/* Email */}
+                <FormControl isInvalid={errors.email && touched.email} mb={4}>
+                  <FormLabel>Email</FormLabel>
+                  <Field
+                    as={Input}
+                    name="email"
+                    type="email"
+                    placeholder="example@gmail.com"
+                    focusBorderColor="yellow.400"
+                  />
+                  <FormErrorMessage>{errors.email}</FormErrorMessage>
+                </FormControl>
 
-            <div>
-              <label htmlFor="password" className="block text-gray-700">
-                Password
-              </label>
-              <input
-                type="password"
-                id="password"
-                placeholder="Password"
-                className="w-full px-4 py-2 mt-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-400"
-              />
-              <div className="flex justify-end mt-1">
-                <a href="#" className="text-sm font-bold text-yellow-500 hover:underline">
-                  Lupa Password?
-                </a>
-              </div>
-            </div>
+                {/* Password */}
+                <FormControl isInvalid={errors.password && touched.password} mb={4}>
+                  <FormLabel>Password</FormLabel>
+                  <Field
+                    as={Input}
+                    name="password"
+                    type="password"
+                    placeholder="Password"
+                    focusBorderColor="yellow.400"
+                  />
+                  <FormErrorMessage>{errors.password}</FormErrorMessage>
+                  <Box textAlign="right" mt={1}>
+                    <ChakraLink href="#" fontSize="sm" fontWeight="bold" color="yellow.500" _hover={{ textDecoration: 'underline' }}>
+                      Lupa Password?
+                    </ChakraLink>
+                  </Box>
+                </FormControl>
 
-            <Button
-              colorScheme="yellow"
-              type="submit"
-              className="w-full text-white font-bold py-2 px-4 rounded-lg"
-            >
-              Masuk
-            </Button>
-          </form>
+                <Button
+                  colorScheme="yellow"
+                  width="full"
+                  type="submit"
+                >
+                  Masuk
+                </Button>
+              </Form>
+            )}
+          </Formik>
 
-          <div className="text-center mt-4">
-            <Button variant="outline" colorScheme="yellow" className="w-full">
-              <Link to={'/register'}>Daftar Akun</Link>
-            </Button>
-          </div>
-        </div>
-      </div>
-    </div>
+          <Box textAlign="center" mt={4}>
+              <Link to="/register" className='text-orange-800 font-bold'>Belum Punya Akun? Daftar</Link>
+          </Box>
+        </Flex>
+      </Flex>
+    </Flex>
   );
 };
 

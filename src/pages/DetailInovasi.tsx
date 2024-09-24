@@ -1,9 +1,9 @@
 import { useState } from "react";
 import Navbar from "../components/navbar";
-// import Footer from "../components/footer";
-// import Rating from "../components/rating";
-// import { Swiper, SwiperSlide } from "swiper/react";
-// import { Pagination } from "swiper/modules";
+import Footer from "../components/footer";
+import Rating from "../components/rating";
+import { Swiper, SwiperSlide } from "swiper/react";
+import { Pagination } from "swiper/modules";
 import {
   Box,
   Text,
@@ -27,18 +27,25 @@ import {
   AccordionPanel,
   AccordionIcon,
 } from "@chakra-ui/react";
-import { IconStarFilled,IconZoomQuestion,IconMessageCircle,IconInfoCircle } from "@tabler/icons-react";
+import {
+  IconStarFilled,
+  IconZoomQuestion,
+  IconMessageCircle,
+  IconInfoCircle,
+} from "@tabler/icons-react";
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
+import banner from "../assets/HeroPage.png";
+import PANGAN from "../assets/PANGAN.svg";
 
 const DetailInovasi: React.FC = () => {
   const [rating, setRating] = useState(0); // State to keep track of the rating
   return (
     <>
       <Navbar />
-
-      <Box className="bg-orange-100 p-3 mt-24">
+      <img src={banner} className="h-24 w-full object-cover" />
+      <Box className="bg-orange-100 p-3 mb-5 ">
         <Breadcrumb spacing="8px">
           <BreadcrumbItem>
             <BreadcrumbLink href="#">Beranda</BreadcrumbLink>
@@ -54,18 +61,47 @@ const DetailInovasi: React.FC = () => {
         </Breadcrumb>
       </Box>
 
-      <Box className="flex flex-col md:flex-row gap-6 justify-center m-5 md:max-w-6xl md:my-5 md:mx-auto">
-        <Box className="h-auto w-full">
-          <img
-            src={"https://placehold.co/600x600"}
-            alt="Product Image"
-            className="rounded-lg w-full h-full object-cover"
-          />
+      <Box className="flex flex-col lg:flex-row gap-6  justify-center lg:max-w-6xl px-3 lg:mx-auto w-full">
+        <Box className="h-auto w-full lg:w-[40rem]">
+          <Swiper
+            modules={[Pagination]}
+            spaceBetween={4}
+            slidesPerView={1}
+            pagination={{ clickable: true }}
+            className="mySwiper"
+          >
+            {/* First Image */}
+            <SwiperSlide>
+              <img
+                src={"https://placehold.co/600x600"}
+                alt="Product Image 1"
+                className="rounded-lg w-full h-full object-cover"
+              />
+            </SwiperSlide>
+
+            {/* Second Image */}
+            <SwiperSlide>
+              <img
+                src={"https://placehold.co/600x600"}
+                alt="Product Image 2"
+                className="rounded-lg w-full h-full object-cover"
+              />
+            </SwiperSlide>
+
+            {/* Third Image */}
+            <SwiperSlide>
+              <img
+                src={"https://placehold.co/600x600"}
+                alt="Product Image 3"
+                className="rounded-lg w-full h-full object-cover"
+              />
+            </SwiperSlide>
+          </Swiper>
         </Box>
 
         <Box className="h-auto flex flex-col justify-between">
           <Box className="space-y-5 flex-grow">
-            <Text fontSize="lg" fontWeight="semibold">
+            <Text fontSize="sm" fontWeight="semibold">
               Produk Inovasi ITERA
             </Text>
             <Text className="text-xl md:text-3xl font-bold">
@@ -74,10 +110,11 @@ const DetailInovasi: React.FC = () => {
             </Text>
 
             <Box className="flex gap-6 items-center">
-              <span className="inline-block bg-green-500 text-white text-xs font-semibold px-3 py-2 rounded-full mb-2">
+              <div className="bg-green-500 text-white text-sm font-semibold px-3 py-2 gap-3 rounded-full flex items-center">
+                <img src={PANGAN} className="w-5" />
                 Pangan
-              </span>
-              <Box className="flex items-center mb-2">
+              </div>
+              <Box className="flex items-center">
                 {[1, 2, 3, 4, 5].map((x) => (
                   <IconStarFilled key={x} className="text-yellow-400 text-xl" />
                 ))}
@@ -115,9 +152,18 @@ const DetailInovasi: React.FC = () => {
 
       <Tabs variant="enclosed" className="m-3 md:max-w-6xl md:mx-auto md:mb-5">
         <TabList>
-          <Tab className="space-x-2 font-bold"><IconInfoCircle size={18}/><span>Deskripsi</span></Tab>
-          <Tab className="space-x-2 font-bold"><IconMessageCircle size={18}/><span>Ulasan</span></Tab>
-          <Tab className="space-x-2 font-bold"><IconZoomQuestion size={18}/><span>Pertanyaan</span></Tab>
+          <Tab className="space-x-2 font-bold">
+            <IconInfoCircle size={18} />
+            <span>Deskripsi</span>
+          </Tab>
+          <Tab className="space-x-2 font-bold">
+            <IconMessageCircle size={18} />
+            <span>Ulasan</span>
+          </Tab>
+          <Tab className="space-x-2 font-bold">
+            <IconZoomQuestion size={18} />
+            <span>Pertanyaan</span>
+          </Tab>
         </TabList>
 
         <TabPanels className="border">

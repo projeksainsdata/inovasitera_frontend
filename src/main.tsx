@@ -10,7 +10,11 @@ import React from 'react';
 import App from './App';
 import './index.css'; 
 import './App.css';
+
+import KategoriesAdmin from './pages/admin/categories';
+
 import ForgotPassword from './pages/ForgotPassword';
+
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <React.StrictMode>
@@ -19,6 +23,7 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
         <Routes>
           <Route path="/" element={<App />} />
           <Route path="/tentang" element={<Tentang />} />
+          <Route path="/admin/" element={<KategoriesAdmin />} />
           <Route path="/inovasi" element={<ListInovasi />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />

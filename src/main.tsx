@@ -12,6 +12,7 @@ import './index.css';
 import './App.css';
 
 import KategoriesAdmin from './pages/admin/categories';
+import Index from '@/pages/admin/index';
 
 import ForgotPassword from './pages/ForgotPassword';
 
@@ -23,7 +24,8 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
         <Routes>
           <Route path="/" element={<App />} />
           <Route path="/tentang" element={<Tentang />} />
-          <Route path="/admin/" element={<KategoriesAdmin />} />
+          <Route path="/admin/" element={<Index />} />
+          <Route path="/admin/kategori" element={<KategoriesAdmin />} />
           <Route path="/inovasi" element={<ListInovasi />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />

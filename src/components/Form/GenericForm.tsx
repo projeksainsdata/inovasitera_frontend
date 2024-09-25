@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useState, Suspense } from 'react';
 import { Formik, Form, FormikHelpers } from 'formik';
 import * as Yup from 'yup';
@@ -8,7 +9,6 @@ const DragDropFileInput = React.lazy(() => import('@/components/Form/DragDropFil
 const Checkbox = React.lazy(() => import('@/components/Form/CheckBoxInput'));
 const DateTimeRange = React.lazy(() => import('@/components/Form/DateTimeRangeInput'));
 const Radio = React.lazy(() => import('@/components/Form/RadioInput'));
-const MarkdownEditor = React.lazy(() => import('@/components/Form/MarkdownEditor'));
 
 export interface FieldConfig {
   name: string;
@@ -24,9 +24,9 @@ export interface FieldConfig {
 
 interface GenericFormProps {
   fields: FieldConfig[];
-  onSubmit: (values: any, formikHelpers: FormikHelpers<any>) => void | Promise<any>;
-  initialValues?: { [key: string]: any };
-  onChange?: (fieldName: string, value: any) => void;
+  onSubmit: (values: { [key: string]: any }, formikHelpers: FormikHelpers<{ [key: string]: any }>) => void | Promise<void>;
+  initialValues?: { [key: string]: unknown };
+  onChange?: (fieldName: string, value: unknown) => void;
 }
 
 const GenericForm: React.FC<GenericFormProps> = ({ fields, onSubmit, initialValues = {}, onChange }) => {
@@ -43,7 +43,7 @@ const GenericForm: React.FC<GenericFormProps> = ({ fields, onSubmit, initialValu
   const defaultInitialValues = fields.reduce((acc, field) => {
     acc[field.name] = initialValues[field.name] || field.type === 'checkbox' ? false : field.type === 'dateTimeRange' ? [new Date(), new Date()] : field.type === 'tags' || field.type === 'file' ? [] : '';
     return acc;
-  }, {} as { [key: string]: any });
+  }, {} as { [key: string]: unknown });
 
   return (
     <Formik
@@ -62,7 +62,7 @@ const GenericForm: React.FC<GenericFormProps> = ({ fields, onSubmit, initialValu
               name: field.name,
               label: field.label,
               placeholder: field.placeholder,
-              onChange: onChange ? (value: any) => onChange(field.name, value) : undefined,
+              onChange: onChange ? (value: unknown) => onChange(field.name, value) : undefined,
             };
 
             switch (field.type) {
@@ -78,10 +78,8 @@ const GenericForm: React.FC<GenericFormProps> = ({ fields, onSubmit, initialValu
                 return <DateTimeRange key={`dateTimeRange-${index}`} {...commonProps} />;
               case 'radio':
                 return <Radio key={`radio-${index}`} {...commonProps} options={field.options || []} />;
-              case 'markdown':
-                return <MarkdownEditor key={`markdown-${index}`} {...commonProps} />;
               default:
-                return <GenericInput key={`default-${index}`} {...commonProps} type={field.type} />;
+                return <GenericInput key={`default-${index}`} {...commonProps} type={field.type as 'number' | 'text' | 'email' | 'password' | 'textarea' | 'currency' | 'multiselect' | 'url'} />;
             }
           })}
         </Suspense>

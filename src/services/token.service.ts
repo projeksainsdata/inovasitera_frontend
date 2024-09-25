@@ -1,16 +1,14 @@
-import Cookie from 'js-cookie';
-import { jwtDecode } from 'jwt-decode';
+import Cookie from "js-cookie";
+import { jwtDecode } from "jwt-decode";
 
-import TOKEN from '@/lib/constants/token.contants';
-import type { DecodedToken, Token } from '@/lib/types/auth.type';
+import TOKEN from "@/lib/constants/token.contants";
+import type { DecodedToken, Token } from "@/lib/types/auth.type";
 // check if client side or server side
 
 const getAccessToken = async (): Promise<string | null | undefined> => {
   try {
-    
-      const token = Cookie.get(TOKEN.ACCESS_TOKEN);
-      return token || null;
-   
+    const token = Cookie.get(TOKEN.ACCESS_TOKEN);
+    return token || null;
   } catch (error) {
     return null;
   }
@@ -18,10 +16,8 @@ const getAccessToken = async (): Promise<string | null | undefined> => {
 
 const getRefreshToken = async (): Promise<string | null | undefined> => {
   try {
-   
-      const token = Cookie.get(TOKEN.REFRESH_TOKEN);
-      return token || null;
-    
+    const token = Cookie.get(TOKEN.REFRESH_TOKEN);
+    return token || null;
   } catch (error) {
     return null;
   }
@@ -58,10 +54,8 @@ const getToken = async (): Promise<Token | null> => {
 
 const updateToken = async (token: Token): Promise<boolean> => {
   try {
-    
-      Cookie.set(TOKEN.ACCESS_TOKEN, token.access, { path: '/' });
-      Cookie.set(TOKEN.REFRESH_TOKEN, token.refresh, { path: '/' });
-    
+    Cookie.set(TOKEN.ACCESS_TOKEN, token.access, { path: "/" });
+    Cookie.set(TOKEN.REFRESH_TOKEN, token.refresh, { path: "/" });
 
     return true;
   } catch (error) {
@@ -71,8 +65,8 @@ const updateToken = async (token: Token): Promise<boolean> => {
 
 const removeUser = (): boolean => {
   try {
-    Cookie.remove(TOKEN.ACCESS_TOKEN, { path: '/' });
-    Cookie.remove(TOKEN.REFRESH_TOKEN, { path: '/' });
+    Cookie.remove(TOKEN.ACCESS_TOKEN, { path: "/" });
+    Cookie.remove(TOKEN.REFRESH_TOKEN, { path: "/" });
     return true;
   } catch (error) {
     return false;
@@ -102,8 +96,8 @@ const isAccessExpired = async (): Promise<boolean> => {
 
 const removeToken = (): boolean => {
   try {
-    Cookie.remove(TOKEN.ACCESS_TOKEN, { path: '/' });
-    Cookie.remove(TOKEN.REFRESH_TOKEN, { path: '/' });
+    Cookie.remove(TOKEN.ACCESS_TOKEN, { path: "/" });
+    Cookie.remove(TOKEN.REFRESH_TOKEN, { path: "/" });
     return true;
   } catch (error) {
     return false;

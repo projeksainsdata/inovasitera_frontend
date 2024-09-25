@@ -1,11 +1,12 @@
-import type { AxiosInstance } from 'axios';
-import axios from 'axios';
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import type { AxiosInstance } from "axios";
+import axios from "axios";
 
-import type { ResponseApi } from '@/lib/types/api.type';
+import type { ResponseApi } from "@/lib/types/api.type";
 
-import TokenService from './token.service';
-import { Token } from '@/lib/types/auth.type';
-import { API_URL, AUTH_PATH } from '@/lib/constants/api.contants';
+import TokenService from "./token.service";
+import { Token } from "@/lib/types/auth.type";
+import { API_URL, AUTH_PATH } from "@/lib/constants/api.contants";
 
 export class AxiosService {
   private static instance: AxiosService;
@@ -19,10 +20,10 @@ export class AxiosService {
         return false;
       }
       const response = await AxiosService.getAxiosWithoutHeader().post(
-        `${AUTH_PATH.REFRESH}`,
+        `${AUTH_PATH.REFRESH_TOKEN}`,
         {
           refreshToken: refreshToken,
-        },
+        }
       );
       const data = response.data as ResponseApi<Token>;
       const token = data.data;
@@ -41,7 +42,7 @@ export class AxiosService {
       baseURL: API_URL,
       timeout: 100000,
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
       withCredentials: true,
     });
@@ -56,7 +57,7 @@ export class AxiosService {
       },
       (error) => {
         return Promise.reject(error);
-      },
+      }
     );
 
     this.axiosInstance.interceptors.response.use(
@@ -73,14 +74,14 @@ export class AxiosService {
               return Promise.reject(error);
             }
             this.setHeader(
-              'Authorization',
-              `Bearer ${TokenService.getAccessToken()}`,
+              "Authorization",
+              `Bearer ${TokenService.getAccessToken()}`
             );
             return this.axiosInstance(originalRequest);
           }
         }
         return Promise.reject(error);
-      },
+      }
     );
   }
 
@@ -113,7 +114,7 @@ export class AxiosService {
       baseURL: API_URL,
       timeout: 100000,
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
     });
   }

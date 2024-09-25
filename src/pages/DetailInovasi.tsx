@@ -5,6 +5,8 @@ import Rating from "../components/rating";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Pagination } from "swiper/modules";
 import {
+  Avatar, AvatarBadge, AvatarGroup,
+  Icon,
   Box,
   Text,
   Breadcrumb,
@@ -26,6 +28,11 @@ import {
   AccordionButton,
   AccordionPanel,
   AccordionIcon,
+  VStack,
+  FormControl,
+  FormLabel,
+  Textarea,
+  Flex,
 } from "@chakra-ui/react";
 import {
   IconStarFilled,
@@ -207,14 +214,67 @@ const DetailInovasi: React.FC = () => {
             <Text className="font-semibold">
               Berikan ulasan untuk Inovasi ini
             </Text>
-            <Box className="flex gap-2">
-              <Box p={4}>
-                <Rating
-                  maxRating={5}
-                  onChange={(value): int => setRating(value)}
-                />
+
+            {/* Two-column layout */}
+            <Flex direction={{ base: "column", md: "row" }} gap={6}>
+              {/* Left Column: Form to Post Comment */}
+              <Box flex={1}>
+                <VStack spacing={4} align="stretch">
+                  <Box>
+                    {/* Rating Component */}
+                    <Rating
+                      maxRating={5}
+                      onChange={(value) => setRating(value)}
+                    />
+                  </Box>
+
+                  {/* Textarea for Comment */}
+                  <FormControl>
+                    <FormLabel>Ulasan</FormLabel>
+                    <Textarea
+                      placeholder="Write your comment here..."
+                      size="md"
+                      // value={comment}
+                      // onChange={(e) => setComment(e.target.value)}
+                    />
+                  </FormControl>
+
+                  {/* Submit Button */}
+                  <Button colorScheme="yellow">Post Comment</Button>
+                </VStack>
               </Box>
-            </Box>
+
+              {/* Right Column: Comments from Other Members */}
+              <Box flex={1}>
+                <Text fontSize="lg" mb={4} fontWeight="bold">
+                  Semua Ulasan (90)
+                </Text>
+
+                {/* List of Comments */}
+                <VStack spacing={4} align="stretch">
+                {[1, 2, 3, 4, 5].map((x) => (
+                  <Box p={3} bg="gray.50" className="space-y-2">
+                    <Box className="flex gap-5">
+                      <Avatar name='Dan Abrahmov' src='https://bit.ly/dan-abramov' />
+                      <Box>
+                        <Text fontWeight="bold">John Doe</Text>
+                        <Text>This is a great innovation! Keep it up!</Text>
+                      </Box>
+                    </Box>
+                    <Box className="flex items-center">
+                      {[1, 2, 3, 4, 5].map((x) => (
+                        <IconStarFilled
+                          key={x}
+                          className="text-yellow-400 text-xl"
+                        />
+                      ))}
+                    </Box>
+                    <Text className="text-sm">24-09-2024</Text>
+                  </Box>
+                ))}
+                </VStack>
+              </Box>
+            </Flex>
           </TabPanel>
 
           <TabPanel className="space-y-4">

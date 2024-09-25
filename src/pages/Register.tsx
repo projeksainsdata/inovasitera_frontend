@@ -13,6 +13,16 @@ import {
   Flex,
   Image,
   Text,
+  HStack,
+  Step,
+  StepDescription,
+  StepIcon,
+  StepIndicator,
+  StepNumber,
+  StepSeparator,
+  StepStatus,
+  StepTitle,
+  Stepper,
 } from "@chakra-ui/react";
 import { Link } from "react-router-dom";
 import ImageLogin from "../assets/ImageLogin.png";
@@ -30,6 +40,20 @@ const RegisterPage: React.FC = () => {
   const [daftarSebagai, setDaftarSebagai] = useState("");
   const [fakultas, setFakultas] = useState("");
   const [prodi, setProdi] = useState("");
+
+  // State for managing the current step
+  const [step, setStep] = useState(1);
+
+  const handleNextStep = () => setStep((prevStep) => prevStep + 1);
+  const handlePrevStep = () => setStep((prevStep) => prevStep - 1);
+
+  // step title
+  const steps = [
+    { title: "Informasi Awal", description: "Pengguna" },
+    { title: "Data Pribadi", description: "Informasi Lengkap" },
+    { title: "Password", description: "Atur Kredensial" },
+  ];
+
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -76,135 +100,173 @@ const RegisterPage: React.FC = () => {
             Untuk menggunakan sistem harap membuat akun terlebih dahulu
           </Text>
 
-          {/* Form without Formik */}
+          {/* Multi-step form */}
           <VStack as="form" spacing={4} onSubmit={handleSubmit}>
-            {/* Nama Lengkap */}
-            <FormControl>
-              <FormLabel>Nama Lengkap</FormLabel>
-              <Input
-                value={namaLengkap}
-                onChange={(e) => setNamaLengkap(e.target.value)}
-                placeholder="Nama Lengkap"
-              />
-            </FormControl>
+            <Stepper index={step} w="100%" size="sm">
+              {steps.map((step, index) => (
+                <Step key={index} onClick={()=>setStep(index+1)}>
+                  <StepIndicator>
+                    <StepStatus
+                      complete={<StepIcon />}
+                      incomplete={<StepNumber />}
+                      active={<StepNumber />}
+                    />
+                  </StepIndicator>
 
-            {/* Email */}
-            <FormControl>
-              <FormLabel>Email</FormLabel>
-              <Input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="Email"
-              />
-            </FormControl>
+                  <Box flexShrink="0">
+                    <StepTitle>{step.title}</StepTitle>
+                    <StepDescription>{step.description}</StepDescription>
+                  </Box>
 
-            {/* Password */}
-            <FormControl>
-              <FormLabel>Password</FormLabel>
-              <Input
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="Password"
-              />
-            </FormControl>
+                  <StepSeparator />
+                </Step>
+              ))}
+            </Stepper>
+            {step === 1 && (
+              <>
+                {/* Step 1: Personal Information */}
+                <FormControl>
+                  <FormLabel>Nama Lengkap</FormLabel>
+                  <Input
+                    value={namaLengkap}
+                    onChange={(e) => setNamaLengkap(e.target.value)}
+                    placeholder="Nama Lengkap"
+                  />
+                </FormControl>
 
-            {/* Konfirmasi Password */}
-            <FormControl>
-              <FormLabel>Konfirmasi Password</FormLabel>
-              <Input
-                type="password"
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                placeholder="Konfirmasi Password"
-              />
-            </FormControl>
+                <FormControl>
+                  <FormLabel>Email</FormLabel>
+                  <Input
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="Email"
+                  />
+                </FormControl>
 
-            {/* No HP */}
-            <FormControl>
-              <FormLabel>No HP</FormLabel>
-              <Input
-                value={noHP}
-                onChange={(e) => setNoHP(e.target.value)}
-                placeholder="No HP"
-              />
-            </FormControl>
+                <FormControl>
+                  <FormLabel>Nomor Handphone</FormLabel>
+                  <Input
+                    value={noHP}
+                    onChange={(e) => setNoHP(e.target.value)}
+                    placeholder="No Handphone"
+                  />
+                </FormControl>
+              </>
+            )}
 
-            {/* Tanggal Lahir */}
-            <FormControl>
-              <FormLabel>Tanggal Lahir</FormLabel>
-              <Input
-                type="date"
-                value={tanggalLahir}
-                onChange={(e) => setTanggalLahir(e.target.value)}
-              />
-            </FormControl>
+            {step === 3 && (
+              <>
+                {/* Step 2: Account Information */}
+                <FormControl>
+                  <FormLabel>Password</FormLabel>
+                  <Input
+                    type="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    placeholder="Password"
+                  />
+                </FormControl>
 
-            {/* Jenis Kelamin (Radio) */}
-            <FormControl>
-              <FormLabel>Jenis Kelamin</FormLabel>
-              <RadioGroup
-                value={jenisKelamin}
-                onChange={setJenisKelamin}
-              >
-                <Stack direction="row">
-                  <Radio value="Laki-Laki">Laki-Laki</Radio>
-                  <Radio value="Perempuan">Perempuan</Radio>
-                </Stack>
-              </RadioGroup>
-            </FormControl>
+                <FormControl>
+                  <FormLabel>Konfirmasi Password</FormLabel>
+                  <Input
+                    type="password"
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    placeholder="Konfirmasi Password"
+                  />
+                </FormControl>
+              </>
+            )}
 
-            {/* Daftar Sebagai (Radio) */}
-            <FormControl>
-              <FormLabel>Daftar Sebagai</FormLabel>
-              <RadioGroup
-                value={daftarSebagai}
-                onChange={setDaftarSebagai}
-              >
-                <Stack direction="row">
-                  <Radio value="Mahasiswa">Innovator</Radio>
-                  <Radio value="Dosen">User Biasa</Radio>
-                </Stack>
-              </RadioGroup>
-            </FormControl>
+            {step === 2 && (
+              <>
+                {/* Step 3: Additional Information */}
+                <FormControl>
+                  <FormLabel>Tanggal Lahir</FormLabel>
+                  <Input
+                    type="date"
+                    value={tanggalLahir}
+                    onChange={(e) => setTanggalLahir(e.target.value)}
+                  />
+                </FormControl>
 
-            {/* Fakultas (Dropdown) */}
-            <FormControl>
-              <FormLabel>Fakultas</FormLabel>
-              <Select
-                placeholder="Pilih Fakultas"
-                value={fakultas}
-                onChange={(e) => setFakultas(e.target.value)}
-              >
-                <option value="Fakultas Teknik">Fakultas Teknik</option>
-                <option value="Fakultas Sains">Fakultas Sains</option>
-                <option value="Fakultas Ilmu Sosial">Fakultas Ilmu Sosial</option>
-              </Select>
-            </FormControl>
+                <FormControl>
+                  <FormLabel>Jenis Kelamin</FormLabel>
+                  <RadioGroup value={jenisKelamin} onChange={setJenisKelamin}>
+                    <Stack direction="row">
+                      <Radio value="Laki-Laki">Laki-Laki</Radio>
+                      <Radio value="Perempuan">Perempuan</Radio>
+                    </Stack>
+                  </RadioGroup>
+                </FormControl>
 
-            {/* Prodi (Dropdown) */}
-            <FormControl>
-              <FormLabel>Program Studi</FormLabel>
-              <Select
-                placeholder="Pilih Program Studi"
-                value={prodi}
-                onChange={(e) => setProdi(e.target.value)}
-              >
-                <option value="Teknik Informatika">Teknik Informatika</option>
-                <option value="Fisika">Fisika</option>
-                <option value="Manajemen">Manajemen</option>
-              </Select>
-            </FormControl>
+                <FormControl>
+                  <FormLabel>Daftar Sebagai</FormLabel>
+                  <RadioGroup value={daftarSebagai} onChange={setDaftarSebagai}>
+                    <Stack direction="row">
+                      <Radio value="Mahasiswa">Innovator</Radio>
+                      <Radio value="Dosen">User Biasa</Radio>
+                    </Stack>
+                  </RadioGroup>
+                </FormControl>
 
-            {/* Submit Button */}
-            <Button colorScheme="yellow" width="full" type="submit">
-              Daftar Akun
-            </Button>
+                <FormControl>
+                  <FormLabel>Fakultas</FormLabel>
+                  <Select
+                    placeholder="Pilih Fakultas"
+                    value={fakultas}
+                    onChange={(e) => setFakultas(e.target.value)}
+                  >
+                    <option value="Fakultas Teknik">Fakultas Teknik</option>
+                    <option value="Fakultas Sains">Fakultas Sains</option>
+                    <option value="Fakultas Ilmu Sosial">
+                      Fakultas Ilmu Sosial
+                    </option>
+                  </Select>
+                </FormControl>
+
+                <FormControl>
+                  <FormLabel>Program Studi</FormLabel>
+                  <Select
+                    placeholder="Pilih Program Studi"
+                    value={prodi}
+                    onChange={(e) => setProdi(e.target.value)}
+                  >
+                    <option value="Teknik Informatika">
+                      Teknik Informatika
+                    </option>
+                    <option value="Fisika">Fisika</option>
+                    <option value="Manajemen">Manajemen</option>
+                  </Select>
+                </FormControl>
+              </>
+            )}
+
+            {/* Navigation Buttons */}
+            <HStack width="100%" justifyContent="space-between">
+              {step > 1 && (
+                <Button variant="outline" onClick={handlePrevStep}>
+                  Kembali
+                </Button>
+              )}
+              {step < 3 ? (
+                <Button colorScheme="yellow" onClick={handleNextStep}>
+                  Lanjut
+                </Button>
+              ) : (
+                <Button colorScheme="yellow" type="submit">
+                  Daftar Akun
+                </Button>
+              )}
+            </HStack>
           </VStack>
 
           <Box textAlign="center" mt={4}>
-              <Link to="/login" className='text-orange-800 font-bold'>Sudah Punya Akun? Login</Link>
+            <Link to="/login" className="text-orange-800 font-bold">
+              Sudah Punya Akun? Login
+            </Link>
           </Box>
         </Box>
       </Box>

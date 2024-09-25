@@ -93,7 +93,7 @@ const LoginPage: React.FC = () => {
                   />
                   <FormErrorMessage>{errors.password}</FormErrorMessage>
                   <Box textAlign="right" mt={1}>
-                    <ChakraLink href="#" fontSize="sm" fontWeight="bold" color="yellow.500" _hover={{ textDecoration: 'underline' }}>
+                    <ChakraLink href="/forgot-password" fontSize="sm" fontWeight="bold" color="yellow.500" _hover={{ textDecoration: 'underline' }}>
                       Lupa Password?
                     </ChakraLink>
                   </Box>

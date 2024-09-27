@@ -4,9 +4,10 @@ import Header from './Header';
 import Footer from './Footer';
 interface LayoutAdminProps {
   children: ReactNode;
+  className: string;
 }
 
-const LayoutAdmin: React.FC<LayoutAdminProps> = ({ children }) => {
+const LayoutAdmin: React.FC<LayoutAdminProps> = ({ children,className }) => {
   const [isSidebarOpen, setIsSidebarOpen] = React.useState(false);
 
   const userAccess = 'admin';
@@ -22,7 +23,7 @@ const LayoutAdmin: React.FC<LayoutAdminProps> = ({ children }) => {
         />
         <div className="flex flex-1 flex-col overflow-hidden">
           <Header toggleSidebar={toggleSidebar} />
-          <main className="flex-1 overflow-y-auto overflow-x-hidden bg-white p-6">
+          <main className={`flex-1 overflow-y-auto overflow-x-hidden bg-white ${className}`}>
             {children}
           </main>
         </div>

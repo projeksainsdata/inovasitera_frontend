@@ -25,7 +25,7 @@ const columns = [{ key: 'name', label: 'Nama Categories' },{
 
 const searchFields = [{ key: 'name', label: 'Nama Categories' }];
 
-const TableCategories: React.FC = () => {
+const TableInovasi: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [initialValues, setInitialValues] = useState<CategoriesUpdate | null>(
     null,
@@ -35,14 +35,13 @@ const TableCategories: React.FC = () => {
   //   ResponseApi<Categories>
   // >(`${CATEGORY_PREFIX.INDEX}`, { page: 1, perPage: 10 });
   const data = {
-    requestId: "string",
+  requestId: "string",
   requestTime: "string",
   data: [
     {
-      id: 'string',
+  id: 'string',
   name: 'string',
   description: 'string',
-
   type: 'string',
     }
   ],
@@ -137,13 +136,13 @@ const TableCategories: React.FC = () => {
   return (
     <>
       <div>
-        <h1 className="mb-4 text-2xl font-semibold">Kategori Management</h1>
+        <h1 className="mb-4 text-2xl font-semibold">Inovasi Management</h1>
         <div className="mb-4">
           <button
             onClick={handleAdd}
             className="w-52 shrink rounded bg-blue-500 px-4 py-2 font-bold text-white hover:bg-blue-700"
           >
-            Tambah Kategori
+            Tambah Inovasi
           </button>
         </div>
         <SearchQuery
@@ -173,7 +172,7 @@ const TableCategories: React.FC = () => {
       <Modal
         isOpen={isModalOpen}
         onClose={closeModal}
-        title="Tambah Inovation"
+        title="Tambah Categories"
       >
         <FormCategories
           handleSubmit={handleSubmit}
@@ -184,4 +183,4 @@ const TableCategories: React.FC = () => {
   );
 };
 
-export default TableCategories;
+export default TableInovasi;

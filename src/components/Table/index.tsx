@@ -64,7 +64,7 @@ const Table: React.FC<TableProps> = ({
 
   return (
     <div
-      className="overflow-x-auto rounded-lg bg-white shadow-md"
+      className="overflow-x-auto rounded-lg bg-grey-200 shadow-md"
       style={{
         WebkitOverflowScrolling: 'touch',
         display: 'block',
@@ -72,7 +72,7 @@ const Table: React.FC<TableProps> = ({
         maxHeight: '45vh',
       }}
     >
-      <table className="min-w-full divide-y divide-gray-800 bg-white  ">
+      <table className="min-w-full divide-y divide-gray-800 bg-orange-600  ">
         <thead className="bg-orange">
           <tr>
             {columns.map((column) => (

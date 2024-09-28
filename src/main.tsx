@@ -1,5 +1,4 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import ListInovasi from './pages/ListInovasi';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import { ChakraProvider } from '@chakra-ui/react';
@@ -12,10 +11,12 @@ import './index.css';
 import './App.css';
 
 import KategoriesAdmin from './pages/admin/categories';
-import TambahInovasi from './pages/admin/innovations';
+import TambahInovasi from '@/pages/admin/innovations/TambahInovasi';
+import ListInovasiDashboard from '@/pages/admin/innovations/ListInovasi';
+import ListInovasi from '@/pages/ListInovasi';
 import Index from '@/pages/admin/index';
-
-import ForgotPassword from './pages/ForgotPassword';
+import EditProfile from './pages/admin/profil';
+import ForgotPassword from '@/pages/ForgotPassword';
 
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
@@ -25,7 +26,9 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
         <Routes>
           <Route path="/" element={<App />} />
           <Route path="/tentang" element={<Tentang />} />
+          <Route path="/dashboard/profil" element={<EditProfile/>}/>
           <Route path="/dashboard/" element={<Index />} />
+          <Route path="/dashboard/list-inovasi" element={<ListInovasiDashboard />} />
           <Route path="/dashboard/tambah-inovasi" element={<TambahInovasi />} />
           <Route path="/inovasi" element={<ListInovasi />} />
           <Route path="/login" element={<Login />} />

@@ -6,12 +6,26 @@ import CategorySidebar from "../components/KategoryInovasi";
 import InnovationCard from "../components/InovationCard";
 import { Button, ButtonGroup, Box } from "@chakra-ui/react";
 import ImageExample from "@/assets/Hero.png";
+import Pagination from "@/components/Pagination";
+import SearchQuery, { SearchField } from "@/components/Form/SearchQuery";
+import useDataFetch from "@/hooks/useFetchData";
+import { ResponseApi } from "@/lib/types/api.type";
+import { INNOVATION_PREFIX } from "@/lib/constants/api.contants";
+const SearchFields = [
+  {
+    label: "Cari inovasi...",
+    key: "q",
+  },
+] as SearchField[];
 
 const InnovationPage: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const innovationsPerPage = 6; // Number of innovations per page
-
+  const { data, loading, error, updateParams, refetch, params } = useDataFetch<ResponseApi<Innovation>>(`${INNOVATION_PREFIX.INDEX}`, {
+    page: 1,
+    perPage: 6,
+  });
   const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(event.target.value);
   };
@@ -70,7 +84,7 @@ const InnovationPage: React.FC = () => {
 
   const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
 
-  const [categoryMobile,setCategoryMobile] = useState(false);
+  const [categoryMobile, setCategoryMobile] = useState(false);
   return (
     <>
       <Navbar />
@@ -91,8 +105,8 @@ const InnovationPage: React.FC = () => {
             />
           </div>
         </div>
-        
-        {categoryMobile && <CategorySidebar close={()=>setCategoryMobile(!categoryMobile)} className="bg-white fixed w-full p-4 bottom-0 border-2 rounded-t-3xl transition-all block md:hidden"/>}
+
+        {categoryMobile && <CategorySidebar close={() => setCategoryMobile(!categoryMobile)} className="bg-white fixed w-full p-4 bottom-0 border-2 rounded-t-3xl transition-all block md:hidden" />}
 
         <div className="container mx-auto mt-8 px-4 flex flex-col gap-6 md:flex-row mb-20 md:mt-[200px]">
           {/* Sidebar Categories */}
@@ -104,7 +118,7 @@ const InnovationPage: React.FC = () => {
               <h2 className="text-xl font-bold">
                 Hasil dari "{searchQuery}" (621)
               </h2>
-              <button onClick={()=>setCategoryMobile(!categoryMobile)} className="block md:hidden">Kategori</button>
+              <button onClick={() => setCategoryMobile(!categoryMobile)} className="block md:hidden">Kategori</button>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {currentInnovations.map((innovation, index) => (

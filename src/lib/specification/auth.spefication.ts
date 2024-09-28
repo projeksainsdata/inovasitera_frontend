@@ -32,7 +32,8 @@ export interface ForgotPasswordSpecification {
 }
 
 export interface ResetPasswordSpecification {
-  token: string;
+  password: string;
+  password2: string;
 }
 
 export interface LoginSpecification {

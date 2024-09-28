@@ -21,8 +21,15 @@ export const AUTH_PATH = {
 };
 
 export const CATEGORY_PREFIX = {
-  INDEX: "/api/categories",
-  CREATE: "/api/categories/",
-  EDIT: "/api/categories/",
-  DELETE: "/api/categories/",
+  INDEX: "/api/v1/categories",
+  CREATE: "/api/v1/categories/",
+  EDIT: "/api/v1/categories/",
+  DELETE: "/api/v1/categories/",
+};
+
+export const INNOVATION_PREFIX = {
+  INDEX: "/api/v1/inovations",
+  CREATE: "/api/v1/inovations",
+  EDIT: "/api/v1/inovations",
+  DELETE: "/api/v1/inovations",
 };

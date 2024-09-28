@@ -18,6 +18,7 @@ import { Token } from "@/lib/types/auth.type";
 
 export default class AuthApiService {
   private static API = AxiosService.getAxiosWithoutHeader();
+  private static API_AUTH = AxiosService.getAxiosAuth();
 
   static async register(
     data: RegisterSpecification
@@ -60,6 +61,12 @@ export default class AuthApiService {
     );
   }
 
+  static async verifyResetToken(
+    token: string
+  ): Promise<AxiosResponse<ResponseApi<unknown>>> {
+    return AuthApiService.API.get(`${AUTH_PATH.RESET_PASSWORD}/${token}`);
+  }
+
   static async login(
     data: LoginSpecification
   ): Promise<AxiosResponse<ResponseApi<Token>>> {
@@ -71,12 +78,11 @@ export default class AuthApiService {
   }
 
   static async logout(): Promise<AxiosResponse<ResponseApi<unknown>>> {
-    await TokenService.removeToken();
-    return AuthApiService.API.post(AUTH_PATH.LOGOUT);
+    return AuthApiService.API_AUTH.post(AUTH_PATH.LOGOUT);
   }
 
   static async me(): Promise<AxiosResponse<ResponseApi<unknown>>> {
-    return AuthApiService.API.get(AUTH_PATH.ME);
+    return AuthApiService.API_AUTH.get(AUTH_PATH.ME);
   }
 
   static async google(

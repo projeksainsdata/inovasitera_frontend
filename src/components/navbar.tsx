@@ -1,14 +1,13 @@
-import React, { useState, useContext } from 'react';
+import React, { useState } from 'react';
 import { Menu, X } from 'lucide-react';
 import Logo from "../assets/Logo.png";
 import { Button } from '@chakra-ui/react';
 import { Link } from 'react-router-dom';
-import { AuthContext } from '@/contexts/AuthContext'; // Adjust this path to where you have your AuthContext
+import { useAuth } from '@/hooks/useAuth';
 
 const Navbar: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const { isAuthenticated } = useContext(AuthContext); // Access auth state
-
+  const auth = useAuth();
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
   };
@@ -30,15 +29,15 @@ const Navbar: React.FC = () => {
           </div>
           {/* Conditionally render login/profile button */}
           <div className="hidden lg:flex items-center">
-            {isAuthenticated ? (
-              <Link to={'/profile'}>
-                <Button colorScheme='blue' borderRadius='full'>
+            {auth.isAuthenticated ? (
+              <Link to={'/innovator/profil'}>
+                <Button colorScheme='red' borderRadius='full'>
                   Profile
                 </Button>
               </Link>
             ) : (
               <Link to={'/login'}>
-                <Button colorScheme='red' borderRadius='full'>Masuk Sistem →</Button>
+                <Button colorScheme='red' borderRadius='full'>Masuk →</Button>
               </Link>
             )}
           </div>
@@ -56,7 +55,7 @@ const Navbar: React.FC = () => {
             <Link to={'/'}><a className="text-black hover:text-gray-600 transition duration-200">Beranda</a></Link>
             <Link to={'/inovasi'}><a className="text-black hover:text-gray-600 transition duration-200">Semua Inovasi</a></Link>
             <Link to={'/tentang'}><a className="text-black hover:text-gray-600 transition duration-200">Tentang</a></Link>
-            {isAuthenticated ? (
+            {auth.isAuthenticated ? (
               <Link to={'/profile'} className='text-sm'>
                 <Button colorScheme='blue' size="sm">Profile</Button>
               </Link>

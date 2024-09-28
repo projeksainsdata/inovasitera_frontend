@@ -113,14 +113,14 @@ const SearchQuery: React.FC<SearchProps> = ({
       <div className="flex gap-2">
         <button
           type="button"
-          className="hover:bg-black-dark rounded-md bg-orange px-4 py-2 text-sm font-medium text-white shadow-sm transition-colors duration-300 hover:bg-black focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2"
+          className="hover:bg-orange-600 rounded-md bg-orange-700 px-4 py-2 text-sm font-medium text-white shadow-sm transition-colors duration-300 hover:bg-black focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2"
           onClick={handleSearch}
         >
           Search
         </button>
         <button
           type="button"
-          className="rounded-md bg-orange px-4 py-2 text-sm font-medium text-white shadow-sm transition-colors duration-300 hover:bg-black focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
+          className="rounded-md hover:bg-orange-600 bg-orange-700 px-4 py-2 text-sm font-medium text-white shadow-sm transition-colors duration-300 hover:bg-black focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
           onClick={handleClear}
         >
           <FaTimes className="size-5" />

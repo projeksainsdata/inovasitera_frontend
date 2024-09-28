@@ -17,6 +17,10 @@ import DetailInovasi from '@/pages/DetailInovasi';
 import ForgotPassword from '@/pages/ForgotPassword';
 import { PublicRoute } from '@/routes/PublicRoute';
 import { PrivateRoute } from '@/routes/PrivateRoute';
+import InovationAdmin from '@/pages/admin/inovations';
+import UserAdmin from '@/pages/admin/user';
+import ManajemenInovasiAdmin from '@/pages/admin/manajemenInovasi';
+import InovationAdminDetail from '@/pages/admin/manajemenDetailInovasi';
 
 const AppRoutes: React.FC = () => {
     return (
@@ -37,6 +41,17 @@ const AppRoutes: React.FC = () => {
                             <KategoriesAdmin />
                         </PrivateRoute>
                     } />
+                    <Route path="/admin/inovation" element={<PrivateRoute role={['admin']}><InovationAdmin /></PrivateRoute>} />
+                    <Route path="/admin/user" element={<PrivateRoute role={['admin']}>
+                        <UserAdmin /></PrivateRoute>} />
+                    <Route path="/admin/manajemeninovasi" element={<PrivateRoute role={['admin']}>
+                        <ManajemenInovasiAdmin /></PrivateRoute>}
+                    />
+                    <Route path="/admin/detailinovasi" element={
+                        <PrivateRoute role={['admin']}>
+                            <InovationAdminDetail />
+                        </PrivateRoute>
+                    } />
                     <Route path="/inovasi" element={<ListInovasi />} />
                     <Route path="/login" element={
                         <PublicRoute>
@@ -55,8 +70,8 @@ const AppRoutes: React.FC = () => {
                         </PublicRoute>
                     } />
                 </Routes>
-            </AuthProvider>
-        </Router>
+            </AuthProvider >
+        </Router >
     );
 };
 

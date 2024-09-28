@@ -1,13 +1,13 @@
 /* eslint-disable tailwindcss/no-custom-classname */
 import React, { useState } from 'react';
-import { FaSortUp, FaSortDown, FaEdit, FaTrash } from 'react-icons/fa';
+import { FaSortUp, FaSortDown, FaTrash } from 'react-icons/fa';
 import { motion } from 'framer-motion';
+import { Link } from 'react-router-dom'; // Import Link
 
 interface Column {
   key: string;
   label: string;
 }
-
 interface DataItem {
   id: string | number;
   [key: string]: any;
@@ -36,6 +36,7 @@ const Table: React.FC<TableProps> = ({
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>(
     params.order || 'asc',
   );
+
   const handleSort = (column: string) => {
     const newSortDirection =
       sortColumn === column
@@ -64,7 +65,7 @@ const Table: React.FC<TableProps> = ({
 
   return (
     <div
-      className="overflow-x-auto rounded-lg bg-white shadow-md"
+      className="overflow-x-auto rounded-lg bg-grey-200 shadow-md"
       style={{
         WebkitOverflowScrolling: 'touch',
         display: 'block',
@@ -72,7 +73,7 @@ const Table: React.FC<TableProps> = ({
         maxHeight: '45vh',
       }}
     >
-      <table className="min-w-full divide-y divide-gray-800 bg-white  ">
+      <table className="min-w-full divide-y divide-gray-800 bg-orange-600">
         <thead className="bg-orange">
           <tr>
             {columns.map((column) => (
@@ -119,13 +120,14 @@ const Table: React.FC<TableProps> = ({
                 </td>
               ))}
               <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
-                <motion.button
-                  whileHover={{ scale: 1.1 }}
-                  onClick={() => onEdit({ ...row })}
-                  className="mr-2 text-green-600 hover:text-green-900"
-                >
-                  <FaEdit />
-                </motion.button>
+                <Link to={`/admin/detailinovasi`}>
+                  <motion.button
+                    whileHover={{ scale: 1.1 }}
+                    className="mr-2 text-green-600 hover:text-green-900"
+                  >
+                    Detail
+                  </motion.button>
+                </Link>
                 <motion.button
                   whileHover={{ scale: 1.1 }}
                   onClick={() => onDelete(row.id)}

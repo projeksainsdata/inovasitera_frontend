@@ -21,6 +21,7 @@ import InovationAdmin from '@/pages/admin/inovations';
 import UserAdmin from '@/pages/admin/user';
 import ManajemenInovasiAdmin from '@/pages/admin/manajemenInovasi';
 import InovationAdminDetail from '@/pages/admin/manajemenDetailInovasi';
+import ProfilePage from '@/pages/ProfilePage';
 
 const AppRoutes: React.FC = () => {
     return (
@@ -53,6 +54,7 @@ const AppRoutes: React.FC = () => {
                         </PrivateRoute>
                     } />
                     <Route path="/inovasi" element={<ListInovasi />} />
+                    <Route path="/profile" element={<ProfilePage />} />
                     <Route path="/login" element={
                         <PublicRoute>
                             <Login />

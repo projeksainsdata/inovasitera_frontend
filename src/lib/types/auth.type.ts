@@ -1,3 +1,9 @@
+export interface AuthState {
+  user: User | null;
+  isAuthenticated: boolean;
+  isLoading: boolean;
+}
+
 export interface Token {
   access: string;
   refresh: string;
@@ -10,11 +16,10 @@ export interface DecodedToken {
 }
 
 export interface User {
-  id: string;
-  username: string;
+  _id: string;
   email: string;
-  role: 'student' | 'non-student' | 'admin';
-  department_id: string | null;
-  createdAt: string;
-  updatedAt: string;
-}
+  username: string;
+  role: string;
+  emailVerified: boolean;
+  profile: string;
+} 

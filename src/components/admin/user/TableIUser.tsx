@@ -17,15 +17,16 @@ import Table from '@/components/Table';
 import SearchQuery from '@/components/Form/SearchQuery';
 import Pagination from '@/components/Pagination';
 import Modal from '@/components/Modal';
-import FormCategories from '@/components/admin/categories/FormCategories'
+import FormCategories from '@/components/admin/categories/FormCategories';
 
-const columns = [{ key: 'name', label: 'Nama Categories' },{
-  key: 'image', label: 'image Categories' 
-}];
+const columns = [
+  { key: 'name', label: 'Nama User' },
+  { key: 'role', label: 'Role' }, 
+];
 
-const searchFields = [{ key: 'name', label: 'Nama Categories' }];
+const searchFields = [{ key: 'name', label: 'Nama Inovasi' }];
 
-const TableCategories: React.FC = () => {
+const TableUser: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [initialValues, setInitialValues] = useState<CategoriesUpdate | null>(
     null,
@@ -35,29 +36,28 @@ const TableCategories: React.FC = () => {
   //   ResponseApi<Categories>
   // >(`${CATEGORY_PREFIX.INDEX}`, { page: 1, perPage: 10 });
   const data = {
-    requestId: "string",
-  requestTime: "string",
-  data: [
-    {
-      id: 'string',
-  name: 'string',
-  description: 'string',
+    requestId: 'string',
+    requestTime: 'string',
+    data: [
+      {
+        id: 'string',
+        name: 'string',
+        description: 'string',
+        type: 'string',
+      },
+    ],
+    pagination: {
+      total: 10,
+      perPage: 10,
+      page: 1,
+    },
+  };
+  const loading = false;
+  const error = null;
+  const updateParams = (newparams) => {};
+  const refetch = () => {};
+  const params = {};
 
-  type: 'string',
-    }
-  ],
-  pagination: {
-    total: 10,
-    perPage: 10,
-    page: 1,
-  } 
-  }
-  const loading = false
-  const error =null
-  const updateParams = (newparams)=>{}
-  const refetch = () => {}
-  const params ={}
-  
   const handleSearch = (criteria: Record<string, string>) => {
     updateParams({ ...criteria, page: 1 });
   };
@@ -137,13 +137,13 @@ const TableCategories: React.FC = () => {
   return (
     <>
       <div>
-        <h1 className="mb-4 text-2xl font-semibold">Kategori Management</h1>
+        <h1 className="mb-4 text-2xl font-semibold">Inovasi Management</h1>
         <div className="mb-4">
           <button
             onClick={handleAdd}
             className="w-52 shrink rounded bg-blue-500 px-4 py-2 font-bold text-white hover:bg-blue-700"
           >
-            Tambah Kategori
+            Tambah Inovasi
           </button>
         </div>
         <SearchQuery
@@ -173,7 +173,7 @@ const TableCategories: React.FC = () => {
       <Modal
         isOpen={isModalOpen}
         onClose={closeModal}
-        title="Tambah Inovation"
+        title="Tambah Categories"
       >
         <FormCategories
           handleSubmit={handleSubmit}
@@ -184,4 +184,4 @@ const TableCategories: React.FC = () => {
   );
 };
 
-export default TableCategories;
+export default TableUser;

@@ -3,8 +3,15 @@ export interface RegisterSpecification {
   fullname: string;
   username: string;
   email: string;
+  fakultas?: string;
+  prodi?: string;
+  "inovator.fakultas"?: string;
+  "inovator.prodi"?: string;
   password: string;
   confirmPassword: string;
+  phonenumber: string;
+  dateOfBirth: string;
+  gender: string;
 }
 
 export interface VerifyEmailSpecification {
@@ -39,4 +46,11 @@ export interface GoogleSpecification {
 
 export interface RefreshTokenSpecification {
   refreshToken: string;
+}
+
+export interface RegisterResponse {
+  id: string;
+  email: string;
+  username: string;
+  fullname: string;
 }

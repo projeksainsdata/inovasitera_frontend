@@ -2,14 +2,14 @@ import React from 'react';
 
 
 import LayoutAdmin from '@/components/admin/layoutAdmin/LayoutAdmin';
-import TableInovasi from '@/components/admin/Inovation/TableInovasi';
+import TableUser from '@/components/admin/user/TableIUser';
 
-const InovationAdmin = () => {
+const UserAdmin = () => {
   return (
     <LayoutAdmin>
-      <TableInovasi />
+      <TableUser />
     </LayoutAdmin>
   );
 };
 
-export default InovationAdmin;
+export default UserAdmin;

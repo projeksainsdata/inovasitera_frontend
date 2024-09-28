@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Formik, Field, Form } from 'formik';
 import * as Yup from 'yup';
 import {
@@ -12,7 +12,8 @@ import {
   Image,
   Text,
   useToast,
-  Link as ChakraLink,
+  InputRightElement,
+  InputGroup,
 } from '@chakra-ui/react';
 import { Link, useNavigate } from 'react-router-dom';
 import ImageLogin from '../assets/ImageLogin.png';
@@ -21,12 +22,17 @@ import { LoginSpecification } from '@/lib/specification/auth.spefication';
 import { AxiosError } from 'axios';
 import { useAuth } from '@/hooks/useAuth';
 import AuthApiService from '@/services/apiServices/auth.api.service';
+import { IconEye, IconEyeClosed } from '@tabler/icons-react';
 
 const LoginPage: React.FC = () => {
   // Define the validation schema with Yup
+
+  const [showPassword, setShowPassword] = useState(false);
   const validationSchema = Yup.object({
     email: Yup.string().email('Format email salah').required('Email diperlukan'),
-    password: Yup.string().min(6, 'Password minimal 6 karakter').required('Password diperlukan'),
+    password: Yup.string()
+      .min(8, "Password minimal 8 karakter")
+      .required("Password diperlukan"),
   });
 
   const toast = useToast();
@@ -96,7 +102,6 @@ const LoginPage: React.FC = () => {
                   });
                   return;
                 }
-                console.error(error);
                 toast({
                   title: 'Login Gagal',
                   description: 'Email atau password salah',
@@ -126,20 +131,32 @@ const LoginPage: React.FC = () => {
                 {/* Password */}
                 <FormControl isInvalid={!!(errors.password && touched.password)} mb={4}>
                   <FormLabel>Password</FormLabel>
-                  <Field
-                    as={Input}
-                    name="password"
-                    type="password"
-                    placeholder="Password"
-                    focusBorderColor="yellow.400"
-                  />
+                  <InputGroup>
+                    <Field
+                      as={Input}
+                      name="password"
+                      type={showPassword ? "text" : "password"}
+                      placeholder="password..."
+                      focusBorderColor="yellow.400"
+                      _focus={{
+                        borderColor: "yellow.400",
+                        boxShadow: "0 0 0 2px #ECC94B",
+                      }}
+
+                    />
+                    <InputRightElement width="4.5rem">
+                      <Button h="1.75rem" size="sm" onClick={() => setShowPassword(!showPassword)}>
+                        {showPassword ? <IconEye /> : <IconEyeClosed />}
+                      </Button>
+                    </InputRightElement>
+                  </InputGroup>
                   <FormErrorMessage>{errors.password}</FormErrorMessage>
-                  <Box textAlign="right" mt={1}>
-                    <ChakraLink href="/forgot-password" fontSize="sm" fontWeight="bold" color="yellow.500" _hover={{ textDecoration: 'underline' }}>
-                      Lupa Password?
-                    </ChakraLink>
-                  </Box>
                 </FormControl>
+                <Box textAlign="right" mb={4}>
+                  <Link to="/forgot-password" className='text-orange-800 font-bold'>Lupa Password?</Link>
+                </Box>
+
+                {/* Submit Button */}
 
                 <Button
                   colorScheme="yellow"

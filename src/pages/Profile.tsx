@@ -1,13 +1,11 @@
 import React, { useState } from "react";
 import {
-  Box,
   Button,
   FormControl,
   FormLabel,
   Input,
   Avatar,
   VStack,
-  HStack,
   IconButton,
   useToast,
   RadioGroup,
@@ -17,7 +15,7 @@ import {
   GridItem,
 } from "@chakra-ui/react";
 import { Formik, Field, Form } from "formik";
-import { IconPhotoPlus, IconCheck } from "@tabler/icons-react";
+import { IconPhotoPlus } from "@tabler/icons-react";
 import * as Yup from "yup";
 import Layout from "@/components/innovator/layoutInnovator/LayoutInnovator";
 
@@ -27,11 +25,30 @@ const validationSchema = Yup.object({
   email: Yup.string()
     .email("Alamat email tidak valid")
     .required("Email is required"),
-  phone: Yup.string().matches(/^[0-9]+$/, "Hanya angka yang diperbolehkan"),
-  dob: Yup.date().required("Tanggal Lahir is required"),
+  phone: Yup.string()
+    .matches(/^[0-9]+$/, "Hanya angka yang diperbolehkan")
+    .min(10, "Nomor telepon minimal 10 digit")
+    .max(15, "Nomor telepon maksimal 15 digit")
+    .required("No Telepon is required"),
+  dob: Yup.date()
+    .max(new Date(), "Tanggal Lahir tidak boleh di masa depan")
+    .required("Tanggal Lahir is required"),
   gender: Yup.string().required("Jenis Kelamin is required"),
   fakultas: Yup.string().required("Fakultas is required"),
   prodi: Yup.string().required("Program Studi is required"),
+  profilePic: Yup.mixed()
+    .nullable()
+    .required("Profile picture is required")
+    .test(
+      "FILE_SIZE",
+      "Ukuran gambar terlalu besar",
+      (value) => !value || (value && (value as File).size <= 2000000) // 2MB
+    )
+    .test(
+      "FILE_FORMAT",
+      "Format gambar tidak didukung",
+      (value) => !value || (value && ["image/jpeg", "image/png", "image/*"].includes((value as File).type))
+    ),
 });
 
 const EditProfile = () => {
@@ -184,7 +201,7 @@ const EditProfile = () => {
                       <p style={{ color: "red" }}>{errors.fakultas}</p>
                     )}
                   </FormControl>
-                  
+
                   {/* Program Studi */}
                   <FormControl isInvalid={errors.prodi && touched.prodi}>
                     <FormLabel>Program Studi</FormLabel>

@@ -1,7 +1,6 @@
-/* eslint-disable tailwindcss/no-custom-classname */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 // components/SearchQuery.tsx
 import React, { useState, useCallback } from 'react';
-import { FaSearch, FaTimes } from 'react-icons/fa';
 import { motion } from 'framer-motion';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
@@ -23,7 +22,6 @@ interface SearchProps {
 const SearchQuery: React.FC<SearchProps> = ({
   fields,
   onSearch,
-  onClear,
   initialValues = {},
 }) => {
   const [searchCriteria, setSearchCriteria] =
@@ -37,10 +35,6 @@ const SearchQuery: React.FC<SearchProps> = ({
     onSearch(searchCriteria);
   }, [onSearch, searchCriteria]);
 
-  const handleClear = useCallback(() => {
-    setSearchCriteria({});
-    onClear();
-  }, [onClear]);
 
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent<HTMLElement>) => {
@@ -59,7 +53,7 @@ const SearchQuery: React.FC<SearchProps> = ({
             <DatePicker
               selected={searchCriteria[field.key]}
               onChange={(date) => handleInputChange(field.key, date)}
-              className="w-full rounded-md border border-gray-300 bg-white py-2 pl-10 pr-3 leading-5 placeholder:text-gray-500 focus:border-black focus:outline-none focus:ring-1 focus:ring-black sm:text-sm"
+              className="px-4 py-2 border rounded-full w-full max-w-md md:w-1/2"
               placeholderText={`Select ${field.label}`}
               onKeyDown={handleKeyDown}
             />
@@ -69,7 +63,7 @@ const SearchQuery: React.FC<SearchProps> = ({
             <select
               value={searchCriteria[field.key] || ''}
               onChange={(e) => handleInputChange(field.key, e.target.value)}
-              className="w-full rounded-md border border-gray-300 bg-white py-2 pl-10 pr-3 leading-5 placeholder:text-gray-500 focus:border-black focus:outline-none focus:ring-1 focus:ring-black sm:text-sm"
+              className="px-4 py-2 border rounded-full w-full max-w-md md:w-1/2"
             >
               <option value="">Select {field.label}</option>
               {field.options?.map((option) => (
@@ -84,7 +78,7 @@ const SearchQuery: React.FC<SearchProps> = ({
             <input
               type="text"
               value={searchCriteria[field.key] || ''}
-              className="w-full rounded-md border border-gray-300 bg-white py-2 pl-10 pr-3 leading-5 placeholder:text-gray-500 focus:border-black focus:outline-none focus:ring-1 focus:ring-black sm:text-sm"
+              className="px-4 py-2 border rounded-full w-full max-w-md md:w-1/2"
               placeholder={`Search ${field.label}`}
               onKeyDown={handleKeyDown}
               onChange={(e) => handleInputChange(field.key, e.target.value)}
@@ -100,32 +94,17 @@ const SearchQuery: React.FC<SearchProps> = ({
       initial={{ opacity: 0, y: -20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
-      className="mb-4 flex flex-wrap gap-4"
     >
       {fields.map((field) => (
-        <div key={field.key} className="relative grow">
-          <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-            <FaSearch className="size-5 text-gray-400" aria-hidden="true" />
+        <>
+          {/* center div  */}
+
+          <div className="flex items-center justify-center my-5">
+            {renderInput(field)}
           </div>
-          {renderInput(field)}
-        </div>
+        </>
       ))}
-      <div className="flex gap-2">
-        <button
-          type="button"
-          className="hover:bg-orange-600 rounded-md bg-orange-700 px-4 py-2 text-sm font-medium text-white shadow-sm transition-colors duration-300 hover:bg-black focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2"
-          onClick={handleSearch}
-        >
-          Search
-        </button>
-        <button
-          type="button"
-          className="rounded-md hover:bg-orange-600 bg-orange-700 px-4 py-2 text-sm font-medium text-white shadow-sm transition-colors duration-300 hover:bg-black focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
-          onClick={handleClear}
-        >
-          <FaTimes className="size-5" />
-        </button>
-      </div>
+
     </motion.div>
   );
 };

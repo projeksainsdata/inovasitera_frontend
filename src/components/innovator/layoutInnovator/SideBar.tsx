@@ -1,8 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { navItems, NavItem } from './NavItems';
 import { motion, AnimatePresence } from 'framer-motion';
 import Logo from "@/assets/Logo1.png"
+import { useAuth } from '@/hooks/useAuth';
+import { useToast } from '@chakra-ui/react';
+import AuthApiService from '@/services/apiServices/auth.api.service';
+import { isAxiosError } from 'axios';
 
 interface SidebarProps {
   isOpen: boolean;
@@ -27,6 +31,43 @@ const Sidebar: React.FC<SidebarProps> = ({
     (item) =>
       item.access.includes('*') || item.access.includes(userAccess as never),
   );
+  const auth = useAuth();
+  const toast = useToast();
+  const navigate = useNavigate();
+
+  const handleLogout = async () => {
+    try {
+      await AuthApiService.logout();
+      auth.logout();
+      toast({
+        title: 'Success',
+        description: 'Logout successfully',
+        status: 'success',
+        duration: 5000,
+        isClosable: true
+      });
+      navigate('/');
+    } catch (error) {
+      if (isAxiosError(error)) {
+        toast({
+          title: 'Error',
+          description: error.response?.data.message || 'Failed to logout',
+          status: 'error',
+          duration: 5000,
+          isClosable: true
+        });
+        return
+      }
+      toast({
+        title: 'Error',
+        description: 'Failed to logout',
+        status: 'error',
+        duration: 5000,
+        isClosable: true
+      });
+
+    }
+  };
 
   useEffect(() => {
     const handleResize = () => {
@@ -70,7 +111,7 @@ const Sidebar: React.FC<SidebarProps> = ({
         <div className="flex h-full flex-col justify-between">
           <div className="flex items-center justify-between p-4">
             <Link to="/dashboard" className="text-2xl font-bold text-black">
-              <img src={Logo} className='w-72'/>
+              <img src={Logo} className='w-72' />
             </Link>
             {isMobile && (
               <button onClick={toggleSidebar} className="text-black">
@@ -127,11 +168,10 @@ const Sidebar: React.FC<SidebarProps> = ({
                           <li key={item.href}>
                             <Link
                               to={item.href}
-                              className={`flex items-center px-6 py-2 text-sm text-black transition-colors duration-200 hover:bg-orange-300 ${
-                                location.pathname === item.href
-                                  ? 'bg-orange-300'
-                                  : ''
-                              }`}
+                              className={`flex items-center px-6 py-2 text-sm text-black transition-colors duration-200 hover:bg-orange-300 ${location.pathname === item.href
+                                ? 'bg-orange-300'
+                                : ''
+                                }`}
                               onClick={isMobile ? toggleSidebar : undefined}
                             >
                               {item.icon}
@@ -146,7 +186,7 @@ const Sidebar: React.FC<SidebarProps> = ({
               ))}
             </ul>
           </nav>
-          <button className='bg-red-600 px-3 py-2 rounded m-5 text-white'>Keluar Sistem</button>
+          <button onClick={handleLogout} className='bg-red-600 px-3 py-2 rounded m-5 text-white'>Keluar Sistem</button>
         </div>
       </motion.aside>
     </>

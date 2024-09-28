@@ -37,19 +37,23 @@ import { FAKULTAS } from "@/lib/constants/fakultas.constans";
 import { PRODI } from '@/lib/constants/prodi.constans'
 import { RegisterSpecification } from "@/lib/specification/auth.spefication";
 
-// Validation schemas remain the same as before
 
 // Validation schemas for each step
 const step1Schema = Yup.object().shape({
   fullname: Yup.string().required("Nama Lengkap is required"),
   username: Yup.string().required("Username is required"),
   email: Yup.string().email("Invalid email").required("Email is required"),
-  phonenumber: Yup.string().min(10, "Nomor Handphone is invalid").required("Nomor Handphone is required"),
+  phonenumber: Yup.string().matches(/^[0-9]+$/, "Hanya angka yang diperbolehkan")
+    .min(10, "Nomor telepon minimal 10 digit")
+    .max(15, "Nomor telepon maksimal 15 digit")
+    .required("No Telepon is required"),
 
 });
 
 const step2Schema = Yup.object().shape({
-  dateOfBirth: Yup.date().required("Tanggal Lahir is required"),
+  dateOfBirth: Yup.date()
+    .max(new Date(), "Tanggal Lahir tidak boleh di masa depan")
+    .required("Tanggal Lahir is required"),
   gender: Yup.string().required("Jenis Kelamin is required"),
   role: Yup.string().default("member"),
   "inovator.fakultas": Yup.string(),
@@ -58,11 +62,12 @@ const step2Schema = Yup.object().shape({
 
 const step3Schema = Yup.object().shape({
   password: Yup.string()
-    .min(8, "Password must be at least 8 characters")
-    .required("Password is required"),
-  confirmPassword: Yup.string()
-    .oneOf([Yup.ref("password"), ""], "Passwords must match")
-    .required("Confirm Password is required"),
+    .min(8, "Password minimal 8 karakter")
+    .matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d@$!%*?&]{8,}$/,
+      "Password harus mengandung huruf besar, huruf kecil, angka")
+    .required("Password diperlukan"),
+  confirmPassword: Yup.string().oneOf([Yup.ref("password"), undefined], "Password tidak cocok")
+
 });
 
 // Combined schema for all steps
@@ -141,6 +146,8 @@ const SelectField = ({ formik, name, label, options, ...props }: { formik: Formi
 
 const RegisterPage: React.FC = () => {
   const [step, setStep] = useState(1);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const toast = useToast();
   const navigate = useNavigate();
   const auth = useAuth();
@@ -300,8 +307,34 @@ const RegisterPage: React.FC = () => {
       case 3:
         return (
           <>
-            <FormField formik={formik} name="password" label="Password" type="password" />
-            <FormField formik={formik} name="confirmPassword" label="Konfirmasi Password" type="password" />
+            <FormField
+              formik={formik}
+              name="password"
+              label="Password"
+              type={showPassword ? "text" : "password"}
+              autoComplete="new-password"
+            />
+            <FormField
+              formik={formik}
+              name="confirmPassword"
+              label="Konfirmasi Password"
+              type={showConfirmPassword ? "text" : "password"}
+              autoComplete="new-password"
+            />
+            <HStack spacing={4}>
+              <Button
+                size="sm"
+                onClick={() => setShowPassword(!showPassword)}
+              >
+                {showPassword ? "Sembunyikan Password" : "Tampilkan Password"}
+              </Button>
+              <Button
+                size="sm"
+                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+              >
+                {showConfirmPassword ? "Sembunyikan Password" : "Tampilkan Password"}
+              </Button>
+            </HStack>
           </>
         );
       default:

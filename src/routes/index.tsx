@@ -21,11 +21,11 @@ import InovationAdmin from '@/pages/admin/inovations';
 import UserAdmin from '@/pages/admin/user';
 import ManajemenInovasiAdmin from '@/pages/admin/manajemenInovasi';
 import InovationAdminDetail from '@/pages/admin/manajemenDetailInovasi';
-import ProfilePage from '@/pages/ProfilePage';
 import InnovatorListInovasi from '@/pages/innovator/innovations/ListInovasi';
 import InnovatorTambahInovasi from '@/pages/innovator/innovations/TambahInovasi';
 import InnovatorWishlistInovasi from '@/pages/innovator/wishlist/WishlistInovasi';
 import Profil from '@/pages/Profile';
+import ResetPassword from '@/pages/ResetPassword';
 
 
 const AppRoutes: React.FC = () => {
@@ -59,7 +59,6 @@ const AppRoutes: React.FC = () => {
                         </PrivateRoute>
                     } />
                     <Route path="/inovasi" element={<ListInovasi />} />
-                    <Route path="/profile" element={<ProfilePage />} />
                     <Route path="/login" element={
                         <PublicRoute>
                             <Login />
@@ -78,6 +77,11 @@ const AppRoutes: React.FC = () => {
                     <Route path="/forgot-password" element={
                         <PublicRoute>
                             <ForgotPassword />
+                        </PublicRoute>
+                    } />
+                    <Route path="/reset-password" element={
+                        <PublicRoute>
+                            <ResetPassword />
                         </PublicRoute>
                     } />
                 </Routes>

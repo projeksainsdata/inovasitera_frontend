@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Box,
   Button,
@@ -9,13 +9,24 @@ import {
   Flex,
   Image,
   Text,
+  Alert,
+  AlertIcon,
+  AlertTitle,
+  AlertDescription,
 } from "@chakra-ui/react";
 import { Formik, Field, Form } from "formik";
 import * as Yup from "yup";
 import { Link } from "react-router-dom";
 import Logo from "../assets/Logo1.png";
+import AuthApiService from "@/services/apiServices/auth.api.service";
+import { ForgotPasswordSpecification } from "@/lib/specification/auth.spefication";
+import { useToast } from "@chakra-ui/react";
+import { isAxiosError } from "axios";
 
 const ForgotPassword: React.FC = () => {
+  const [isSubmitted, setIsSubmitted] = useState(false);
+  const toast = useToast();
+
   const validationSchema = Yup.object({
     email: Yup.string()
       .email("Format email salah")
@@ -45,7 +56,6 @@ const ForgotPassword: React.FC = () => {
         rounded="lg"
         bg="white"
       >
-        {/* Logo */}
         <Box mb={6}>
           <Image src={Logo} alt="Logo" width={70} />
         </Box>
@@ -58,47 +68,102 @@ const ForgotPassword: React.FC = () => {
           password Anda.
         </Text>
 
-        {/* Formik form */}
-        <Formik
-          initialValues={{
-            email: "",
-          }}
-          validationSchema={validationSchema}
-          onSubmit={(values) => {
-            console.log(values); // Handle form submission
-          }}
-        >
-          {({ errors, touched }) => (
-            <Form style={{ width: "100%" }}>
-              {/* Email */}
-              <FormControl isInvalid={errors.email && touched.email} mb={4}>
-                <FormLabel>Email</FormLabel>
-                <Field
-                  as={Input}
-                  name="email"
-                  type="email"
-                  placeholder="example@gmail.com"
-                  focusBorderColor="yellow.400"
-                  _focus={{
-                    borderColor: "yellow.400",
-                    boxShadow: "0 0 0 2px #ECC94B",
-                  }}
-                />
-                <FormErrorMessage>{errors.email}</FormErrorMessage>
-              </FormControl>
+        {isSubmitted ? (
+          <Alert
+            status="success"
+            variant="subtle"
+            flexDirection="column"
+            alignItems="center"
+            justifyContent="center"
+            textAlign="center"
+            height="200px"
+          >
+            <AlertIcon boxSize="40px" mr={0} />
+            <AlertTitle mt={4} mb={1} fontSize="lg">
+              Email Terkirim!
+            </AlertTitle>
+            <AlertDescription maxWidth="sm">
+              Instruksi untuk mereset password telah dikirim ke email Anda. Silakan cek inbox atau folder spam Anda.
+            </AlertDescription>
+          </Alert>
+        ) : (
+          <Formik
+            initialValues={{
+              email: "",
+            }}
+            validationSchema={validationSchema}
+            onSubmit={async (values: ForgotPasswordSpecification, { setSubmitting }) => {
+              setSubmitting(true);
+              try {
+                const response = await AuthApiService.forgotPassword({
+                  email: values.email,
+                });
+                console.log(response);
+                setIsSubmitted(true);
+                toast({
+                  title: "Email Terkirim",
+                  description: "Instruksi reset password telah dikirim ke email Anda.",
+                  status: "success",
+                  duration: 5000,
+                  isClosable: true,
+                });
+              } catch (error) {
+                if (isAxiosError(error)) {
+                  toast({
+                    title: "Error",
+                    description: error.response?.data.message || "Gagal mengirim email reset password. Silakan coba lagi.",
+                    status: "error",
+                    duration: 5000,
+                    isClosable: true,
+                  });
+                  return
+                }
 
-              <Button
-                colorScheme="yellow"
-                width="full"
-                type="submit"
-                fontWeight="bold"
-                py={2}
-              >
-                Kirim Instruksi
-              </Button>
-            </Form>
-          )}
-        </Formik>
+                toast({
+                  title: "Error",
+                  description: "Gagal mengirim email reset password. Silakan coba lagi.",
+                  status: "error",
+                  duration: 5000,
+                  isClosable: true,
+                });
+              } finally {
+                setSubmitting(false);
+              }
+            }}
+          >
+            {({ errors, touched, isSubmitting }) => (
+              <Form style={{ width: "100%" }}>
+                <FormControl isInvalid={!!(errors.email && touched.email)} mb={4}>
+                  <FormLabel>Email</FormLabel>
+                  <Field
+                    as={Input}
+                    name="email"
+                    type="email"
+                    placeholder="example@gmail.com"
+                    focusBorderColor="yellow.400"
+                    _focus={{
+                      borderColor: "yellow.400",
+                      boxShadow: "0 0 0 2px #ECC94B",
+                    }}
+                  />
+                  <FormErrorMessage>{errors.email}</FormErrorMessage>
+                </FormControl>
+
+                <Button
+                  colorScheme="yellow"
+                  width="full"
+                  type="submit"
+                  fontWeight="bold"
+                  py={2}
+                  isLoading={isSubmitting}
+                  loadingText="Mengirim..."
+                >
+                  Kirim Instruksi
+                </Button>
+              </Form>
+            )}
+          </Formik>
+        )}
 
         <Box textAlign="center" mt={4}>
           <Text>

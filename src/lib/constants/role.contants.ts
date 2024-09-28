@@ -1,11 +1,11 @@
 export const ROLE = {
-  ADMIN: 'admin',
-  STUDENT: 'student',
-  NON_STUDENT: 'non-student',
+  ADMIN: "admin",
+  MEMBER: "member",
+  INOVATOR: "inovator",
 };
 
 export const ROLE_LABEL = {
-  [ROLE.ADMIN]: 'Admin',
-  [ROLE.STUDENT]: 'Mahasiswa',
-  [ROLE.NON_STUDENT]: 'Non-Mahasiswa',
+  [ROLE.ADMIN]: "Admin",
+  [ROLE.MEMBER]: "Member",
+  [ROLE.INOVATOR]: "Inovator",
 };

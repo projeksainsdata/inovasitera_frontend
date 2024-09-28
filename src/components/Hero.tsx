@@ -34,12 +34,12 @@ const Hero = () => {
               direction={{ base: 'column', md: 'row' }}
               align={{ base: 'center', md: 'flex-start' }}
             >
-              <Button colorScheme="red" size="sm" className='w-full'>
+              <Button colorScheme="red" size="lg" className='w-full'>
                 <Link to="/inovasi" className="text-white font-bold">
                   Lihat Semua Inovasi →
                 </Link>
               </Button>
-              <Button colorScheme="red" variant="outline" size="sm" className='w-full'>
+              <Button colorScheme="red" variant="outline" size="lg" className='w-full'>
                 <Link to="/tentang" className="font-bold">
                   Tentang Kami
                 </Link>

@@ -1,12 +1,10 @@
-import React from "react";
-import { Formik, Field, Form, ErrorMessage } from "formik";
+import React, { useState } from "react";
 import {
   Box,
   Button,
   FormControl,
   FormLabel,
   Input,
-  FormErrorMessage,
   RadioGroup,
   Radio,
   Select,
@@ -14,39 +12,67 @@ import {
   Stack,
   Flex,
   Image,
-  Text
+  Text,
+  HStack,
+  Step,
+  StepDescription,
+  StepIcon,
+  StepIndicator,
+  StepNumber,
+  StepSeparator,
+  StepStatus,
+  StepTitle,
+  Stepper,
 } from "@chakra-ui/react";
-import * as Yup from "yup";
-import { Link as RouterLink } from "react-router-dom";
+import { Link } from "react-router-dom";
 import ImageLogin from "../assets/ImageLogin.png";
 import Logo from "../assets/Logo1.png";
 
 const RegisterPage: React.FC = () => {
-  const validationSchema = Yup.object({
-    namaLengkap: Yup.string().required("Nama Lengkap diperlukan"),
-    email: Yup.string()
-      .email("Format email salah")
-      .required("Email diperlukan"),
-    password: Yup.string()
-      .min(6, "Password minimal 6 karakter")
-      .required("Password diperlukan"),
-    confirmPassword: Yup.string()
-      .oneOf([Yup.ref("password"), null], "Password tidak cocok")
-      .required("Konfirmasi Password diperlukan"),
-    noHP: Yup.string().required("No HP diperlukan"),
-    tanggalLahir: Yup.date().required("Tanggal Lahir diperlukan"),
-    jenisKelamin: Yup.string().required("Jenis Kelamin diperlukan"),
-    daftarSebagai: Yup.string().required("Pilih Daftar Sebagai"),
-    fakultas: Yup.string().required("Fakultas diperlukan"),
-    prodi: Yup.string().required("Program Studi diperlukan"),
-  });
+  // States to manage form values
+  const [namaLengkap, setNamaLengkap] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [noHP, setNoHP] = useState("");
+  const [tanggalLahir, setTanggalLahir] = useState("");
+  const [jenisKelamin, setJenisKelamin] = useState("");
+  const [daftarSebagai, setDaftarSebagai] = useState("");
+  const [fakultas, setFakultas] = useState("");
+  const [prodi, setProdi] = useState("");
+
+  // State for managing the current step
+  const [step, setStep] = useState(1);
+
+  const handleNextStep = () => setStep((prevStep) => prevStep + 1);
+  const handlePrevStep = () => setStep((prevStep) => prevStep - 1);
+
+  // step title
+  const steps = [
+    { title: "Informasi Awal", description: "Pengguna" },
+    { title: "Data Pribadi", description: "Informasi Lengkap" },
+    { title: "Password", description: "Atur Kredensial" },
+  ];
+
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    console.log({
+      namaLengkap,
+      email,
+      password,
+      confirmPassword,
+      noHP,
+      tanggalLahir,
+      jenisKelamin,
+      daftarSebagai,
+      fakultas,
+      prodi,
+    });
+  };
+
   return (
-    <Flex
-      
-      alignItems="center"
-      justifyContent="center"
-      bg="gray.50"
-    >
+    <Flex alignItems="center" justifyContent="center" bg="gray.50">
       <Box w="full" h="full" shadow="lg" display={{ md: "flex" }}>
         {/* Left Section - Image */}
         <Box flex={1} display={{ base: "none", md: "block" }}>
@@ -61,226 +87,186 @@ const RegisterPage: React.FC = () => {
         </Box>
 
         {/* Right Section - Form */}
-        <Box
-          flex={1}
-          p={{ base: 6, md: 10 }}
-        >
+        <Box flex={1} p={{ base: 6, md: 10 }}>
           {/* Logo */}
           <Box mb={6} mt={10}>
             <Image src={Logo} alt="Logo" width={70} />
           </Box>
 
           <Text fontSize="2xl" fontWeight="bold" color="gray.700" mb={2}>
-            Daftar Sistem
+            Daftar Akun Sistem PII ITERA
           </Text>
           <Text color="gray.500" mb={6}>
-            Untuk menggunakan sistem
+            Untuk menggunakan sistem harap membuat akun terlebih dahulu
           </Text>
 
-          {/* Login Form */}
-          <VStack spacing={4} as="form">
-            <Formik
-              initialValues={{
-                namaLengkap: "",
-                email: "",
-                password: "",
-                confirmPassword: "",
-                noHP: "",
-                tanggalLahir: "",
-                jenisKelamin: "",
-                daftarSebagai: "",
-                fakultas: "",
-                prodi: "",
-              }}
-              validationSchema={validationSchema}
-              onSubmit={(values) => {
-                console.log(values);
-              }}
-            >
-              {({ errors, touched, values, handleChange }) => (
-                <Form>
-                  <VStack spacing={4}>
-                    {/* Nama Lengkap */}
-                    <FormControl
-                      isInvalid={errors.namaLengkap && touched.namaLengkap}
-                    >
-                      <FormLabel>Nama Lengkap</FormLabel>
-                      <Field
-                        as={Input}
-                        name="namaLengkap"
-                        placeholder="Nama Lengkap"
-                      />
-                      <FormErrorMessage>{errors.namaLengkap}</FormErrorMessage>
-                    </FormControl>
+          {/* Multi-step form */}
+          <VStack as="form" spacing={4} onSubmit={handleSubmit}>
+            <Stepper index={step} w="100%" size="sm">
+              {steps.map((step, index) => (
+                <Step key={index} onClick={()=>setStep(index+1)}>
+                  <StepIndicator>
+                    <StepStatus
+                      complete={<StepIcon />}
+                      incomplete={<StepNumber />}
+                      active={<StepNumber />}
+                    />
+                  </StepIndicator>
 
-                    {/* Email */}
-                    <FormControl isInvalid={errors.email && touched.email}>
-                      <FormLabel>Email</FormLabel>
-                      <Field
-                        as={Input}
-                        name="email"
-                        type="email"
-                        placeholder="Email"
-                      />
-                      <FormErrorMessage>{errors.email}</FormErrorMessage>
-                    </FormControl>
+                  <Box flexShrink="0">
+                    <StepTitle>{step.title}</StepTitle>
+                    <StepDescription>{step.description}</StepDescription>
+                  </Box>
 
-                    {/* Password */}
-                    <FormControl
-                      isInvalid={errors.password && touched.password}
-                    >
-                      <FormLabel>Password</FormLabel>
-                      <Field
-                        as={Input}
-                        name="password"
-                        type="password"
-                        placeholder="Password"
-                      />
-                      <FormErrorMessage>{errors.password}</FormErrorMessage>
-                    </FormControl>
+                  <StepSeparator />
+                </Step>
+              ))}
+            </Stepper>
+            {step === 1 && (
+              <>
+                {/* Step 1: Personal Information */}
+                <FormControl>
+                  <FormLabel>Nama Lengkap</FormLabel>
+                  <Input
+                    value={namaLengkap}
+                    onChange={(e) => setNamaLengkap(e.target.value)}
+                    placeholder="Nama Lengkap"
+                  />
+                </FormControl>
 
-                    {/* Konfirmasi Password */}
-                    <FormControl
-                      isInvalid={
-                        errors.confirmPassword && touched.confirmPassword
-                      }
-                    >
-                      <FormLabel>Konfirmasi Password</FormLabel>
-                      <Field
-                        as={Input}
-                        name="confirmPassword"
-                        type="password"
-                        placeholder="Konfirmasi Password"
-                      />
-                      <FormErrorMessage>
-                        {errors.confirmPassword}
-                      </FormErrorMessage>
-                    </FormControl>
+                <FormControl>
+                  <FormLabel>Email</FormLabel>
+                  <Input
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="Email"
+                  />
+                </FormControl>
 
-                    {/* No HP */}
-                    <FormControl isInvalid={errors.noHP && touched.noHP}>
-                      <FormLabel>No HP</FormLabel>
-                      <Field as={Input} name="noHP" placeholder="No HP" />
-                      <FormErrorMessage>{errors.noHP}</FormErrorMessage>
-                    </FormControl>
+                <FormControl>
+                  <FormLabel>Nomor Handphone</FormLabel>
+                  <Input
+                    value={noHP}
+                    onChange={(e) => setNoHP(e.target.value)}
+                    placeholder="No Handphone"
+                  />
+                </FormControl>
+              </>
+            )}
 
-                    {/* Tanggal Lahir */}
-                    <FormControl
-                      isInvalid={errors.tanggalLahir && touched.tanggalLahir}
-                    >
-                      <FormLabel>Tanggal Lahir</FormLabel>
-                      <Field as={Input} name="tanggalLahir" type="date" />
-                      <FormErrorMessage>{errors.tanggalLahir}</FormErrorMessage>
-                    </FormControl>
+            {step === 3 && (
+              <>
+                {/* Step 2: Account Information */}
+                <FormControl>
+                  <FormLabel>Password</FormLabel>
+                  <Input
+                    type="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    placeholder="Password"
+                  />
+                </FormControl>
 
-                    {/* Jenis Kelamin (Radio) */}
-                    <FormControl
-                      isInvalid={errors.jenisKelamin && touched.jenisKelamin}
-                    >
-                      <FormLabel>Jenis Kelamin</FormLabel>
-                      <RadioGroup
-                        name="jenisKelamin"
-                        onChange={handleChange}
-                        value={values.jenisKelamin}
-                      >
-                        <Stack direction="row">
-                          <Field
-                            as={Radio}
-                            name="jenisKelamin"
-                            value="Laki-Laki"
-                          >
-                            Laki-Laki
-                          </Field>
-                          <Field
-                            as={Radio}
-                            name="jenisKelamin"
-                            value="Perempuan"
-                          >
-                            Perempuan
-                          </Field>
-                        </Stack>
-                      </RadioGroup>
-                      <FormErrorMessage>{errors.jenisKelamin}</FormErrorMessage>
-                    </FormControl>
+                <FormControl>
+                  <FormLabel>Konfirmasi Password</FormLabel>
+                  <Input
+                    type="password"
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    placeholder="Konfirmasi Password"
+                  />
+                </FormControl>
+              </>
+            )}
 
-                    {/* Daftar Sebagai (Radio) */}
-                    <FormControl
-                      isInvalid={errors.daftarSebagai && touched.daftarSebagai}
-                    >
-                      <FormLabel>Daftar Sebagai</FormLabel>
-                      <RadioGroup
-                        name="daftarSebagai"
-                        onChange={handleChange}
-                        value={values.daftarSebagai}
-                      >
-                        <Stack direction="row">
-                          <Field
-                            as={Radio}
-                            name="daftarSebagai"
-                            value="Mahasiswa"
-                          >
-                            Innovator
-                          </Field>
-                          <Field as={Radio} name="daftarSebagai" value="Dosen">
-                            User Biasa
-                          </Field>
-                        </Stack>
-                      </RadioGroup>
-                      <FormErrorMessage>
-                        {errors.daftarSebagai}
-                      </FormErrorMessage>
-                    </FormControl>
+            {step === 2 && (
+              <>
+                {/* Step 3: Additional Information */}
+                <FormControl>
+                  <FormLabel>Tanggal Lahir</FormLabel>
+                  <Input
+                    type="date"
+                    value={tanggalLahir}
+                    onChange={(e) => setTanggalLahir(e.target.value)}
+                  />
+                </FormControl>
 
-                    {/* Fakultas (Dropdown) */}
-                    <FormControl
-                      isInvalid={errors.fakultas && touched.fakultas}
-                    >
-                      <FormLabel>Fakultas</FormLabel>
-                      <Field
-                        as={Select}
-                        name="fakultas"
-                        placeholder="Pilih Fakultas"
-                      >
-                        <option value="Fakultas Teknik">Fakultas Teknik</option>
-                        <option value="Fakultas Sains">Fakultas Sains</option>
-                        <option value="Fakultas Ilmu Sosial">
-                          Fakultas Ilmu Sosial
-                        </option>
-                      </Field>
-                      <FormErrorMessage>{errors.fakultas}</FormErrorMessage>
-                    </FormControl>
+                <FormControl>
+                  <FormLabel>Jenis Kelamin</FormLabel>
+                  <RadioGroup value={jenisKelamin} onChange={setJenisKelamin}>
+                    <Stack direction="row">
+                      <Radio value="Laki-Laki">Laki-Laki</Radio>
+                      <Radio value="Perempuan">Perempuan</Radio>
+                    </Stack>
+                  </RadioGroup>
+                </FormControl>
 
-                    {/* Prodi (Dropdown) */}
-                    <FormControl isInvalid={errors.prodi && touched.prodi}>
-                      <FormLabel>Program Studi</FormLabel>
-                      <Field
-                        as={Select}
-                        name="prodi"
-                        placeholder="Pilih Program Studi"
-                      >
-                        <option value="Teknik Informatika">
-                          Teknik Informatika
-                        </option>
-                        <option value="Fisika">Fisika</option>
-                        <option value="Manajemen">Manajemen</option>
-                      </Field>
-                      <FormErrorMessage>{errors.prodi}</FormErrorMessage>
-                    </FormControl>
+                <FormControl>
+                  <FormLabel>Daftar Sebagai</FormLabel>
+                  <RadioGroup value={daftarSebagai} onChange={setDaftarSebagai}>
+                    <Stack direction="row">
+                      <Radio value="Mahasiswa">Innovator</Radio>
+                      <Radio value="Dosen">User Biasa</Radio>
+                    </Stack>
+                  </RadioGroup>
+                </FormControl>
 
-                    {/* Submit Button */}
-                    <Button colorScheme="yellow" width="full" type="submit">
-                        Daftar Akun
-                    </Button>
-                  </VStack>
-                </Form>
+                <FormControl>
+                  <FormLabel>Fakultas</FormLabel>
+                  <Select
+                    placeholder="Pilih Fakultas"
+                    value={fakultas}
+                    onChange={(e) => setFakultas(e.target.value)}
+                  >
+                    <option value="Fakultas Teknik">Fakultas Teknik</option>
+                    <option value="Fakultas Sains">Fakultas Sains</option>
+                    <option value="Fakultas Ilmu Sosial">
+                      Fakultas Ilmu Sosial
+                    </option>
+                  </Select>
+                </FormControl>
+
+                <FormControl>
+                  <FormLabel>Program Studi</FormLabel>
+                  <Select
+                    placeholder="Pilih Program Studi"
+                    value={prodi}
+                    onChange={(e) => setProdi(e.target.value)}
+                  >
+                    <option value="Teknik Informatika">
+                      Teknik Informatika
+                    </option>
+                    <option value="Fisika">Fisika</option>
+                    <option value="Manajemen">Manajemen</option>
+                  </Select>
+                </FormControl>
+              </>
+            )}
+
+            {/* Navigation Buttons */}
+            <HStack width="100%" justifyContent="space-between">
+              {step > 1 && (
+                <Button variant="outline" onClick={handlePrevStep}>
+                  Kembali
+                </Button>
               )}
-            </Formik>
+              {step < 3 ? (
+                <Button colorScheme="yellow" onClick={handleNextStep}>
+                  Lanjut
+                </Button>
+              ) : (
+                <Button colorScheme="yellow" type="submit">
+                  Daftar Akun
+                </Button>
+              )}
+            </HStack>
           </VStack>
 
           <Box textAlign="center" mt={4}>
-            <Button variant="outline" colorScheme="yellow" width="full">
-              <RouterLink to="/register">Login Sistem</RouterLink>
-            </Button>
+            <Link to="/login" className="text-orange-800 font-bold">
+              Sudah Punya Akun? Login
+            </Link>
           </Box>
         </Box>
       </Box>

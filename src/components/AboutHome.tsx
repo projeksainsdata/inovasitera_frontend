@@ -21,7 +21,7 @@ const AboutHome = () => {
                         </div>
                     </div>
                     <div className="md:w-1/2 flex justify-center md:justify-end">
-                        <img src={ImageAbout} alt="About" className="w-full max-w-[500px] md:max-w-none" />
+                        <img src={ImageAbout} alt="About" className="w-full max-w-[500px] md:max-w-none rounded-xl border-2" />
                     </div>
                 </div>
             </div>

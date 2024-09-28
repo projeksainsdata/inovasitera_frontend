@@ -1,7 +1,6 @@
-/* eslint-disable tailwindcss/no-custom-classname */
 import React, { useCallback, useEffect, useState } from 'react';
 import { useField } from 'formik';
-import Image from 'next/image';
+
 
 interface DragDropFileInputProps {
   name: string;
@@ -90,11 +89,10 @@ const DragDropFileInput: React.FC<DragDropFileInputProps> = ({
       >
         {preview ? (
           <div className="relative w-full pt-[100%]">
-            <Image
+            <img
               src={preview}
               alt="Preview"
               className="absolute left-0 top-0 size-full rounded-md object-cover"
-              fill
               style={{
                 objectFit: 'cover',
               }}

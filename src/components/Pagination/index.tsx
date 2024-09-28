@@ -1,6 +1,6 @@
-/* eslint-disable tailwindcss/no-custom-classname */
 import React from 'react';
 import { motion } from 'framer-motion';
+import { Button } from '@chakra-ui/react';
 
 interface PaginationProps {
   currentPage: number;
@@ -69,17 +69,17 @@ const Pagination: React.FC<PaginationProps> = ({
       transition={{ duration: 0.3 }}
       className="mt-10 flex items-center justify-center"
     >
-      <button
+      <Button
         onClick={handlePrevPage}
-        className={`rounded-l-md px-4 py-2 ${
-          currentPage === 1
-            ? 'cursor-not-allowed bg-gray-300 text-gray-500'
-            : 'bg-gray-200 text-gray-700 hover:bg-primary-100'
-        }`}
+        colorScheme="red"
+        className={`rounded-l-md px-6 py-2 ${currentPage === 1
+          ? 'cursor-not-allowed bg-gray-300 text-gray-500'
+          : 'bg-gray-200 text-gray-700 hover:bg-primary-100'
+          }`}
         disabled={currentPage === 1}
       >
         Prev
-      </button>
+      </Button>
 
       {getPageNumbers().map((page, index) => (
         <React.Fragment key={page}>
@@ -88,30 +88,30 @@ const Pagination: React.FC<PaginationProps> = ({
             page !== getPageNumbers()[index - 1]! + 1 && (
               <span className="px-4 py-2 text-gray-500">...</span>
             )}
-          <button
+          <Button
             onClick={() => handlePageClick(page)}
-            className={`px-4 py-2 ${
-              page === currentPage
-                ? 'bg-orange text-white'
-                : 'bg-gray-200 text-gray-700 hover:bg-primary-100'
-            }`}
+            colorScheme="red"
+            className={`px-4 py-2 ${page === currentPage
+              ? 'bg-red text-white'
+              : 'bg-gray-200 text-gray-700 hover:bg-primary-100'
+              }`}
           >
             {page}
-          </button>
+          </Button>
         </React.Fragment>
       ))}
 
-      <button
+      <Button
         onClick={handleNextPage}
-        className={`rounded-r-md px-4 py-2 ${
-          currentPage === totalPages
-            ? 'cursor-not-allowed bg-gray-300 text-gray-500'
-            : 'bg-gray-200 text-gray-700 hover:bg-primary-100'
-        }`}
+        colorScheme="red"
+        className={`rounded-r-md px-4 py-2 ${currentPage === totalPages
+          ? 'cursor-not-allowed bg-gray-300 text-gray-500'
+          : 'bg-gray-200 text-gray-700 hover:bg-primary-100'
+          }`}
         disabled={currentPage === totalPages}
       >
         Next
-      </button>
+      </Button>
     </motion.div>
   );
 };

@@ -2,149 +2,161 @@ import React, { useState } from "react";
 import Navbar from "../components/navbar";
 import HeroPage from "../components/HeroPage";
 import Footer from "../components/Footer";
-import CategorySidebar from "../components/KategoryInovasi";
+import FilterPanel, { FilterGroup } from "../components/FilterPanel";
 import InnovationCard from "../components/InovationCard";
-import { Button, ButtonGroup, Box } from "@chakra-ui/react";
-import ImageExample from "@/assets/Hero.png";
+import { Box, Spinner } from "@chakra-ui/react";
 import Pagination from "@/components/Pagination";
 import SearchQuery, { SearchField } from "@/components/Form/SearchQuery";
 import useDataFetch from "@/hooks/useFetchData";
-import { ResponseApi } from "@/lib/types/api.type";
 import { INNOVATION_PREFIX } from "@/lib/constants/api.contants";
-const SearchFields = [
+import { InovationResponse } from "@/lib/types/inovation.type";
+
+const SearchFields: SearchField[] = [
   {
-    label: "Cari inovasi...",
+    label: "Search innovations...",
     key: "q",
   },
-] as SearchField[];
+];
+
+const filterGroups: FilterGroup[] = [
+  {
+    id: 'category.name',
+    label: 'Categories',
+    type: 'checkbox',
+    options: [
+      { id: 'all', label: 'All', count: 100 },
+      { id: 'food', label: 'Food', count: 29 },
+      { id: 'health', label: 'Health', count: 19 },
+    ],
+  },
+  {
+    id: 'sort',
+    label: 'Sort By',
+    type: 'radio',
+    options: [
+      { id: 'rating_desc', label: 'Highest Rating' },
+      { id: 'rating_asc', label: 'Lowest Rating' },
+      { id: 'title_asc', label: 'A-Z' },
+      { id: 'title_desc', label: 'Z-A' },
+      { id: 'createdAt_desc', label: 'Newest' },
+      { id: 'createdAt_asc', label: 'Oldest' },
+    ],
+  },
+];
 
 const InnovationPage: React.FC = () => {
-  const [searchQuery, setSearchQuery] = useState("");
-  const [currentPage, setCurrentPage] = useState(1);
-  const innovationsPerPage = 6; // Number of innovations per page
-  const { data, loading, error, updateParams, refetch, params } = useDataFetch<ResponseApi<Innovation>>(`${INNOVATION_PREFIX.INDEX}`, {
+  const [filterMobile, setFilterMobile] = useState(false);
+  const { data, loading, error, updateParams, params } = useDataFetch<InovationResponse>(`${INNOVATION_PREFIX.INDEX}`, {
     page: 1,
     perPage: 6,
+    "category.name": 'all',
+    sort: 'createdAt',
+    order: 'desc',
   });
-  const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchQuery(event.target.value);
+
+  const handleSearch = (criteria: Record<string, string>) => {
+    updateParams({ ...criteria, page: 1 });
+
   };
 
-  const innovations = [
-    {
-      id: 1,
-      category: "Pangan",
-      title: "Contoh Produk Inovasi ITERA",
-      rating: 4.5,
-      review: 10,
-      image: ImageExample,
-    },
-    {
-      id: 2,
-      category: "Pangan",
-      title: "Contoh Produk Inovasi ITERA",
-      rating: 4.5,
-      review: 10,
-      image: ImageExample,
-    },
-    {
-      id: 3,
-      category: "Pangan",
-      title: "Contoh Produk Inovasi ITERA",
-      rating: 4.5,
-      review: 10,
-      image: ImageExample,
-    },
-    {
-      id: 1,
-      category: "Pangan",
-      title: "Contoh Produk Inovasi ITERA",
-      rating: 4.5,
-      review: 10,
-      image: ImageExample,
-    },
-    {
-      id: 1,
-      category: "Pangan",
-      title: "Contoh Produk Inovasi ITERA",
-      rating: 4.5,
-      review: 10,
-      image: ImageExample,
-    },
-  ];
+  const handleFilter = (selections: Record<string, string | string[]>) => {
+    const [sortColumn, sortDirection] = (selections.sort as string).split('_');
+    const categories = selections['category.name'] as string[];
+    updateParams({
+      ...params,
+      'category.name': categories.includes('all') || categories.length === 0 ? 'all' : categories.join(','),
+      sort: sortColumn,
+      order: sortDirection,
+      page: 1,
+    });
+  };
 
-  const totalPages = Math.ceil(innovations.length / innovationsPerPage);
-
-  const indexOfLastInnovation = currentPage * innovationsPerPage;
-  const indexOfFirstInnovation = indexOfLastInnovation - innovationsPerPage;
-  const currentInnovations = innovations.slice(
-    indexOfFirstInnovation,
-    indexOfLastInnovation
-  );
-
-  const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
-
-  const [categoryMobile, setCategoryMobile] = useState(false);
+  const handlePageChange = (page: number) => {
+    updateParams({ ...params, page });
+  };
   return (
     <>
       <Navbar />
       <HeroPage />
       <div className="relative z-20">
-        {/* Header Section */}
         <div className="py-8 text-center md:mt-[-300px] mt-[-200px] px-8">
           <h1 className="md:text-4xl text-2xl font-bold text-red-500">
-            Semua Inovasi PII ITERA
+            All PII ITERA Innovations
           </h1>
-          <div className="mt-7">
-            <input
-              type="text"
-              placeholder="Cari inovasi..."
-              value={searchQuery}
-              onChange={handleSearch}
-              className="px-4 py-2 border rounded-full w-full max-w-md md:w-1/2"
-            />
-          </div>
+          <SearchQuery
+            fields={SearchFields}
+            initialValues={params}
+            onSearch={handleSearch}
+            onClear={() => updateParams({ page: 1, perPage: 6 })}
+          />
         </div>
 
-        {categoryMobile && <CategorySidebar close={() => setCategoryMobile(!categoryMobile)} className="bg-white fixed w-full p-4 bottom-0 border-2 rounded-t-3xl transition-all block md:hidden" />}
-
         <div className="container mx-auto mt-8 px-4 flex flex-col gap-6 md:flex-row mb-20 md:mt-[200px]">
-          {/* Sidebar Categories */}
-          <CategorySidebar className="bg-white border rounded-lg shadow-md p-4 md:w-1/4 h-fit overflow-y-auto sticky top-[100px] hidden md:block" />
+          <FilterPanel
+            filterGroups={filterGroups}
+            defaultSelections={{
+              "category.name": ['all'],
+              sort: 'createdAt_desc',
+            }}
+            onApply={handleFilter}
+            className="md:w-1/4 h-fit overflow-y-auto sticky top-[100px] hidden md:block"
+          />
 
-          {/* Innovation Cards Section */}
           <main className="w-full md:w-3/4">
             <div className="flex justify-between my-8">
               <h2 className="text-xl font-bold">
-                Hasil dari "{searchQuery}" (621)
+                Results for "{params?.q || ''}" ({data?.pagination?.total || 0})
               </h2>
-              <button onClick={() => setCategoryMobile(!categoryMobile)} className="block md:hidden">Kategori</button>
+              <button onClick={() => setFilterMobile(!filterMobile)} className="block md:hidden">Filters</button>
             </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-              {currentInnovations.map((innovation, index) => (
-                <InnovationCard inovasi={innovation} />
-              ))}
-            </div>
-
-            {/* Centered Pagination Buttons */}
-            <Box mt={8} display="flex" justifyContent="center">
-              <ButtonGroup>
-                {Array.from({ length: totalPages }, (_, index) => (
-                  <Button
-                    colorScheme="red"
-                    key={index}
-                    onClick={() => paginate(index + 1)}
-                    isActive={index + 1 === currentPage}
-                  >
-                    {index + 1}
-                  </Button>
+            {loading ? (
+              <Box display="flex" justifyContent="center" alignItems="center" height="200px">
+                <Spinner size="xl" />
+              </Box>
+            ) : error ? (
+              <Box textAlign="center" color="red.500">Error: {error.message}</Box>
+            ) : (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                {data?.data.map((innovation) => (
+                  <InnovationCard key={innovation._id} inovasi={innovation} />
                 ))}
-              </ButtonGroup>
+              </div>
+            )}
+
+            <Box mt={8} display="flex" justifyContent="center">
+              <Pagination
+                currentPage={data?.pagination?.page || 1}
+                totalPages={
+                  Math.ceil((data?.pagination?.total ?? 1) / (data?.pagination?.perPage ?? 1)) ||
+                  1
+                }
+                onPageChange={handlePageChange}
+              />
             </Box>
           </main>
         </div>
       </div>
       <Footer />
+
+      {filterMobile && (
+        <Box className="fixed inset-0 z-50 bg-white p-4 overflow-y-auto md:hidden">
+          <div className="flex justify-between items-center mb-4">
+            <h2 className="font-bold text-lg">Filters</h2>
+            <button onClick={() => setFilterMobile(false)}>Close</button>
+          </div>
+          <FilterPanel
+            filterGroups={filterGroups}
+            defaultSelections={{
+              "category.name": ['all'],
+              sort: 'createdAt_desc',
+            }}
+            onApply={(selections) => {
+              handleFilter(selections);
+              setFilterMobile(false);
+            }}
+          />
+        </Box>
+      )}
     </>
   );
 };

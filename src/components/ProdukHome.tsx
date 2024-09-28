@@ -105,7 +105,7 @@ const ProdukHome: React.FC = () => {
               768: { slidesPerView: 3, spaceBetween: 24 },
               1024: { slidesPerView: 4, spaceBetween: 30 },
             }}
-            className="mySwiper"
+            className="mySwiper py-2"
           >
             {filteredData.map((item) => (
               <SwiperSlide key={item.id}>

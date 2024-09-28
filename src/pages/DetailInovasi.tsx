@@ -55,11 +55,7 @@ const DetailInovasi: React.FC = () => {
       <Box className="bg-orange-100 p-3 mb-5 ">
         <Breadcrumb spacing="8px">
           <BreadcrumbItem>
-            <BreadcrumbLink href="#">Beranda</BreadcrumbLink>
-          </BreadcrumbItem>
-
-          <BreadcrumbItem>
-            <BreadcrumbLink href="#">Pangan</BreadcrumbLink>
+            <BreadcrumbLink href="/inovasi">Beranda</BreadcrumbLink>
           </BreadcrumbItem>
 
           <BreadcrumbItem isCurrentPage>
@@ -112,13 +108,11 @@ const DetailInovasi: React.FC = () => {
               Produk Inovasi ITERA
             </Text>
             <Text className="text-xl md:text-3xl font-bold">
-              Obat Tradisional BioLuric Menjadi Obat Herbal Terstandar
-              Antigout/Penurun Asam Urat
+              Ini Adalah Contoh Produk Inovasi ITERA
             </Text>
 
             <Box className="flex gap-6 items-center">
               <div className="bg-green-500 text-white text-sm font-semibold px-3 py-2 gap-3 rounded-full flex items-center">
-                <img src={PANGAN} className="w-5" />
                 Pangan
               </div>
               <Box className="flex items-center">
@@ -159,16 +153,16 @@ const DetailInovasi: React.FC = () => {
 
       <Tabs variant="enclosed" className="m-3 md:max-w-6xl md:mx-auto md:mb-5">
         <TabList>
-          <Tab className="space-x-2 font-bold">
-            <IconInfoCircle size={18} />
+          <Tab className="space-x-1 font-bold">
+            <IconInfoCircle size={16} />
             <span>Deskripsi</span>
           </Tab>
-          <Tab className="space-x-2 font-bold">
-            <IconMessageCircle size={18} />
+          <Tab className="space-x-1 font-bold">
+            <IconMessageCircle size={16} />
             <span>Ulasan</span>
           </Tab>
-          <Tab className="space-x-2 font-bold">
-            <IconZoomQuestion size={18} />
+          <Tab className="space-x-2">
+            <IconZoomQuestion size={16} />
             <span>Pertanyaan</span>
           </Tab>
         </TabList>

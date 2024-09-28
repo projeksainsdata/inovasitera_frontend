@@ -7,7 +7,6 @@ interface Column {
   key: string;
   label: string;
 }
-
 interface DataItem {
   id: string | number;
   [key: string]: any;

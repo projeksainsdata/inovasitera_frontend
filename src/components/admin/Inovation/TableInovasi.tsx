@@ -17,13 +17,17 @@ import Table from '@/components/Table';
 import SearchQuery from '@/components/Form/SearchQuery';
 import Pagination from '@/components/Pagination';
 import Modal from '@/components/Modal';
-import FormCategories from '@/components/admin/categories/FormCategories'
+import FormCategories from '@/components/admin/categories/FormCategories';
 
-const columns = [{ key: 'name', label: 'Nama Categories' },{
-  key: 'image', label: 'image Categories' 
-}];
+const columns = [
+  { key: 'name', label: 'Nama Produk Inovasi' },
+  { key: 'image', label: 'Image' },
+  { key: 'status', label: 'Status' }, 
+  { key: 'description', label: 'Deskripsi' }, 
+  { key: 'rating', label: 'Rating' }, 
+];
 
-const searchFields = [{ key: 'name', label: 'Nama Categories' }];
+const searchFields = [{ key: 'name', label: 'Nama Inovasi' }];
 
 const TableInovasi: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -35,28 +39,29 @@ const TableInovasi: React.FC = () => {
   //   ResponseApi<Categories>
   // >(`${CATEGORY_PREFIX.INDEX}`, { page: 1, perPage: 10 });
   const data = {
-  requestId: "string",
-  requestTime: "string",
-  data: [
-    {
-  id: 'string',
-  name: 'string',
-  description: 'string',
-  type: 'string',
-    }
-  ],
-  pagination: {
-    total: 10,
-    perPage: 10,
-    page: 1,
-  } 
-  }
-  const loading = false
-  const error =null
-  const updateParams = (newparams)=>{}
-  const refetch = () => {}
-  const params ={}
-  
+    requestId: 'string',
+    requestTime: 'string',
+    data: [
+      {
+        id: 'string',
+        name: 'string',
+        description: 'string',
+        type: 'string',
+        status: 'ACC', 
+      },
+    ],
+    pagination: {
+      total: 10,
+      perPage: 10,
+      page: 1,
+    },
+  };
+  const loading = false;
+  const error = null;
+  const updateParams = (newparams) => {};
+  const refetch = () => {};
+  const params = {};
+
   const handleSearch = (criteria: Record<string, string>) => {
     updateParams({ ...criteria, page: 1 });
   };

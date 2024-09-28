@@ -1,6 +1,5 @@
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Pagination } from 'swiper/modules';
-import Produk from '../assets/TEKNIK.svg';
 import { Button, Input, VStack, InputGroup, InputRightElement } from '@chakra-ui/react';
 import { Link } from 'react-router-dom';
 import 'swiper/css';
@@ -8,12 +7,16 @@ import 'swiper/css/navigation';
 import 'swiper/css/pagination';
 import React, { useState } from 'react';
 
+import InnovationCard from "../components/InovationCard";
+import ImageExample from "@/assets/Hero.png";
+
 interface Item {
   id: number;
   category: string;
   title: string;
   rating: number;
-  reviews: number;
+  review: number;
+  image: string;
 }
 
 const ProdukHome: React.FC = () => {
@@ -22,70 +25,55 @@ const ProdukHome: React.FC = () => {
   const data: Item[] = [
     {
       id: 1,
-      category: 'Pangan',
-      title: 'Formula Inokulan Bakteri Bintil Akar untuk Peningkatan Produksi Kedelai pada Lahan Kering Asam (pH > 4.0)',
+      category: "Pangan",
+      title:"Contoh Produk Inovasi ITERA",
       rating: 4.5,
-      reviews: 10,
+      review: 10,
+      image:ImageExample
     },
     {
-        id: 2,
-        category: 'Pangan',
-        title: 'Formula Inokulan Bakteri Bintil Akar untuk Peningkatan Produksi Kedelai pada Lahan Kering Asam (pH > 4.0)',
-        rating: 4.5,
-        reviews: 10,
-      },
-      {
-        id: 3,
-        category: 'Pangan',
-        title: 'Formula Inokulan Bakteri Bintil Akar untuk Peningkatan Produksi Kedelai pada Lahan Kering Asam (pH > 4.0)',
-        rating: 4.5,
-        reviews: 10,
-      },
-      {
-        id: 4,
-        category: 'Pangan',
-        title: 'Formula Inokulan Bakteri Bintil Akar untuk Peningkatan Produksi Kedelai pada Lahan Kering Asam (pH > 4.0)',
-        rating: 4.5,
-        reviews: 10,
-      },
-      {
-        id: 5,
-        category: 'Pangan',
-        title: 'Formula Inokulan Bakteri Bintil Akar untuk Peningkatan Produksi Kedelai pada Lahan Kering Asam (pH > 4.0)',
-        rating: 4.5,
-        reviews: 10,
-      },
-    
+      id: 2,
+      category: "Pangan",
+      title:"Contoh Produk Inovasi ITERA",
+      rating: 4.5,
+      review: 10,
+      image:ImageExample
+    },
+    {
+      id: 3,
+      category: "Pangan",
+      title:"Contoh Produk Inovasi ITERA",
+      rating: 4.5,
+      review: 10,
+      image:ImageExample
+    },
+    {
+      id: 1,
+      category: "Pangan",
+      title:"Contoh Produk Inovasi ITERA",
+      rating: 4.5,
+      review: 10,
+      image:ImageExample
+    },
+    {
+      id: 1,
+      category: "Pangan",
+      title:"Contoh Produk Inovasi ITERA",
+      rating: 4.5,
+      review: 10,
+      image:ImageExample
+    },
   ];
-
   // Filter data based on search query
   const filteredData = data.filter(item =>
     item.title.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  const Card: React.FC<{ item: Item }> = ({ item }) => (
-    <div className="bg-white rounded-lg shadow-lg p-4 mb-5 mt-10">
-      <div className="bg-white rounded-lg p-4 mb-1 mt-3 flex text-center items-center justify-center">
-        <img src={Produk} alt="produk" />
-      </div>
-      <div className='flex justify-between'>
-        <span className="inline-block bg-green-500 text-white text-xs font-semibold px-2 py-1 rounded-full mb-2">
-          {item.category}
-        </span>
-        <div className="flex items-center mb-2">
-          <span className="text-yellow-400 text-sm">{'★'.repeat(Math.floor(item.rating))}</span>
-          <span className="ml-2 text-xs text-gray-600">{item.rating.toFixed(1)} ({item.reviews})</span>
-        </div>
-      </div>
-      <h3 className="text-sm font-semibold line-clamp-3">{item.title}</h3>
-    </div>
-  );
-
   return (
     <div className="py-6 px-4 sm:py-10 sm:px-6 md:mt-0 mt-20">
       <VStack spacing={4} align="stretch">
-        <h1 className='text-center font-bold text-xl sm:text-2xl'>Jelajahi Riset & Inovasi ITERA</h1>
-        <h2 className='text-center text-sm mb-6'>Lihat Semua Inovasi yang ada di ITERA</h2>
+        <h1 className='text-center font-bold text-xl sm:text-3xl'>Jelajahi Riset & Inovasi ITERA</h1>
+        <h2 className='text-center text-base mb-6'>Lihat Semua Inovasi yang ada di ITERA</h2>
 
         {/* Search Form */}
         <InputGroup maxW="600px" mx="auto" mb={6}>
@@ -121,7 +109,7 @@ const ProdukHome: React.FC = () => {
           >
             {filteredData.map((item) => (
               <SwiperSlide key={item.id}>
-                <Card item={item} />
+                <InnovationCard inovasi={item}/>
               </SwiperSlide>
             ))}
           </Swiper>

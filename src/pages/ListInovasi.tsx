@@ -5,6 +5,7 @@ import Footer from "../components/Footer";
 import CategorySidebar from "../components/KategoryInovasi";
 import InnovationCard from "../components/InovationCard";
 import { Button, ButtonGroup, Box } from "@chakra-ui/react";
+import ImageExample from "@/assets/Hero.png";
 
 const InnovationPage: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -17,63 +18,48 @@ const InnovationPage: React.FC = () => {
 
   const innovations = [
     {
+      id: 1,
       category: "Pangan",
+      title: "Contoh Produk Inovasi ITERA",
       rating: 4.5,
-      title:
-        "Formula Inokulan Bakteri Bintil Akar untuk Peningkatan Produksi Kedelai pada Lahan Kering Asam (pH > 4.0)",
+      review: 10,
+      image: ImageExample,
     },
     {
+      id: 2,
       category: "Pangan",
+      title: "Contoh Produk Inovasi ITERA",
       rating: 4.5,
-      title:
-        "Formula Inokulan Bakteri Bintil Akar untuk Peningkatan Produksi Kedelai pada Lahan Kering Asam (pH > 4.0)",
+      review: 10,
+      image: ImageExample,
     },
     {
+      id: 3,
       category: "Pangan",
+      title: "Contoh Produk Inovasi ITERA",
       rating: 4.5,
-      title:
-        "Formula Inokulan Bakteri Bintil Akar untuk Peningkatan Produksi Kedelai pada Lahan Kering Asam (pH > 4.0)",
+      review: 10,
+      image: ImageExample,
     },
     {
+      id: 1,
       category: "Pangan",
+      title: "Contoh Produk Inovasi ITERA",
       rating: 4.5,
-      title:
-        "Formula Inokulan Bakteri Bintil Akar untuk Peningkatan Produksi Kedelai pada Lahan Kering Asam (pH > 4.0)",
+      review: 10,
+      image: ImageExample,
     },
     {
+      id: 1,
       category: "Pangan",
+      title: "Contoh Produk Inovasi ITERA",
       rating: 4.5,
-      title:
-        "Formula Inokulan Bakteri Bintil Akar untuk Peningkatan Produksi Kedelai pada Lahan Kering Asam (pH > 4.0)",
-    },
-    {
-      category: "Pangan",
-      rating: 4.5,
-      title:
-        "Formula Inokulan Bakteri Bintil Akar untuk Peningkatan Produksi Kedelai pada Lahan Kering Asam (pH > 4.0)",
-    },
-    {
-      category: "Pangan",
-      rating: 4.5,
-      title:
-        "Formula Inokulan Bakteri Bintil Akar untuk Peningkatan Produksi Kedelai pada Lahan Kering Asam (pH > 4.0)",
-    },
-    {
-      category: "Pangan",
-      rating: 4.5,
-      title:
-        "Formula Inokulan Bakteri Bintil Akar untuk Peningkatan Produksi Kedelai pada Lahan Kering Asam (pH > 4.0)",
-    },
-    {
-      category: "Pangan",
-      rating: 4.5,
-      title:
-        "Formula Inokulan Bakteri Bintil Akar untuk Peningkatan Produksi Kedelai pada Lahan Kering Asam (pH > 4.0)",
+      review: 10,
+      image: ImageExample,
     },
   ];
 
   const totalPages = Math.ceil(innovations.length / innovationsPerPage);
-
 
   const indexOfLastInnovation = currentPage * innovationsPerPage;
   const indexOfFirstInnovation = indexOfLastInnovation - innovationsPerPage;
@@ -81,7 +67,6 @@ const InnovationPage: React.FC = () => {
     indexOfFirstInnovation,
     indexOfLastInnovation
   );
-
 
   const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
 
@@ -93,7 +78,7 @@ const InnovationPage: React.FC = () => {
         {/* Header Section */}
         <div className="py-8 text-center md:mt-[-300px] mt-[-200px] px-8">
           <h1 className="md:text-4xl text-2xl font-bold text-red-500">
-            Semua Inovasi
+            Semua Inovasi PII ITERA
           </h1>
           <div className="mt-7">
             <input
@@ -106,7 +91,7 @@ const InnovationPage: React.FC = () => {
           </div>
         </div>
 
-        <div className="container mx-auto mt-8 px-4 flex flex-col md:flex-row mb-20 mt-[200px]">
+        <div className="container mx-auto mt-8 px-4 flex flex-col md:flex-row mb-20 md:mt-[200px]">
           {/* Sidebar Categories */}
           <CategorySidebar />
 
@@ -117,12 +102,7 @@ const InnovationPage: React.FC = () => {
             </h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {currentInnovations.map((innovation, index) => (
-                <InnovationCard
-                  key={index}
-                  category={innovation.category}
-                  rating={innovation.rating}
-                  title={innovation.title}
-                />
+                <InnovationCard inovasi={innovation} />
               ))}
             </div>
 

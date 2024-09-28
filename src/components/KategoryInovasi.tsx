@@ -4,7 +4,7 @@ import React from "react";
 
 const CategorySidebar: React.FC = () => {
   return (
-    <div className="md:w-1/4 bg-white rounded-lg p-4 shadow-md mb-6 md:mb-0 max-h-[500px] overflow-y-auto sticky md:top-[100px] md:mt-[0] mt-[-80px]">
+    <div className="md:w-1/4 bg-white border rounded-lg p-4 shadow-md mb-6 md:mb-0 h-fit overflow-y-auto sticky md:top-[100px] md:mt-[0] mt-[-80px]">
       <h2 className="font-bold text-lg mb-4">Kategori</h2>
       <ul>
           <li className="mb-2">

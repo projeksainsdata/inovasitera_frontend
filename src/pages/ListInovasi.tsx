@@ -5,6 +5,7 @@ import Footer from "../components/Footer";
 import CategorySidebar from "../components/KategoryInovasi";
 import InnovationCard from "../components/InovationCard";
 import { Button, ButtonGroup, Box } from "@chakra-ui/react";
+import ImageExample from "@/assets/Hero.png";
 
 const InnovationPage: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -17,63 +18,48 @@ const InnovationPage: React.FC = () => {
 
   const innovations = [
     {
+      id: 1,
       category: "Pangan",
+      title: "Contoh Produk Inovasi ITERA",
       rating: 4.5,
-      title:
-        "Formula Inokulan Bakteri Bintil Akar untuk Peningkatan Produksi Kedelai pada Lahan Kering Asam (pH > 4.0)",
+      review: 10,
+      image: ImageExample,
     },
     {
+      id: 2,
       category: "Pangan",
+      title: "Contoh Produk Inovasi ITERA",
       rating: 4.5,
-      title:
-        "Formula Inokulan Bakteri Bintil Akar untuk Peningkatan Produksi Kedelai pada Lahan Kering Asam (pH > 4.0)",
+      review: 10,
+      image: ImageExample,
     },
     {
+      id: 3,
       category: "Pangan",
+      title: "Contoh Produk Inovasi ITERA",
       rating: 4.5,
-      title:
-        "Formula Inokulan Bakteri Bintil Akar untuk Peningkatan Produksi Kedelai pada Lahan Kering Asam (pH > 4.0)",
+      review: 10,
+      image: ImageExample,
     },
     {
+      id: 1,
       category: "Pangan",
+      title: "Contoh Produk Inovasi ITERA",
       rating: 4.5,
-      title:
-        "Formula Inokulan Bakteri Bintil Akar untuk Peningkatan Produksi Kedelai pada Lahan Kering Asam (pH > 4.0)",
+      review: 10,
+      image: ImageExample,
     },
     {
+      id: 1,
       category: "Pangan",
+      title: "Contoh Produk Inovasi ITERA",
       rating: 4.5,
-      title:
-        "Formula Inokulan Bakteri Bintil Akar untuk Peningkatan Produksi Kedelai pada Lahan Kering Asam (pH > 4.0)",
-    },
-    {
-      category: "Pangan",
-      rating: 4.5,
-      title:
-        "Formula Inokulan Bakteri Bintil Akar untuk Peningkatan Produksi Kedelai pada Lahan Kering Asam (pH > 4.0)",
-    },
-    {
-      category: "Pangan",
-      rating: 4.5,
-      title:
-        "Formula Inokulan Bakteri Bintil Akar untuk Peningkatan Produksi Kedelai pada Lahan Kering Asam (pH > 4.0)",
-    },
-    {
-      category: "Pangan",
-      rating: 4.5,
-      title:
-        "Formula Inokulan Bakteri Bintil Akar untuk Peningkatan Produksi Kedelai pada Lahan Kering Asam (pH > 4.0)",
-    },
-    {
-      category: "Pangan",
-      rating: 4.5,
-      title:
-        "Formula Inokulan Bakteri Bintil Akar untuk Peningkatan Produksi Kedelai pada Lahan Kering Asam (pH > 4.0)",
+      review: 10,
+      image: ImageExample,
     },
   ];
 
   const totalPages = Math.ceil(innovations.length / innovationsPerPage);
-
 
   const indexOfLastInnovation = currentPage * innovationsPerPage;
   const indexOfFirstInnovation = indexOfLastInnovation - innovationsPerPage;
@@ -82,18 +68,18 @@ const InnovationPage: React.FC = () => {
     indexOfLastInnovation
   );
 
-
   const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
 
+  const [categoryMobile,setCategoryMobile] = useState(false);
   return (
     <>
       <Navbar />
       <HeroPage />
-      <div className="min-h-screen relative z-20">
+      <div className="relative z-20">
         {/* Header Section */}
         <div className="py-8 text-center md:mt-[-300px] mt-[-200px] px-8">
           <h1 className="md:text-4xl text-2xl font-bold text-red-500">
-            Semua Inovasi
+            Semua Inovasi PII ITERA
           </h1>
           <div className="mt-7">
             <input
@@ -105,24 +91,24 @@ const InnovationPage: React.FC = () => {
             />
           </div>
         </div>
+        
+        {categoryMobile && <CategorySidebar close={()=>setCategoryMobile(!categoryMobile)} className="bg-white fixed w-full p-4 bottom-0 border-2 rounded-t-3xl transition-all block md:hidden"/>}
 
-        <div className="container mx-auto mt-8 px-4 flex flex-col md:flex-row mb-20 mt-[200px]">
+        <div className="container mx-auto mt-8 px-4 flex flex-col gap-6 md:flex-row mb-20 md:mt-[200px]">
           {/* Sidebar Categories */}
-          <CategorySidebar />
+          <CategorySidebar className="bg-white border rounded-lg shadow-md p-4 md:w-1/4 h-fit overflow-y-auto sticky top-[100px] hidden md:block" />
 
           {/* Innovation Cards Section */}
-          <main className="md:w-3/4 md:pl-6">
-            <h2 className="text-xl font-bold mb-4">
-              Hasil dari "{searchQuery}" (621)
-            </h2>
+          <main className="w-full md:w-3/4">
+            <div className="flex justify-between my-8">
+              <h2 className="text-xl font-bold">
+                Hasil dari "{searchQuery}" (621)
+              </h2>
+              <button onClick={()=>setCategoryMobile(!categoryMobile)} className="block md:hidden">Kategori</button>
+            </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {currentInnovations.map((innovation, index) => (
-                <InnovationCard
-                  key={index}
-                  category={innovation.category}
-                  rating={innovation.rating}
-                  title={innovation.title}
-                />
+                <InnovationCard inovasi={innovation} />
               ))}
             </div>
 
@@ -143,8 +129,8 @@ const InnovationPage: React.FC = () => {
             </Box>
           </main>
         </div>
-        <Footer />
       </div>
+      <Footer />
     </>
   );
 };

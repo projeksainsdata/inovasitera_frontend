@@ -38,7 +38,7 @@ const Navbar: React.FC = () => {
               </Link>
             ) : (
               <Link to={'/login'}>
-                <Button colorScheme='red' borderRadius='full'>Masuk →</Button>
+                <Button colorScheme='red' borderRadius='full'>Masuk Sistem →</Button>
               </Link>
             )}
           </div>

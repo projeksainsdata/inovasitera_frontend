@@ -23,13 +23,9 @@ const AboutPage: React.FC = () => {
         {/* Description Section */}
         <div className="text-gray-700 text-base leading-relaxed max-w-4xl mx-auto mb-12">
           <p className="mb-4">
-            Peningkatan komersialisasi inovasi membutuhkan peningkatan knowledge flow baik ke dalam maupun ke luar IPB melalui jejaring dan kemitraan strategis. Peningkatan knowledge flow ke dalam IPB diperlukan untuk mendapatkan informasi tentang inovasi yang dibutuhkan oleh industri, sedangkan peningkatan knowledge flow ke luar IPB dilakukan untuk mempromosikan komersialisasi inovasi IPB kepada industri. Terutama industri dalam negeri agar dapat memanfaatkan inovasi. Dengan lancarnya flow of knowledge tersebut maka agenda riset IPB akan dapat difokuskan secara lebih tajam, sesuai kebutuhan industri dan strategi inovasi dalam upaya mengatasi masalah-masalah perekonomian, sekaligus meningkatkan income generating IPB.
-          </p>
-          <p className="mb-4">
-            IPB Innovation dirancang sebagai alat untuk mempromosikan/menawari inovasi yang dihasilkan oleh sivitas akademika IPB kepada masyarakat industri dan calon penggunanya. Inovasi IPB ini didasarkan pada kegiatan riset yang mengedepankan kepakaran dan kompetensi riset dari para inovator IPB. Inovator juga berfungsi sebagai role model secara profesional antar inovator dengan calon pengguna teknologi atau untuk mitra bisnis IPB. Inovasi IPB menawarkan fitur-fitur plotifatif yang lengkap, mulai dari hasil riset dalam skala laboratorium, prototype, paten, lisensi, hingga produk yang siap dipasarkan.
-          </p>
-          <p className="mb-4">
-            IPB Innovation juga menjadi alat diseminasi secara terbuka mengenai inovasi yang dihasilkan oleh inovator, termasuk hasil dan kesiapan teknologi.
+            Pusat Inovasi ITERA berkomitmen untuk menghadirkan berbagai program unggulan yang dirancang khusus untuk memfasilitasi dan mendukung pengembangan ide-ide kreatif serta inovatif. Dengan fokus pada inovasi, kami berupaya menciptakan lingkungan yang kondusif bagi lahirnya solusi-solusi terobosan.
+            Kami bertekad untuk membangun ekosistem inovasi yang berkelanjutan melalui pelaksanaan tugas pokok kami serta pilar-pilar pembangunan yang kokoh dan saling berhubungan. Dalam upaya ini, kami memberikan dukungan penuh terhadap munculnya ide-ide brilian serta solusi nyata yang dapat memberikan manfaat langsung kepada masyarakat.
+            Dengan semangat kolaborasi dan kreativitas, ayo bersama-sama kita mengembangkan dan mewujudkan ide-ide yang akan membawa perubahan positif dan menciptakan dampak yang signifikan. Mari berinovasi dan menjadikan dunia tempat yang lebih baik melalui solusi yang inovatif dan berkelanjutan.
           </p>
         </div>
 

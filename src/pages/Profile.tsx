@@ -19,7 +19,7 @@ import {
 import { Formik, Field, Form } from "formik";
 import { IconPhotoPlus, IconCheck } from "@tabler/icons-react";
 import * as Yup from "yup";
-import LayoutAdmin from "@/components/admin/layoutAdmin/LayoutAdmin";
+import Layout from "@/components/innovator/layoutInnovator/LayoutInnovator";
 
 // Updated Validation schema using Yup
 const validationSchema = Yup.object({
@@ -61,7 +61,7 @@ const EditProfile = () => {
   };
 
   return (
-    <LayoutAdmin>
+    <Layout>
       <Formik
         initialValues={{
           name: "",
@@ -214,7 +214,7 @@ const EditProfile = () => {
           </Form>
         )}
       </Formik>
-    </LayoutAdmin>
+    </Layout>
   );
 };
 

@@ -1,14 +1,14 @@
 import React from 'react';
 
 
-import LayoutAdmin from '@/components/admin/layoutAdmin/LayoutAdmin';
+import Layout from '@/components/innovator/layoutInnovator/LayoutInnovator';
 import TableSemuaInovasi from '@/components/innovator/inovasi/TableSemuaInovasi';
 
 const ListInovasi = () => {
   return (
-    <LayoutAdmin>
+    <Layout>
       <TableSemuaInovasi />
-    </LayoutAdmin>
+    </Layout>
   );
 };
 

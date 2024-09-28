@@ -17,7 +17,7 @@ import {
 } from "@chakra-ui/react";
 import { IconPlus, IconMinus } from "@tabler/icons-react";
 import { Dropzone, FileMosaic } from "@files-ui/react";
-import LayoutAdmin from "@/components/admin/layoutAdmin/LayoutAdmin";
+import Layout from "@/components/innovator/layoutInnovator/LayoutInnovator";
 import * as Yup from "yup";
 
 // Updated validation schema using Yup
@@ -54,7 +54,7 @@ const TambahInovasi = () => {
     setFiles(files.filter((x) => x.id !== id));
   };
   return (
-    <LayoutAdmin>
+    <Layout>
       <Box className="flex flex-col md:flex-row md:items-center justify-between mb-4">
         <h1>Sistem Inovasi ITERA</h1>
         <ButtonGroup className="z-40">
@@ -427,7 +427,7 @@ const TambahInovasi = () => {
           </Box>
         )}
       </Formik>
-    </LayoutAdmin>
+    </Layout>
   );
 };
 

@@ -20,11 +20,8 @@ import Modal from '@/components/Modal';
 import FormCategories from '@/components/admin/categories/FormCategories';
 
 const columns = [
-  { key: 'name', label: 'Nama Produk Inovasi' },
-  { key: 'image', label: 'Image' },
-  { key: 'status', label: 'Status' }, 
-  { key: 'description', label: 'Deskripsi' }, 
-  { key: 'rating', label: 'Rating' }, 
+  { key: 'name', label: 'Nama User' },
+  { key: 'role', label: 'Role' }, 
 ];
 
 const searchFields = [{ key: 'name', label: 'Nama Inovasi' }];

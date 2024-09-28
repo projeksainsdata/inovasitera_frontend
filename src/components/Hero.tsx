@@ -1,24 +1,32 @@
 import { Button, Stack } from '@chakra-ui/react';
 import { Link } from 'react-router-dom';
 import hero from '../assets/Hero.png';
-//import heru from '../assets/batik.png'
 
 const Hero = () => {
   return (
     <>
       <div className="relative flex items-center min-h-screen">
-        {/* Desktop Image */}
-        <img
-          src={hero}
-          alt="Desktop hero"
-          className="object-cover w-full h-full absolute hidden md:block"
-        />
-        {/* Mobile Image */}
-        <img
-          src={hero}
-          alt="Mobile hero"
-          className="object-cover w-full h-full absolute md:hidden"
-        />
+        {/* Parallax Background for Desktop */}
+        <div
+          className="hidden md:block absolute top-0 left-0 w-full h-full"
+          style={{
+            backgroundImage: `url(${hero})`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            backgroundAttachment: 'fixed', // Parallax effect
+          }}
+        ></div>
+
+        {/* Mobile Image (non-parallax) */}
+        <div
+          className="block md:hidden absolute top-0 left-0 w-full h-full"
+          style={{
+            backgroundImage: `url(${hero})`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            backgroundAttachment: 'fixed', // Parallax effect
+          }}
+        ></div>
 
         {/* Content */}
         <div className="px-5 md:px-20 md:mt-0 mt-[-100px] z-20">
@@ -34,12 +42,17 @@ const Hero = () => {
               direction={{ base: 'column', md: 'row' }}
               align={{ base: 'center', md: 'flex-start' }}
             >
-              <Button colorScheme="red" size="lg" className='w-full'>
+              <Button colorScheme="red" size="lg" className="w-full">
                 <Link to="/inovasi" className="text-white font-bold">
                   Lihat Semua Inovasi →
                 </Link>
               </Button>
-              <Button colorScheme="red" variant="outline" size="lg" className='w-full'>
+              <Button
+                colorScheme="red"
+                variant="outline"
+                size="lg"
+                className="w-full"
+              >
                 <Link to="/tentang" className="font-bold">
                   Tentang Kami
                 </Link>

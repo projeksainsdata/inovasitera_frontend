@@ -29,7 +29,7 @@ const columns = [
 
 const searchFields = [{ key: 'name', label: 'Nama Inovasi' }];
 
-const TableInovasi: React.FC = () => {
+const TableUser: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [initialValues, setInitialValues] = useState<CategoriesUpdate | null>(
     null,
@@ -187,4 +187,4 @@ const TableInovasi: React.FC = () => {
   );
 };
 
-export default TableInovasi;
+export default TableUser;

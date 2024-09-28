@@ -16,6 +16,9 @@ import Index from '@/pages/admin/index';
 import InovationAdmin from './pages/admin/inovations';
 
 import ForgotPassword from './pages/ForgotPassword';
+import UserAdmin from './pages/admin/user';
+import ManajemenInovasiAdmin from './pages/admin/manajemenInovasi';
+import InovationAdminDetail from './pages/admin/manajemenDetailInovasi';
 
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
@@ -28,6 +31,9 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
           <Route path="/admin/" element={<Index />} />
           <Route path="/admin/kategori" element={<KategoriesAdmin />} />
           <Route path="/admin/inovation" element={<InovationAdmin />} />
+          <Route path="/admin/user" element={<UserAdmin />} />
+          <Route path="/admin/manajemeninovasi" element={<ManajemenInovasiAdmin />} />
+          <Route path="/admin/detailinovasi" element={<InovationAdminDetail />} />
           <Route path="/inovasi" element={<ListInovasi />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />

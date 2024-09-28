@@ -1,8 +1,9 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import Cookie from "js-cookie";
 import { jwtDecode } from "jwt-decode";
 
 import TOKEN from "@/lib/constants/token.contants";
-import type { DecodedToken, Token } from "@/lib/types/auth.type";
+import type { DecodedToken, Token, User } from "@/lib/types/auth.type";
 // check if client side or server side
 
 const getAccessToken = async (): Promise<string | null | undefined> => {
@@ -73,6 +74,16 @@ const removeUser = (): boolean => {
   }
 };
 
+const getUserFromToken = async (
+  token: string
+): Promise<User | null | undefined> => {
+  try {
+    const decodedUser = jwtDecode(token) as DecodedToken;
+    return decodedUser.user;
+  } catch (error) {
+    return null;
+  }
+};
 const isTokenExpired = async (token: string): Promise<boolean> => {
   try {
     const decodedUser = jwtDecode(token) as DecodedToken;
@@ -114,6 +125,7 @@ const TokenService = {
   getUser,
   getRefreshToken,
   removeToken,
+  getUserFromToken,
 };
 
 export default TokenService;

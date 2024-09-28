@@ -1,4 +1,3 @@
-/* eslint-disable tailwindcss/migration-from-tailwind-2 */
 // OverlaySpinner.tsx
 import React from 'react';
 import LoadingSpinner from './LoadingSpinner';

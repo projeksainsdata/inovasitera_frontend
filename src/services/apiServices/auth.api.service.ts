@@ -9,16 +9,19 @@ import {
   ResetPasswordSpecification,
   VerifyEmailSpecification,
   GoogleSpecification,
+  RegisterResponse,
 } from "@/lib/specification/auth.spefication";
 import { AxiosResponse } from "axios";
 import { ResponseApi } from "@/lib/types/api.type";
+import TokenService from "../token.service";
+import { Token } from "@/lib/types/auth.type";
 
 export default class AuthApiService {
   private static API = AxiosService.getAxiosWithoutHeader();
 
   static async register(
     data: RegisterSpecification
-  ): Promise<AxiosResponse<ResponseApi<unknown>>> {
+  ): Promise<AxiosResponse<ResponseApi<RegisterResponse>>> {
     return AuthApiService.API.post(AUTH_PATH.REGISTER, data);
   }
 
@@ -59,11 +62,16 @@ export default class AuthApiService {
 
   static async login(
     data: LoginSpecification
-  ): Promise<AxiosResponse<ResponseApi<unknown>>> {
-    return AuthApiService.API.post(AUTH_PATH.LOGIN, data);
+  ): Promise<AxiosResponse<ResponseApi<Token>>> {
+    const response = await AuthApiService.API.post(AUTH_PATH.LOGIN, data);
+    if (response?.data) {
+      TokenService.updateToken(response.data.data);
+    }
+    return response;
   }
 
   static async logout(): Promise<AxiosResponse<ResponseApi<unknown>>> {
+    await TokenService.removeToken();
     return AuthApiService.API.post(AUTH_PATH.LOGOUT);
   }
 

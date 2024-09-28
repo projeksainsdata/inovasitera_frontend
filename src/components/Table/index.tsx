@@ -37,6 +37,7 @@ const Table: React.FC<TableProps> = ({
   const [sortDirection, setSortDirection] = useState<"asc" | "desc">(
     params.order || "asc"
   );
+
   const handleSort = (column: string) => {
     const newSortDirection =
       sortColumn === column

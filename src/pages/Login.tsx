@@ -1,5 +1,5 @@
 import React from 'react';
-import { Formik, Field, Form, ErrorMessage } from 'formik';
+import { Formik, Field, Form } from 'formik';
 import * as Yup from 'yup';
 import {
   Box,
@@ -11,11 +11,16 @@ import {
   Flex,
   Image,
   Text,
+  useToast,
   Link as ChakraLink,
 } from '@chakra-ui/react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import ImageLogin from '../assets/ImageLogin.png';
 import Logo from '../assets/Logo1.png';
+import { LoginSpecification } from '@/lib/specification/auth.spefication';
+import { AxiosError } from 'axios';
+import { useAuth } from '@/hooks/useAuth';
+import AuthApiService from '@/services/apiServices/auth.api.service';
 
 const LoginPage: React.FC = () => {
   // Define the validation schema with Yup
@@ -24,10 +29,14 @@ const LoginPage: React.FC = () => {
     password: Yup.string().min(6, 'Password minimal 6 karakter').required('Password diperlukan'),
   });
 
+  const toast = useToast();
+  const auth = useAuth();
+  // for redirecting to dashboard
+  const navigate = useNavigate()
   return (
     <Flex h="100vh" align="center" justify="center" bg="gray.50">
       <Flex w="full" h="full" shadow="lg" direction={{ base: 'column', md: 'row' }}>
-        
+
         {/* Left Section - Image */}
         <Box flex={1} display={{ base: 'none', md: 'block' }}>
           <Image
@@ -42,7 +51,7 @@ const LoginPage: React.FC = () => {
 
         {/* Right Section - Form */}
         <Flex flex={1} direction="column" justify="center" p={{ base: 6, md: 10 }} bg="white" roundedTop={{ base: '30px', md: 'none' }}>
-          
+
           {/* Logo */}
           <Box mb={6} mt={10}>
             <Image src={Logo} alt="Logo" width={70} />
@@ -62,14 +71,47 @@ const LoginPage: React.FC = () => {
               password: '',
             }}
             validationSchema={validationSchema}
-            onSubmit={(values) => {
-              console.log(values); // Handle form submission
+            onSubmit={async (values: LoginSpecification) => {
+              try {
+                const responseLogin = await AuthApiService.login(values);
+                await auth?.login(responseLogin?.data?.data?.access);
+                toast({
+                  title: 'Login Berhasil',
+                  description: 'Selamat datang di sistem',
+                  status: 'success',
+                  duration: 5000,
+                  isClosable: true,
+                });
+
+                // Redirect to dashboard
+                navigate('/');
+              } catch (error) {
+                if (error instanceof AxiosError) {
+                  toast({
+                    title: 'Login Gagal',
+                    description: error.response?.data.message || 'Terjadi kesalahan',
+                    status: 'error',
+                    duration: 5000,
+                    isClosable: true,
+                  });
+                  return;
+                }
+                console.error(error);
+                toast({
+                  title: 'Login Gagal',
+                  description: 'Email atau password salah',
+                  status: 'error',
+                  duration: 5000,
+                  isClosable: true,
+                });
+              }
+
             }}
           >
             {({ errors, touched }) => (
               <Form>
                 {/* Email */}
-                <FormControl isInvalid={errors.email && touched.email} mb={4}>
+                <FormControl isInvalid={!!(errors.email && touched.email)} mb={4}>
                   <FormLabel>Email</FormLabel>
                   <Field
                     as={Input}
@@ -82,7 +124,7 @@ const LoginPage: React.FC = () => {
                 </FormControl>
 
                 {/* Password */}
-                <FormControl isInvalid={errors.password && touched.password} mb={4}>
+                <FormControl isInvalid={!!(errors.password && touched.password)} mb={4}>
                   <FormLabel>Password</FormLabel>
                   <Field
                     as={Input}
@@ -111,11 +153,11 @@ const LoginPage: React.FC = () => {
           </Formik>
 
           <Box textAlign="center" mt={4}>
-              <Link to="/register" className='text-orange-800 font-bold'>Belum Punya Akun? Daftar</Link>
+            <Link to="/register" className='text-orange-800 font-bold'>Belum Punya Akun? Daftar</Link>
           </Box>
         </Flex>
       </Flex>
-    </Flex>
+    </Flex >
   );
 };
 

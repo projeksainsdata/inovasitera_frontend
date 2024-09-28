@@ -20,16 +20,16 @@ import Modal from '@/components/Modal';
 import FormCategories from '@/components/admin/categories/FormCategories';
 
 const columns = [
-  { key: 'name', label: 'Nama Produk Inovasi' },
+  { key: 'name', label: 'Produk Name Inovasi' },
   { key: 'image', label: 'Image' },
-  { key: 'status', label: 'Status' }, 
-  { key: 'description', label: 'Deskripsi' }, 
-  { key: 'rating', label: 'Rating' }, 
+  { key: 'kategory', label: 'Kategori' },
+  { key: 'tgl', label: 'Tanggal' },
+  { key: 'status', label: 'Status' },
 ];
 
 const searchFields = [{ key: 'name', label: 'Nama Inovasi' }];
 
-const TableInovasi: React.FC = () => {
+const ManajemenInovasi: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [initialValues, setInitialValues] = useState<CategoriesUpdate | null>(
     null,
@@ -140,15 +140,7 @@ const TableInovasi: React.FC = () => {
   return (
     <>
       <div>
-        <h1 className="mb-4 text-2xl font-semibold">Inovasi Management</h1>
-        <div className="mb-4">
-          <button
-            onClick={handleAdd}
-            className="w-52 shrink rounded bg-blue-500 px-4 py-2 font-bold text-white hover:bg-blue-700"
-          >
-            Tambah Inovasi
-          </button>
-        </div>
+        <h1 className="mb-4 text-2xl font-semibold">Admin Management Inovasi</h1>
         <SearchQuery
           fields={searchFields}
           initialValues={params}
@@ -187,4 +179,4 @@ const TableInovasi: React.FC = () => {
   );
 };
 
-export default TableInovasi;
+export default ManajemenInovasi;

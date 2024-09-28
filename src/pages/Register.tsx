@@ -1,4 +1,8 @@
-import React, { useState } from "react";
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
+import React, { useMemo, useState } from "react";
+import { useFormik } from "formik";
+import * as Yup from "yup";
 import {
   Box,
   Button,
@@ -23,58 +27,291 @@ import {
   StepStatus,
   StepTitle,
   Stepper,
+  FormErrorMessage,
+  useToast
 } from "@chakra-ui/react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import ImageLogin from "../assets/ImageLogin.png";
 import Logo from "../assets/Logo1.png";
+import { FAKULTAS } from "@/lib/constants/fakultas.constans";
+import { PRODI } from '@/lib/constants/prodi.constans'
+import { RegisterSpecification } from "@/lib/specification/auth.spefication";
+
+// Validation schemas remain the same as before
+
+// Validation schemas for each step
+const step1Schema = Yup.object().shape({
+  fullname: Yup.string().required("Nama Lengkap is required"),
+  username: Yup.string().required("Username is required"),
+  email: Yup.string().email("Invalid email").required("Email is required"),
+  phonenumber: Yup.string().min(10, "Nomor Handphone is invalid").required("Nomor Handphone is required"),
+
+});
+
+const step2Schema = Yup.object().shape({
+  dateOfBirth: Yup.date().required("Tanggal Lahir is required"),
+  gender: Yup.string().required("Jenis Kelamin is required"),
+  role: Yup.string().default("member"),
+  "inovator.fakultas": Yup.string(),
+  "inovator.prodi": Yup.string(),
+});
+
+const step3Schema = Yup.object().shape({
+  password: Yup.string()
+    .min(8, "Password must be at least 8 characters")
+    .required("Password is required"),
+  confirmPassword: Yup.string()
+    .oneOf([Yup.ref("password"), ""], "Passwords must match")
+    .required("Confirm Password is required"),
+});
+
+// Combined schema for all steps
+const registerSchema = Yup.object().shape({
+  ...step1Schema.fields,
+  ...step2Schema.fields,
+  ...step3Schema.fields,
+});
+const initialValues: RegisterSpecification = {
+  fullname: "",
+  username: "",
+  email: "",
+  phonenumber: "",
+  dateOfBirth: "",
+  gender: "",
+  role: "member",
+  fakultas: "",
+  prodi: "",
+  password: "",
+  confirmPassword: "",
+};
+
+import { FormikProps } from "formik";
+import { AxiosError } from "axios";
+import AuthApiService from "@/services/apiServices/auth.api.service";
+import { useAuth } from "@/hooks/useAuth";
+
+const FormField = ({ formik, name, label, type = "text", ...props }: { formik: any, name: keyof typeof initialValues, label: string, type?: string, [key: string]: any }) => (
+  <FormControl isInvalid={!!formik.errors[name] && !!formik.touched[name]}>
+    <FormLabel>{label}</FormLabel>
+    <Input
+      {...formik.getFieldProps(name)}
+      type={type}
+      {...props}
+    />
+    <FormErrorMessage>{formik.errors[name]}</FormErrorMessage>
+  </FormControl>
+);
+
+const RadioField = ({ formik, name, label, options }: { formik: any, name: string, label: string, options: { value: string, label: string }[] }) => (
+  <FormControl isInvalid={!!formik.errors[name] && !!formik.touched[name]}>
+    <FormLabel>{label}</FormLabel>
+    <RadioGroup
+      {...formik.getFieldProps(name)}
+      onChange={(value) => formik.setFieldValue(name, value)}
+    >
+      <Stack direction="row">
+        {options.map((option) => (
+          <Radio key={option.value} value={option.value}>
+            {option.label}
+          </Radio>
+        ))}
+      </Stack>
+    </RadioGroup>
+    <FormErrorMessage>{formik.errors[name]}</FormErrorMessage>
+  </FormControl>
+);
+
+const SelectField = ({ formik, name, label, options, ...props }: { formik: FormikProps<typeof initialValues>, name: keyof typeof initialValues, label: string, options: { value: string, label: string }[], [key: string]: any }) => (
+  <FormControl isInvalid={!!(formik.errors[name] && formik.touched[name])}>
+    <FormLabel>{label}</FormLabel>
+    <Select
+      {...formik.getFieldProps(name)}
+      placeholder={`Pilih ${label}`}
+      {...props}
+    >
+      {options.map((option: any) => (
+        <option key={option.value} value={option.value}>
+          {option.label}
+        </option>
+      ))}
+    </Select>
+    <FormErrorMessage>{formik.errors[name]}</FormErrorMessage>
+  </FormControl>
+);
 
 const RegisterPage: React.FC = () => {
-  // States to manage form values
-  const [namaLengkap, setNamaLengkap] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [noHP, setNoHP] = useState("");
-  const [tanggalLahir, setTanggalLahir] = useState("");
-  const [jenisKelamin, setJenisKelamin] = useState("");
-  const [daftarSebagai, setDaftarSebagai] = useState("");
-  const [fakultas, setFakultas] = useState("");
-  const [prodi, setProdi] = useState("");
-
-  // State for managing the current step
   const [step, setStep] = useState(1);
-
-  const handleNextStep = () => setStep((prevStep) => prevStep + 1);
-  const handlePrevStep = () => setStep((prevStep) => prevStep - 1);
-
-  // step title
+  const toast = useToast();
+  const navigate = useNavigate();
+  const auth = useAuth();
   const steps = [
     { title: "Informasi Awal", description: "Pengguna" },
     { title: "Data Pribadi", description: "Informasi Lengkap" },
     { title: "Password", description: "Atur Kredensial" },
   ];
 
+  const formik = useFormik({
+    initialValues,
+    validationSchema: registerSchema,
+    onSubmit: async (values: RegisterSpecification) => {
+      try {
+        // convert format fakultas and prodi to inovator.fakultas and inovator.prodi
+        if (values.role === "innovator") {
+          values["inovator.fakultas"] = values.fakultas;
+          values["inovator.prodi"] = values.prodi;
+        }
+        delete values.fakultas;
+        delete values.prodi;
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    console.log({
-      namaLengkap,
-      email,
-      password,
-      confirmPassword,
-      noHP,
-      tanggalLahir,
-      jenisKelamin,
-      daftarSebagai,
-      fakultas,
-      prodi,
-    });
-  };
+        const response = await AuthApiService.register(values);
+
+        // toast success
+        toast({
+          title: `Akun ${response?.data?.data?.email} berhasil dibuat`,
+          description: "Silahkan login untuk mengakses sistem",
+          status: "success",
+          duration: 9000,
+          isClosable: true,
+        });
+
+        // reset form
+        formik.resetForm();
+
+        // login 
+        const responseLogin = await AuthApiService.login({
+          email: values.email,
+          password: values.password
+        })
+
+        await auth?.login(responseLogin?.data?.data?.access);
+
+
+        toast({
+          title: "Login berhasil",
+          description: "Selamat datang di sistem",
+          status: "success",
+          duration: 9000,
+          isClosable: true,
+        });
+
+        // redirect to dashboard
+        navigate("/", { replace: true, state: { from: "/register", } });
+      }
+      catch (error) {
+        // 
+        if (error instanceof AxiosError) {
+          toast({
+            title: "Gagal membuat akun",
+            description: error.response?.data.message || "Silahkan coba lagi",
+            status: "error",
+            duration: 9000,
+            isClosable: true,
+          });
+
+          return;
+        }
+        // toast error
+        toast({
+          title: "Gagal membuat akun",
+          description: "Silahkan coba lagi",
+          status: "error",
+          duration: 9000,
+          isClosable: true,
+        });
+
+
+      }
+    }
+  });
+
+  const fakultasOptions = useMemo(() =>
+    Object.entries(FAKULTAS).map(([, value]) => ({ value: value, label: value })),
+    []
+  );
+
+  const prodiOptions = useMemo(() => {
+    const selectedFakultas = formik.values.fakultas;
+    if (!selectedFakultas) return [];
+    return selectedFakultas && PRODI[selectedFakultas]
+      ? Object.entries(PRODI[selectedFakultas]).map(([, value]) => ({ value: value, label: value }))
+      : [];
+  }, [formik.values.fakultas]);
+
+  const renderStepContent = (step: number) => {
+    switch (step) {
+      case 1:
+        return (
+          <>
+            <FormField formik={formik} name="fullname" label="Nama Lengkap" />
+            <FormField formik={formik} name="username" label="Username Anda" />
+            <FormField formik={formik} name="email" label="Email" type="email" />
+            <FormField formik={formik} name="phonenumber" label="Nomor Handphone" />
+          </>
+        );
+      case 2:
+        return (
+          <>
+            <FormField formik={formik} name="dateOfBirth" label="Tanggal Lahir" type="date" />
+            <RadioField
+              formik={formik}
+              name="gender"
+              label="Jenis Kelamin"
+              options={[
+                { value: "Laki-Laki", label: "Laki-Laki" },
+                { value: "Perempuan", label: "Perempuan" },
+              ]}
+            />
+            <RadioField
+              formik={formik}
+              name="role"
+              label="Daftar Sebagai"
+              options={[
+                { value: "innovator", label: "innovator" },
+                { value: "member", label: "member" },
+              ]}
+            />
+            {formik.values.role === "innovator" && (
+              <>
+                <Text fontSize="sm" color="gray.500" mb={2}>
+                  Informasi Inovator
+                </Text>
+
+                <SelectField
+                  formik={formik}
+                  name="fakultas"
+                  label="Fakultas"
+                  options={fakultasOptions}
+                  onChange={(e: any) => {
+                    formik.setFieldValue("fakultas", e.target.value);
+                    formik.setFieldValue("prodi", "");
+                  }}
+                />
+                <SelectField
+                  formik={formik}
+                  name="prodi"
+                  label="Program Studi"
+                  options={prodiOptions}
+                  isDisabled={!formik.values.fakultas}
+                />
+              </>
+            )}
+          </>
+        );
+      case 3:
+        return (
+          <>
+            <FormField formik={formik} name="password" label="Password" type="password" />
+            <FormField formik={formik} name="confirmPassword" label="Konfirmasi Password" type="password" />
+          </>
+        );
+      default:
+        return null;
+    }
+  }
 
   return (
     <Flex alignItems="center" justifyContent="center" bg="gray.50">
       <Box w="full" h="full" shadow="lg" display={{ md: "flex" }}>
-        {/* Left Section - Image */}
         <Box flex={1} display={{ base: "none", md: "block" }}>
           <Image
             src={ImageLogin}
@@ -86,9 +323,7 @@ const RegisterPage: React.FC = () => {
           />
         </Box>
 
-        {/* Right Section - Form */}
         <Box flex={1} p={{ base: 6, md: 10 }}>
-          {/* Logo */}
           <Box mb={6} mt={10}>
             <Image src={Logo} alt="Logo" width={70} />
           </Box>
@@ -100,168 +335,54 @@ const RegisterPage: React.FC = () => {
             Untuk menggunakan sistem harap membuat akun terlebih dahulu
           </Text>
 
-          {/* Multi-step form */}
-          <VStack as="form" spacing={4} onSubmit={handleSubmit}>
-            <Stepper index={step} w="100%" size="sm">
-              {steps.map((step, index) => (
-                <Step key={index} onClick={()=>setStep(index+1)}>
-                  <StepIndicator>
-                    <StepStatus
-                      complete={<StepIcon />}
-                      incomplete={<StepNumber />}
-                      active={<StepNumber />}
-                    />
-                  </StepIndicator>
+          <form onSubmit={formik.handleSubmit}>
+            <VStack spacing={4}>
+              <Stepper index={step - 1} w="100%" size="sm">
+                {steps.map((stepInfo, index) => (
+                  <Step key={index} onClick={() => setStep(index + 1)}>
+                    <StepIndicator>
+                      <StepStatus
+                        complete={<StepIcon />}
+                        incomplete={<StepNumber />}
+                        active={<StepNumber />}
+                      />
+                    </StepIndicator>
+                    <Box flexShrink="0">
+                      <StepTitle>{stepInfo.title}</StepTitle>
+                      <StepDescription>{stepInfo.description}</StepDescription>
+                    </Box>
+                    <StepSeparator />
+                  </Step>
+                ))}
+              </Stepper>
 
-                  <Box flexShrink="0">
-                    <StepTitle>{step.title}</StepTitle>
-                    <StepDescription>{step.description}</StepDescription>
-                  </Box>
+              {renderStepContent(step)}
 
-                  <StepSeparator />
-                </Step>
-              ))}
-            </Stepper>
-            {step === 1 && (
-              <>
-                {/* Step 1: Personal Information */}
-                <FormControl>
-                  <FormLabel>Nama Lengkap</FormLabel>
-                  <Input
-                    value={namaLengkap}
-                    onChange={(e) => setNamaLengkap(e.target.value)}
-                    placeholder="Nama Lengkap"
-                  />
-                </FormControl>
-
-                <FormControl>
-                  <FormLabel>Email</FormLabel>
-                  <Input
-                    type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    placeholder="Email"
-                  />
-                </FormControl>
-
-                <FormControl>
-                  <FormLabel>Nomor Handphone</FormLabel>
-                  <Input
-                    value={noHP}
-                    onChange={(e) => setNoHP(e.target.value)}
-                    placeholder="No Handphone"
-                  />
-                </FormControl>
-              </>
-            )}
-
-            {step === 3 && (
-              <>
-                {/* Step 2: Account Information */}
-                <FormControl>
-                  <FormLabel>Password</FormLabel>
-                  <Input
-                    type="password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    placeholder="Password"
-                  />
-                </FormControl>
-
-                <FormControl>
-                  <FormLabel>Konfirmasi Password</FormLabel>
-                  <Input
-                    type="password"
-                    value={confirmPassword}
-                    onChange={(e) => setConfirmPassword(e.target.value)}
-                    placeholder="Konfirmasi Password"
-                  />
-                </FormControl>
-              </>
-            )}
-
-            {step === 2 && (
-              <>
-                {/* Step 3: Additional Information */}
-                <FormControl>
-                  <FormLabel>Tanggal Lahir</FormLabel>
-                  <Input
-                    type="date"
-                    value={tanggalLahir}
-                    onChange={(e) => setTanggalLahir(e.target.value)}
-                  />
-                </FormControl>
-
-                <FormControl>
-                  <FormLabel>Jenis Kelamin</FormLabel>
-                  <RadioGroup value={jenisKelamin} onChange={setJenisKelamin}>
-                    <Stack direction="row">
-                      <Radio value="Laki-Laki">Laki-Laki</Radio>
-                      <Radio value="Perempuan">Perempuan</Radio>
-                    </Stack>
-                  </RadioGroup>
-                </FormControl>
-
-                <FormControl>
-                  <FormLabel>Daftar Sebagai</FormLabel>
-                  <RadioGroup value={daftarSebagai} onChange={setDaftarSebagai}>
-                    <Stack direction="row">
-                      <Radio value="Mahasiswa">Innovator</Radio>
-                      <Radio value="Dosen">User Biasa</Radio>
-                    </Stack>
-                  </RadioGroup>
-                </FormControl>
-
-                <FormControl>
-                  <FormLabel>Fakultas</FormLabel>
-                  <Select
-                    placeholder="Pilih Fakultas"
-                    value={fakultas}
-                    onChange={(e) => setFakultas(e.target.value)}
+              <HStack width="100%" justifyContent="space-between">
+                {step > 1 && (
+                  <Button variant="outline" onClick={() => setStep(step - 1)}>
+                    Kembali
+                  </Button>
+                )}
+                {step < 3 ? (
+                  <Button
+                    colorScheme="yellow"
+                    onClick={() => setStep(step + 1)}
                   >
-                    <option value="Fakultas Teknik">Fakultas Teknik</option>
-                    <option value="Fakultas Sains">Fakultas Sains</option>
-                    <option value="Fakultas Ilmu Sosial">
-                      Fakultas Ilmu Sosial
-                    </option>
-                  </Select>
-                </FormControl>
-
-                <FormControl>
-                  <FormLabel>Program Studi</FormLabel>
-                  <Select
-                    placeholder="Pilih Program Studi"
-                    value={prodi}
-                    onChange={(e) => setProdi(e.target.value)}
+                    Lanjut
+                  </Button>
+                ) : (
+                  <Button
+                    colorScheme="yellow"
+                    type="submit"
+                    isDisabled={!formik.isValid || !formik.dirty}
                   >
-                    <option value="Teknik Informatika">
-                      Teknik Informatika
-                    </option>
-                    <option value="Fisika">Fisika</option>
-                    <option value="Manajemen">Manajemen</option>
-                  </Select>
-                </FormControl>
-              </>
-            )}
-
-            {/* Navigation Buttons */}
-            <HStack width="100%" justifyContent="space-between">
-              {step > 1 && (
-                <Button variant="outline" onClick={handlePrevStep}>
-                  Kembali
-                </Button>
-              )}
-              {step < 3 ? (
-                <Button colorScheme="yellow" onClick={handleNextStep}>
-                  Lanjut
-                </Button>
-              ) : (
-                <Button colorScheme="yellow" type="submit">
-                  Daftar Akun
-                </Button>
-              )}
-            </HStack>
-          </VStack>
+                    Daftar Akun
+                  </Button>
+                )}
+              </HStack>
+            </VStack>
+          </form>
 
           <Box textAlign="center" mt={4}>
             <Link to="/login" className="text-orange-800 font-bold">

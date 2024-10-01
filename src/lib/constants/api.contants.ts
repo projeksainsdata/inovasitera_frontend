@@ -32,4 +32,11 @@ export const INNOVATION_PREFIX = {
   CREATE: "/api/v1/inovations",
   EDIT: "/api/v1/inovations",
   DELETE: "/api/v1/inovations",
+  USER: "/api/v1/inovations/user"
+};            
+
+export const WHITELIST_PREFIX = {
+  INDEX: "/api/v1/whitelists/user",
+  CREATE: "/api/v1/whitelists/user",
+  DELETE: "/api/v1/whitelists/user",
 };

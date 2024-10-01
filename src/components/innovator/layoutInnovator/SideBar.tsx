@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { navItems, NavItem } from './NavItems';
 import { motion, AnimatePresence } from 'framer-motion';
-import Logo from "@/assets/Logo1.png"
+import Logo from "@/assets/Logo2.png"
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@chakra-ui/react';
 import AuthApiService from '@/services/apiServices/auth.api.service';
@@ -110,14 +110,14 @@ const Sidebar: React.FC<SidebarProps> = ({
       >
         <div className="flex h-full flex-col justify-between">
           <div className="flex items-center justify-between p-4">
-            <Link to="/dashboard" className="text-2xl font-bold text-black">
+            <Link to="/" className="text-2xl font-bold text-black">
               <img src={Logo} className='w-72' />
             </Link>
             {isMobile && (
               <button onClick={toggleSidebar} className="text-black">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
-                  className="size-6"
+                  className="size-5"
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"

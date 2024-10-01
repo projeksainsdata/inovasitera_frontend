@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Menu, X } from 'lucide-react';
-import Logo from "../assets/Logo.png";
+import Logo from "../assets/Logo2.png";
 import { Button } from '@chakra-ui/react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
@@ -14,8 +14,8 @@ const Navbar: React.FC = () => {
 
   return (
     <>
-      <nav className="navbar md:px-[200px] px-6 flex justify-center transition-all duration-300 fixed top-0 left-0 right-0 z-9999 py-3">
-        <div className="rounded-full px-4 md:px-6 py-2 flex items-center justify-between max-w-7xl w-full transition-all duration-300 bg-white shadow">
+      <nav className="navbar md:px-[150px] px-6 flex justify-center transition-all duration-300 fixed top-0 left-0 right-0 z-9999 py-3">
+        <div className="rounded-full px-4 md:pr-3 md:pl-4 py-2 flex items-center justify-between max-w-7xl w-full transition-all duration-300 bg-white shadow">
           <div className="flex items-center">
             <Link to={'/'}>
               <img src={Logo} alt="Logo" className="h-8 md:h-10" />
@@ -56,8 +56,8 @@ const Navbar: React.FC = () => {
             <Link to={'/inovasi'}><a className="text-black hover:text-gray-600 transition duration-200">Semua Inovasi</a></Link>
             <Link to={'/tentang'}><a className="text-black hover:text-gray-600 transition duration-200">Tentang</a></Link>
             {auth.isAuthenticated ? (
-              <Link to={'/profile'} className='text-sm'>
-                <Button colorScheme='blue' size="sm">Profile</Button>
+              <Link to={'/innovator/profil'} className='text-sm'>
+                <Button colorScheme='red' size="sm">Profile</Button>
               </Link>
             ) : (
               <Link to={'/login'} className='text-sm'>

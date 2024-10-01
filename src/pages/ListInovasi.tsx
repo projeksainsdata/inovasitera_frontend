@@ -81,7 +81,7 @@ const InnovationPage: React.FC = () => {
       <div className="relative z-20">
         <div className="py-8 text-center md:mt-[-300px] mt-[-200px] px-8">
           <h1 className="md:text-4xl text-2xl font-bold text-red-500">
-            All PII ITERA Innovations
+            Semua Inovasi PII ITERA
           </h1>
           <SearchQuery
             fields={SearchFields}
@@ -105,7 +105,7 @@ const InnovationPage: React.FC = () => {
           <main className="w-full md:w-3/4">
             <div className="flex justify-between my-8">
               <h2 className="text-xl font-bold">
-                Results for "{params?.q || ''}" ({data?.pagination?.total || 0})
+                {!!params.q && `Hasil Untuk ${params?.q || ''} (${data?.pagination?.total || 0})`}
               </h2>
               <button onClick={() => setFilterMobile(!filterMobile)} className="block md:hidden">Filters</button>
             </div>

@@ -10,6 +10,7 @@ import SearchQuery, { SearchField } from "@/components/Form/SearchQuery";
 import useDataFetch from "@/hooks/useFetchData";
 import { INNOVATION_PREFIX } from "@/lib/constants/api.contants";
 import { InovationResponse } from "@/lib/types/inovation.type";
+import useCategories from "@/hooks/useCategories";
 
 const SearchFields: SearchField[] = [
   {
@@ -18,41 +19,44 @@ const SearchFields: SearchField[] = [
   },
 ];
 
-const filterGroups: FilterGroup[] = [
-  {
-    id: 'category.name',
-    label: 'Categories',
-    type: 'checkbox',
-    options: [
-      { id: 'all', label: 'All', count: 100 },
-      { id: 'food', label: 'Food', count: 29 },
-      { id: 'health', label: 'Health', count: 19 },
-    ],
-  },
-  {
-    id: 'sort',
-    label: 'Sort By',
-    type: 'radio',
-    options: [
-      { id: 'rating_desc', label: 'Highest Rating' },
-      { id: 'rating_asc', label: 'Lowest Rating' },
-      { id: 'title_asc', label: 'A-Z' },
-      { id: 'title_desc', label: 'Z-A' },
-      { id: 'createdAt_desc', label: 'Newest' },
-      { id: 'createdAt_asc', label: 'Oldest' },
-    ],
-  },
-];
+
 
 const InnovationPage: React.FC = () => {
   const [filterMobile, setFilterMobile] = useState(false);
   const { data, loading, error, updateParams, params } = useDataFetch<InovationResponse>(`${INNOVATION_PREFIX.INDEX}`, {
     page: 1,
     perPage: 6,
-    "category.name": 'all',
     sort: 'createdAt',
     order: 'desc',
   });
+
+  const { data: categories } = useCategories();
+
+
+  const filterGroups: FilterGroup[] = [
+    {
+      id: 'category.name',
+      label: 'Categories',
+      type: 'checkbox',
+      options: categories?.map((category) => ({
+        id: category.name,
+        label: category.name,
+      })) || [],
+    },
+    {
+      id: 'sort',
+      label: 'Sort By',
+      type: 'radio',
+      options: [
+        { id: 'rating_desc', label: 'Highest Rating' },
+        { id: 'rating_asc', label: 'Lowest Rating' },
+        { id: 'title_asc', label: 'A-Z' },
+        { id: 'title_desc', label: 'Z-A' },
+        { id: 'createdAt_desc', label: 'Newest' },
+        { id: 'createdAt_asc', label: 'Oldest' },
+      ],
+    },
+  ];
 
   const handleSearch = (criteria: Record<string, string>) => {
     updateParams({ ...criteria, page: 1 });
@@ -64,7 +68,7 @@ const InnovationPage: React.FC = () => {
     const categories = selections['category.name'] as string[];
     updateParams({
       ...params,
-      'category.name': categories.includes('all') || categories.length === 0 ? 'all' : categories.join(','),
+      'category.name': categories.join(','),
       sort: sortColumn,
       order: sortDirection,
       page: 1,
@@ -95,7 +99,6 @@ const InnovationPage: React.FC = () => {
           <FilterPanel
             filterGroups={filterGroups}
             defaultSelections={{
-              "category.name": ['all'],
               sort: 'createdAt_desc',
             }}
             onApply={handleFilter}

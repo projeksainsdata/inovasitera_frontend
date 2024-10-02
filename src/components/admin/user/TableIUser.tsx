@@ -1,62 +1,52 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useState } from 'react';
-
-import type {
-  Categories,
-  CategoriesCreate,
-  CategoriesUpdate,
-} from '@/types/models.type';
+import { USER, UserCreate, UserUpdate } from '@/lib/types/user.type';
 
 import { post, del, put } from '@/hooks/useSubmit';
 import toast from 'react-hot-toast';
 import { AxiosError } from 'axios';
-// import useDataFetch from '@/hooks/useFetchData';
-// import { ResponseApi } from '@/lib/types/api.type';
-import { CATEGORY_PREFIX } from '@/lib/constants/api.contants';
+import useDataFetch from '@/hooks/useFetchData';
+import { ResponseApi } from '@/lib/types/api.type';
+import { USER_PREFIX } from '@/lib/constants/api.contants';
 import OverlaySpinner from '@/components/Loading/OverlayLoading';
 import Table from '@/components/Table';
-import SearchQuery from '@/components/Form/SearchQuery';
+import SearchQuery, { SearchField } from '@/components/Form/GenericSearch';
 import Pagination from '@/components/Pagination';
 import Modal from '@/components/Modal';
-import FormCategories from '@/components/admin/categories/FormCategories';
+import FormUser from '@/components/admin/user/FormUser';
 
 const columns = [
-  { key: 'name', label: 'Nama User' },
-  { key: 'role', label: 'Role' }, 
+  { key: 'email', label: 'email ' },
+  { key: 'fullname', label: 'fullname' },
+  { key: 'role', label: 'Role' },
+  { key: 'email', label: 'Email' },
+  { key: "provider", label: "Provider user" },
+  {key:"inovator.fakultas", label:"Fakultas"},
+  {key:"inovator.prodi", label:"prodi"},
+
 ];
 
-const searchFields = [{ key: 'name', label: 'Nama Inovasi' }];
+const searchFields: SearchField[] = [
+  { key: 'q', label: 'Search user', type: 'text' },
+  {
+    key: "role", label: "Role", type: "select", options: [
+      { value: "admin", label: "Admin" },
+      { value: "member", label: "member" },
+      { value: "inovator", label: "Innovator" },
+    ]
+  },
+];
 
 const TableUser: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [initialValues, setInitialValues] = useState<CategoriesUpdate | null>(
+  const [initialValues, setInitialValues] = useState<UserUpdate | null>(
     null,
   );
 
-  // const { data, loading, error, updateParams, refetch, params } = useDataFetch<
-  //   ResponseApi<Categories>
-  // >(`${CATEGORY_PREFIX.INDEX}`, { page: 1, perPage: 10 });
-  const data = {
-    requestId: 'string',
-    requestTime: 'string',
-    data: [
-      {
-        id: 'string',
-        name: 'string',
-        description: 'string',
-        type: 'string',
-      },
-    ],
-    pagination: {
-      total: 10,
-      perPage: 10,
-      page: 1,
-    },
-  };
-  const loading = false;
-  const error = null;
-  const updateParams = (newparams) => {};
-  const refetch = () => {};
-  const params = {};
+  const { data, loading, error, updateParams, refetch, params } = useDataFetch<
+    ResponseApi<USER>
+  >(`${USER_PREFIX.INDEX}`, { page: 1, perPage: 10 });
+
 
   const handleSearch = (criteria: Record<string, string>) => {
     updateParams({ ...criteria, page: 1 });
@@ -70,52 +60,52 @@ const TableUser: React.FC = () => {
     updateParams({ ...params, page });
   };
 
-  const handleSubmit = async (values: CategoriesCreate | CategoriesUpdate) => {
+  const handleSubmit = async (values: UserCreate | UserUpdate) => {
     try {
       if (initialValues) {
         // delete email
-        const result = await put<Categories>({
-          url: `${CATEGORY_PREFIX.EDIT}/${initialValues.id}`,
-          data: values,
+        const result = await put<USER, UserUpdate>({
+          url: `${USER_PREFIX.EDIT}/${initialValues._id}`,
+          data: values as UserUpdate,
         });
         refetch();
-        toast.success(`Categories ${result?.data.title} updated successfully`);
+        toast.success(`USER ${result?.data.title} updated successfully`);
         setIsModalOpen(false);
       } else {
-        const result = await post<Categories>({
-          url: `${CATEGORY_PREFIX.CREATE}`,
-          data: values,
+        const result = await post<USER, UserCreate>({
+          url: `${USER_PREFIX.CREATE}`,
+          data: values as UserCreate,
         });
 
         refetch();
-        toast.success(`Categories ${result?.data.title} created successfully`);
+        toast.success(`USER ${result?.data.username} created successfully`);
         setIsModalOpen(false);
       }
     } catch (ErrorCatch) {
       if (ErrorCatch instanceof AxiosError) {
         toast.error(
-          ErrorCatch.response?.data.message || 'Failed to create Categories',
+          ErrorCatch.response?.data.message || 'Failed to create USER',
         );
         return;
       }
-      toast.error('Failed to create Categories');
+      toast.error('Failed to create USER');
       setIsModalOpen(false);
     }
   };
 
   const handleDelete = async (id: string | number) => {
     try {
-      await del<Categories>(`${CATEGORY_PREFIX.DELETE}/${id}`);
+      await del<USER>(`${USER_PREFIX.DELETE}/${id}`);
       refetch();
-      toast.success(`Categories ${id} deleted successfully`);
+      toast.success(`USER ${id} deleted successfully`);
     } catch (ErrorCatch) {
       if (ErrorCatch instanceof AxiosError) {
         toast.error(
-          ErrorCatch.response?.data.message || 'Failed to delete Categories',
+          ErrorCatch.response?.data.message || 'Failed to delete USER',
         );
         return;
       }
-      toast.error('Failed to delete Categories');
+      toast.error('Failed to delete USER');
     }
   };
 
@@ -126,10 +116,7 @@ const TableUser: React.FC = () => {
     setIsModalOpen(true);
   };
 
-  const handleAdd = () => {
-    setInitialValues(null);
-    setIsModalOpen(true);
-  };
+
 
   if (loading) return <OverlaySpinner show={loading} />;
   if (error) toast.error(error.message);
@@ -137,15 +124,8 @@ const TableUser: React.FC = () => {
   return (
     <>
       <div>
-        <h1 className="mb-4 text-2xl font-semibold">Inovasi Management</h1>
-        <div className="mb-4">
-          <button
-            onClick={handleAdd}
-            className="w-52 shrink rounded bg-blue-500 px-4 py-2 font-bold text-white hover:bg-blue-700"
-          >
-            Tambah Inovasi
-          </button>
-        </div>
+        <h1 className="mb-4 text-2xl font-semibold">USER Management</h1>
+
         <SearchQuery
           fields={searchFields}
           initialValues={params}
@@ -164,7 +144,7 @@ const TableUser: React.FC = () => {
         <Pagination
           currentPage={data?.pagination?.page || 1}
           totalPages={
-            Math.ceil(data?.pagination?.total! / data?.pagination?.perPage!) ||
+            Math.ceil((data?.pagination?.total ?? 0) / (data?.pagination?.perPage ?? 1)) ||
             1
           }
           onPageChange={handlePageChange}
@@ -173,9 +153,9 @@ const TableUser: React.FC = () => {
       <Modal
         isOpen={isModalOpen}
         onClose={closeModal}
-        title="Tambah Categories"
+        title="Tambah USER"
       >
-        <FormCategories
+        <FormUser
           handleSubmit={handleSubmit}
           initialValues={initialValues}
         />

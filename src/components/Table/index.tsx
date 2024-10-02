@@ -153,7 +153,7 @@ const Table: React.FC<TableProps> = ({
                 </motion.button>
                 <motion.button
                   whileHover={{ scale: 1.1 }}
-                  onClick={() => onDelete(row.id)}
+                  onClick={() => onDelete(row._id)}
                   className="text-red-600 hover:text-red-900"
                 >
                   <IconTrash />

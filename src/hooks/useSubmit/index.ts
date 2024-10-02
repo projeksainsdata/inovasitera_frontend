@@ -2,7 +2,7 @@
 import AxiosService from "@/services/axios.service";
 import { ResponseApi } from "@/lib/types/api.type";
 import { UPLOAD_PATH } from "@/lib/constants/api.contants";
-
+import { UploadResponse } from "@/lib/specification/upload.spefication";
 interface PostProps<T> {
   url: string;
   data: T;
@@ -36,24 +36,25 @@ export const get = async <T>(url: string): Promise<ResponseApi<T> | null> => {
   return res.data;
 };
 
-interface UploadedFile {
-  fieldname: string;
-  originalname: string;
-  encoding: string;
-  mimetype: string;
-  path: string;
-  size: number;
-  filename: string;
-}
-
 export const UploadImage = async (
   file: File
-): Promise<ResponseApi<UploadedFile[]>> => {
+): Promise<ResponseApi<UploadResponse>> => {
   const axiosApiInstance = AxiosService.getAxiosAuth();
+  //  get token
+
+  const responseToken = await axiosApiInstance.post(UPLOAD_PATH.TOKEN_UPLOAD, {
+    fileType: file.type,
+    maxSizeBytes: file.size,
+  });
+
+  if (!responseToken.data) {
+    throw new Error("Failed to get token");
+  }
+
   const formData = new FormData();
-  formData.append("images", file);
+  formData.append("image", file);
   const response = await axiosApiInstance.post(
-    UPLOAD_PATH.UPLOAD_IMAGE,
+    responseToken.data.data.url,
     formData,
     {
       headers: {

@@ -2,15 +2,7 @@ import React from 'react';
 import GenericForm, { FieldConfig } from '@/components/Form/GenericForm';
 import * as Yup from 'yup';
 
-import type {
-  CategoriesCreate,
-  CategoriesUpdate,
-} from '@/lib/types/models.type';
-
-import {
-  CATEGORIES,
-  CATEGORIES_LABEL,
-} from '@/lib/constants/categories.contants';
+import { CategoriesCreate, CategoriesUpdate } from '@/lib/types/categories.type';
 
 interface PropsFormMerchantdis {
   handleSubmit: (props: CategoriesCreate | CategoriesUpdate) => void;
@@ -36,23 +28,22 @@ const FormPortofolio: React.FC<PropsFormMerchantdis> = ({
       validation: Yup.string().required('Description is required'),
     },
     {
-      name: 'type',
-      label: 'Tipe Kategori',
-      type: 'select',
-      options: Object.keys(CATEGORIES).map((key) => ({
-        value: CATEGORIES[key as keyof typeof CATEGORIES]!,
-        label: CATEGORIES_LABEL[CATEGORIES[key as keyof typeof CATEGORIES]]!,
-      })),
-      validation: Yup.string().required('Type is required'),
+      name: 'image',
+      label: 'gambar Kategori',
+      type: 'file' as const,
+      accept: 'image/*',
+      multiple: false,
     },
+
   ];
 
   const initialValuesForm: CategoriesCreate | CategoriesUpdate =
     initialValues || {
       name: '',
       description: '',
-      type: 'merchant',
+      image: '',
     };
+
 
   return (
     <div className="mx-auto mt-8 max-w-md">

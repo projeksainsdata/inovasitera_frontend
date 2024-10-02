@@ -23,3 +23,53 @@ export interface Pagination {
   perPage: number;
   total: number;
 }
+
+export interface InovationSchema {
+  title: string;
+  description?: string;
+  category: string;
+  user_id: string;
+  status?: string;
+  Image?: string;
+  adventage?: string;
+  status_paten?: string;
+  score_tkt?: string;
+  invesment_value?: string;
+  collaboration?: string[];
+  collaboration_details?: string;
+}
+
+export interface InovationUpdateSchema {
+  _id: string;
+  title: string;
+  description?: string;
+  category: string;
+  status?: string;
+  Image?: string;
+  adventage?: string;
+  status_paten?: string;
+  score_tkt?: string;
+  invesment_value?: string;
+  collaboration?: string[];
+  collaboration_details?: string;
+}
+
+export interface InovationCreateSchema {
+  _id: any;
+  title: string;
+  description: string;
+  category: string;
+  user_id: string;
+  status?: string;
+  Image: string;
+  adventage?: string;
+  status_paten?: string;
+  score_tkt?: string;
+  invesment_value?: string;
+  collaboration?: string[];
+  collaboration_details?: string;
+}
+
+export interface InovationManageSchema {
+  status: string;
+}

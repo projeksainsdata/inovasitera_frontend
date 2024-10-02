@@ -18,7 +18,7 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, children, title }) => {
         onClose();
       }
     },
-    [onClose],
+    [onClose]
   );
 
   useEffect(() => {
@@ -26,7 +26,6 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, children, title }) => {
       document.addEventListener('keydown', handleEscape);
       document.body.style.overflow = 'hidden';
     }
-
     return () => {
       document.removeEventListener('keydown', handleEscape);
       document.body.style.overflow = 'unset';
@@ -53,7 +52,7 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, children, title }) => {
             initial={{ scale: 0.95 }}
             animate={{ scale: 1 }}
             exit={{ scale: 0.95 }}
-            className="flex max-h-[90%] max-w-[90%] flex-col rounded-lg bg-white shadow-lg"
+            className="flex flex-col rounded-lg bg-white shadow-lg w-full mx-4 sm:mx-auto sm:w-3/4 md:w-2/3 lg:w-1/2 max-h-[90vh]"
             onClick={(e) => e.stopPropagation()}
             ref={modalRef}
             tabIndex={-1}

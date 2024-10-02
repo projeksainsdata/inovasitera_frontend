@@ -1,59 +1,115 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
+  Box,
+  Badge,
   Button,
   FormControl,
   FormLabel,
   Input,
-  Avatar,
   VStack,
-  IconButton,
-  useToast,
   RadioGroup,
   Radio,
   Select,
   Grid,
   GridItem,
+  useToast,
+  FormErrorMessage,
+  Link,
 } from "@chakra-ui/react";
-import { Formik, Field, Form } from "formik";
+import { useFormik } from "formik";
 import { IconPhotoPlus } from "@tabler/icons-react";
 import * as Yup from "yup";
+import AuthApiService from "@/services/apiServices/auth.api.service";
 import Layout from "@/components/innovator/layoutInnovator/LayoutInnovator";
+import { FAKULTAS } from "@/lib/constants/fakultas.constans";
+import { PRODI } from "@/lib/constants/prodi.constans";
+import { put } from "@/hooks/useSubmit";
 
-// Updated Validation schema using Yup
 const validationSchema = Yup.object({
-  name: Yup.string().required("Nama is required"),
-  email: Yup.string()
-    .email("Alamat email tidak valid")
-    .required("Email is required"),
-  phone: Yup.string()
+  fullname: Yup.string().required("Nama is required"),
+  phonenumber: Yup.string()
     .matches(/^[0-9]+$/, "Hanya angka yang diperbolehkan")
     .min(10, "Nomor telepon minimal 10 digit")
     .max(15, "Nomor telepon maksimal 15 digit")
     .required("No Telepon is required"),
-  dob: Yup.date()
+  dateOfBirth: Yup.date()
     .max(new Date(), "Tanggal Lahir tidak boleh di masa depan")
     .required("Tanggal Lahir is required"),
   gender: Yup.string().required("Jenis Kelamin is required"),
   fakultas: Yup.string().required("Fakultas is required"),
   prodi: Yup.string().required("Program Studi is required"),
-  profilePic: Yup.mixed()
-    .nullable()
-    .required("Profile picture is required")
-    .test(
-      "FILE_SIZE",
-      "Ukuran gambar terlalu besar",
-      (value) => !value || (value && (value as File).size <= 2000000) // 2MB
-    )
-    .test(
-      "FILE_FORMAT",
-      "Format gambar tidak didukung",
-      (value) => !value || (value && ["image/jpeg", "image/png", "image/*"].includes((value as File).type))
-    ),
 });
 
 const EditProfile = () => {
+  const [profileData, setProfileData] = useState(null);
+  const [tempProfileData, setTempProfileData] = useState(null);
   const [profilePic, setProfilePic] = useState("");
   const toast = useToast();
+
+  const getProfile = async () => {
+    try {
+      const response = await AuthApiService.me();
+      setProfileData(response.data.data);
+      setProfilePic(response.data.data.profile);
+
+      setTempProfileData(response.data.data);
+    } catch (error) {
+      console.error("Failed to fetch profile:", error);
+    }
+  };
+
+  useEffect(() => {
+    getProfile();
+  }, []);
+
+  const formik = useFormik({
+    initialValues: {
+      fullname: profileData?.fullname || "",
+      email: profileData?.email || "",
+      phonenumber: profileData?.phonenumber || "",
+      dateOfBirth: profileData?.dateOfBirth || "",
+      gender: profileData?.gender || "1",
+      fakultas: profileData?.inovator.fakultas || "",
+      prodi: profileData?.inovator.prodi || "",
+    },
+    validationSchema,
+    enableReinitialize: true,
+    onSubmit: async (values, { setSubmitting }) => {
+      try {
+        let constructForm = {
+          ...values,
+          // "inovator.fakultas":values.fakultas,
+          // "inovator.prodi":values.prodi
+        };
+        // delete constructForm.fakultas;
+        // delete constructForm.prodi;
+
+        await put({
+          url: `/api/v1/users/${profileData?._id}`,
+          data: constructForm,
+        });
+        toast({
+          title: "Profil diperbarui.",
+          description: "Informasi profil Anda telah diperbarui.",
+          status: "success",
+          duration: 3000,
+          isClosable: true,
+          position: "top-right",
+        });
+      } catch (error) {
+        console.error("Failed to update profile:", error);
+        toast({
+          title: "Error",
+          description: "Gagal memperbarui profil.",
+          status: "error",
+          duration: 3000,
+          isClosable: true,
+        });
+      } finally {
+        setSubmitting(false);
+      }
+    },
+  });
 
   const handleProfilePicChange = (e) => {
     const file = e.target.files[0];
@@ -66,171 +122,245 @@ const EditProfile = () => {
     }
   };
 
-  const handleSubmit = (values) => {
-    console.log(values);
-    toast({
-      title: "Profil diperbarui.",
-      description: "Informasi profil Anda telah diperbarui.",
-      status: "success",
-      duration: 3000,
-      isClosable: true,
-    });
-  };
-
   return (
     <Layout>
-      <Formik
-        initialValues={{
-          name: "",
-          email: "",
-          phone: "",
-          dob: "",
-          gender: "",
-          fakultas: "",
-          prodi: "",
-        }}
-        validationSchema={validationSchema}
-        onSubmit={(values, actions) => {
-          handleSubmit(values);
-          actions.setSubmitting(false);
-        }}
-      >
-        {({ isSubmitting, errors, touched }) => (
-          <Form>
-            <Grid templateColumns={{ base: "1fr", md: "1fr 2fr" }} gap={6}>
-              {/* Column 1: Profile Picture */}
-              <GridItem>
-                <FormControl>
-                  <VStack spacing={4}>
-                    <Avatar size="2xl" src={profilePic} />
-                    <Input
-                      type="file"
-                      accept="image/*"
-                      onChange={handleProfilePicChange}
-                      display="none"
-                      id="profile-pic"
-                    />
-                    <IconButton
-                      as="label"
-                      htmlFor="profile-pic"
-                      icon={<IconPhotoPlus />}
-                      colorScheme="blue"
-                      aria-label="Upload profile picture"
-                    />
-                  </VStack>
-                </FormControl>
-              </GridItem>
-
-              {/* Column 2: Form Fields */}
-              <GridItem>
-                <VStack spacing={4} align="stretch">
-                  {/* Name */}
-                  <FormControl isInvalid={errors.name && touched.name}>
-                    <FormLabel>Nama</FormLabel>
-                    <Field name="name" as={Input} placeholder="Masukkan Nama" />
-                    {errors.name && touched.name && (
-                      <p style={{ color: "red" }}>{errors.name}</p>
-                    )}
-                  </FormControl>
-
-                  {/* Email */}
-                  <FormControl isInvalid={errors.email && touched.email}>
-                    <FormLabel>Email</FormLabel>
-                    <Field
-                      name="email"
-                      as={Input}
-                      type="email"
-                      placeholder="Masukkan Email"
-                    />
-                    {errors.email && touched.email && (
-                      <p style={{ color: "red" }}>{errors.email}</p>
-                    )}
-                  </FormControl>
-
-                  {/* Phone Number */}
-                  <FormControl>
-                    <FormLabel>No Telepon</FormLabel>
-                    <Field
-                      name="phone"
-                      as={Input}
-                      placeholder="Masukkan No Telepon"
-                    />
-                    {errors.phone && touched.phone && (
-                      <p style={{ color: "red" }}>{errors.phone}</p>
-                    )}
-                  </FormControl>
-
-                  {/* Date of Birth */}
-                  <FormControl isInvalid={errors.dob && touched.dob}>
-                    <FormLabel>Tanggal Lahir</FormLabel>
-                    <Field name="dob" as={Input} type="date" />
-                    {errors.dob && touched.dob && (
-                      <p style={{ color: "red" }}>{errors.dob}</p>
-                    )}
-                  </FormControl>
-
-                  {/* Gender */}
-                  <FormControl as="fieldset" isInvalid={errors.gender && touched.gender}>
-                    <FormLabel as="legend">Jenis Kelamin</FormLabel>
-                    <Field name="gender">
-                      {({ field }) => (
-                        <RadioGroup {...field}>
-                          <VStack spacing="8px" align={"left"}>
-                            <Radio value="male">Laki-Laki</Radio>
-                            <Radio value="female">Perempuan</Radio>
-                          </VStack>
-                        </RadioGroup>
-                      )}
-                    </Field>
-                    {errors.gender && touched.gender && (
-                      <p style={{ color: "red" }}>{errors.gender}</p>
-                    )}
-                  </FormControl>
-
-                  {/* Fakultas */}
-                  <FormControl isInvalid={errors.fakultas && touched.fakultas}>
-                    <FormLabel>Fakultas</FormLabel>
-                    <Field name="fakultas" as={Select} placeholder="Pilih Fakultas">
-                      <option value="fs">Fakultas Sains</option>
-                      <option value="ftik">
-                        Fakultas Teknologi Infrastruktur & Kewilayahan
-                      </option>
-                      <option value="fti">Fakultas Teknologi Industri</option>
-                    </Field>
-                    {errors.fakultas && touched.fakultas && (
-                      <p style={{ color: "red" }}>{errors.fakultas}</p>
-                    )}
-                  </FormControl>
-
-                  {/* Program Studi */}
-                  <FormControl isInvalid={errors.prodi && touched.prodi}>
-                    <FormLabel>Program Studi</FormLabel>
-                    <Field name="prodi" as={Select} placeholder="Pilih Program Studi">
-                      <option value="arsitektur">Arsitektur</option>
-                      <option value="elektro">Teknik Elektro</option>
-                      <option value="sd">Sains Data</option>
-                    </Field>
-                    {errors.prodi && touched.prodi && (
-                      <p style={{ color: "red" }}>{errors.prodi}</p>
-                    )}
-                  </FormControl>
-
-                  {/* Submit Button */}
+      {profileData && (
+        <form onSubmit={formik.handleSubmit}>
+          <Grid templateColumns={{ base: "1fr", md: "1fr 2fr" }} gap={6}>
+            {/* Column 1: Profile Picture */}
+            <GridItem>
+              <FormControl>
+                <VStack spacing={4}>
+                  <img
+                    src={profilePic}
+                    className="rounded-lg w-fit h-[350px] object-cover object-top"
+                    alt="Profile"
+                  />
+                  <Input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleProfilePicChange}
+                    display="none"
+                    id="profile-pic"
+                  />
                   <Button
-                    type="submit"
+                    as="label"
+                    htmlFor="profile-pic"
+                    leftIcon={<IconPhotoPlus />}
                     colorScheme="blue"
-                    size="md"
-                    width="full"
-                    isLoading={isSubmitting}
+                    aria-label="Upload profile picture"
                   >
-                    Simpan Profil
+                    Ganti Foto Profil
                   </Button>
+
+                  <Box className="p-5 border flex flex-col justify-center items-center gap-4">
+                    <h1 className="text-lg font-bold">
+                      Ingin mengubah password?
+                    </h1>
+                    <Link href="/forgot-password">
+                      <Button colorScheme="blue">Ubah Password</Button>
+                    </Link>
+                  </Box>
                 </VStack>
-              </GridItem>
-            </Grid>
-          </Form>
-        )}
-      </Formik>
+              </FormControl>
+            </GridItem>
+
+            {/* Column 2: Form Fields */}
+            <GridItem>
+              <VStack spacing={4} align="stretch">
+                <Box className="w-full">
+                  {profileData.inovator.status === "pending" && (
+                    <Box className="rounded p-3 bg-orange-600 text-white font-medium space-y-2">
+                      <Badge colorScheme="orange" fontSize={"sm"}>
+                        Pending
+                      </Badge>
+                      <p className="font-medium">Menunggu Konfirmasi Admin</p>
+                    </Box>
+                  )}
+                  {profileData.inovator.status === "approved" && (
+                    <Badge colorScheme="green" fontSize={"lg"}>
+                      Status Terverifikasi
+                    </Badge>
+                  )}
+                  {profileData.inovator.status === "rejected" && (
+                    <Box className="rounded p-3 bg-red-600 text-white font-medium space-y-2">
+                      <Badge colorScheme="red" fontSize={"sm"}>
+                        Ditolak
+                      </Badge>
+                      <p className="font-medium">
+                        Status Pendaftaran Anda Ditolak
+                      </p>
+                    </Box>
+                  )}
+                </Box>
+                {/* Nama */}
+                <FormControl
+                  isInvalid={formik.touched.fullname && formik.errors.fullname}
+                >
+                  <FormLabel>Nama</FormLabel>
+                  <Input
+                    {...formik.getFieldProps("fullname")}
+                    placeholder="Masukkan Nama"
+                  />
+                  <FormErrorMessage>{formik.errors.fullname}</FormErrorMessage>
+                </FormControl>
+
+                {/* Daftar Sebagai */}
+                <FormControl>
+                  <FormLabel>Terdaftar Sebagai</FormLabel>
+                  <Input
+                    disabled={true}
+                    value={profileData.role.toUpperCase()}
+                  />
+                </FormControl>
+
+                {/* Email */}
+                <FormControl>
+                  <FormLabel>Email</FormLabel>
+                  <Input
+                    {...formik.getFieldProps("email")}
+                    type="email"
+                    disabled
+                  />
+                </FormControl>
+
+                {/* No Telepon */}
+                <FormControl
+                  isInvalid={
+                    formik.touched.phonenumber && formik.errors.phonenumber
+                  }
+                >
+                  <FormLabel>No Telepon</FormLabel>
+                  <Input
+                    {...formik.getFieldProps("phonenumber")}
+                    placeholder="Masukkan No Telepon"
+                  />
+                  <FormErrorMessage>
+                    {formik.errors.phonenumber}
+                  </FormErrorMessage>
+                </FormControl>
+
+                {/* Tanggal Lahir */}
+                <FormControl
+                  isInvalid={
+                    formik.touched.dateOfBirth && formik.errors.dateOfBirth
+                  }
+                >
+                  <FormLabel>Tanggal Lahir</FormLabel>
+                  <Input {...formik.getFieldProps("dateOfBirth")} type="date" />
+                  <FormErrorMessage>
+                    {formik.errors.dateOfBirth}
+                  </FormErrorMessage>
+                </FormControl>
+
+                {/* Jenis Kelamin */}
+                <FormControl
+                  as="fieldset"
+                  isInvalid={formik.touched.gender && formik.errors.gender}
+                >
+                  <FormLabel as="legend">Jenis Kelamin</FormLabel>
+                  <RadioGroup
+                    {...formik.getFieldProps("gender")}
+                    onChange={(val) => formik.setFieldValue("gender", val)}
+                    value={formik.values.gender}
+                  >
+                    <VStack spacing="8px" align={"left"}>
+                      <Radio value="Laki-Laki">Laki-Laki</Radio>
+                      <Radio value="Perempuan">Perempuan</Radio>
+                    </VStack>
+                  </RadioGroup>
+                  <FormErrorMessage>{formik.errors.gender}</FormErrorMessage>
+                </FormControl>
+
+                {/* Fakultas */}
+                {profileData.role == "innovator" && (
+                  <>
+                    <FormControl
+                      isInvalid={
+                        formik.touched.fakultas && formik.errors.fakultas
+                      }
+                    >
+                      <FormLabel>Fakultas</FormLabel>
+                      <Select
+                        {...formik.getFieldProps("fakultas")}
+                        onChange={(e) => {
+                          setTempProfileData((prev) => ({
+                            ...prev,
+                            inovator: {
+                              ...prev.inovator,
+                              fakultas: e.target.value,
+                            },
+                          }));
+                          formik.handleChange(e);
+                        }}
+                        placeholder="Pilih Fakultas"
+                      >
+                        <option value="Fakultas Sains">Fakultas Sains</option>
+                        <option value="Fakultas Teknologi Infrastruktur & Kewilayahan">
+                          Fakultas Teknologi Infrastruktur & Kewilayahan
+                        </option>
+                        <option value="Fakultas Teknologi Industri">
+                          Fakultas Teknologi Industri
+                        </option>
+                      </Select>
+                      <FormErrorMessage>
+                        {formik.errors.fakultas}
+                      </FormErrorMessage>
+                    </FormControl>
+
+                    {/* Program Studi */}
+                    <FormControl
+                      isInvalid={formik.touched.prodi && formik.errors.prodi}
+                    >
+                      <FormLabel>Program Studi</FormLabel>
+                      <Select
+                        {...formik.getFieldProps("prodi")}
+                        placeholder="Pilih Program Studi"
+                      >
+                        {tempProfileData.inovator.fakultas ===
+                          "Fakultas Teknologi Industri" &&
+                          Object.keys(PRODI[FAKULTAS.FTI]).map((prodi, key) => (
+                            <option key={key} value={prodi}>
+                              {PRODI[FAKULTAS.FTI][prodi]}
+                            </option>
+                          ))}
+                        {tempProfileData.inovator.fakultas ===
+                          "Fakultas Teknologi Infrastruktur & Kewilayahan" &&
+                          Object.keys(PRODI[FAKULTAS.FTIK]).map(
+                            (prodi, key) => (
+                              <option key={key} value={prodi.nama}>
+                                {PRODI[FAKULTAS.FTIK][prodi]}
+                              </option>
+                            )
+                          )}
+                        {tempProfileData.inovator.fakultas ===
+                          "Fakultas Sains" &&
+                          Object.keys(PRODI[FAKULTAS.FS]).map((prodi, key) => (
+                            <option key={key} value={prodi.nama}>
+                              {PRODI[FAKULTAS.FS][prodi]}
+                            </option>
+                          ))}
+                      </Select>
+                      <FormErrorMessage>{formik.errors.prodi}</FormErrorMessage>
+                    </FormControl>
+                  </>
+                )}
+
+                <Button
+                  type="submit"
+                  colorScheme="blue"
+                  size="md"
+                  width="full"
+                  isLoading={formik.isSubmitting}
+                  isDisabled={!formik.isValid}
+                >
+                  Update Profil
+                </Button>
+              </VStack>
+            </GridItem>
+          </Grid>
+        </form>
+      )}
     </Layout>
   );
 };

@@ -1,27 +1,26 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useState } from 'react';
 
-import type {
-  Categories,
-  CategoriesCreate,
-  CategoriesUpdate,
-} from '@/types/models.type';
-
-import { post, del, put } from '@/hooks/useSubmit';
-import toast from 'react-hot-toast';
+import { post, del, put, UploadImage } from '@/hooks/useSubmit';
 import { AxiosError } from 'axios';
-// import useDataFetch from '@/hooks/useFetchData';
-// import { ResponseApi } from '@/lib/types/api.type';
 import { CATEGORY_PREFIX } from '@/lib/constants/api.contants';
 import OverlaySpinner from '@/components/Loading/OverlayLoading';
 import Table from '@/components/Table';
-import SearchQuery from '@/components/Form/SearchQuery';
+import SearchQuery from '@/components/Form/GenericSearch';
 import Pagination from '@/components/Pagination';
 import Modal from '@/components/Modal';
 import FormCategories from '@/components/admin/categories/FormCategories'
+import useDataFetch from '@/hooks/useFetchData';
+import { ResponseApi } from '@/lib/types/api.type';
+import { Categories, CategoriesCreate, CategoriesUpdate } from '@/lib/types/categories.type';
+import { useToast } from '@chakra-ui/react';
 
-const columns = [{ key: 'name', label: 'Nama Categories' },{
-  key: 'image', label: 'image Categories' 
-}];
+const columns = [
+  { key: 'name', label: 'Nama Categories' },
+  { key: 'image', label: 'image Categories' },
+  { key: 'description', label: 'Deskripsi Categories' },
+];
 
 const searchFields = [{ key: 'name', label: 'Nama Categories' }];
 
@@ -30,34 +29,13 @@ const TableCategories: React.FC = () => {
   const [initialValues, setInitialValues] = useState<CategoriesUpdate | null>(
     null,
   );
+  const toast = useToast();
 
-  // const { data, loading, error, updateParams, refetch, params } = useDataFetch<
-  //   ResponseApi<Categories>
-  // >(`${CATEGORY_PREFIX.INDEX}`, { page: 1, perPage: 10 });
-  const data = {
-    requestId: "string",
-  requestTime: "string",
-  data: [
-    {
-      id: 'string',
-  name: 'string',
-  description: 'string',
+  const { data, loading, updateParams, refetch, params } = useDataFetch<
+    ResponseApi<Categories>
+  >(`${CATEGORY_PREFIX.INDEX}`, { page: 1, perPage: 10 });
 
-  type: 'string',
-    }
-  ],
-  pagination: {
-    total: 10,
-    perPage: 10,
-    page: 1,
-  } 
-  }
-  const loading = false
-  const error =null
-  const updateParams = (newparams)=>{}
-  const refetch = () => {}
-  const params ={}
-  
+
   const handleSearch = (criteria: Record<string, string>) => {
     updateParams({ ...criteria, page: 1 });
   };
@@ -72,33 +50,73 @@ const TableCategories: React.FC = () => {
 
   const handleSubmit = async (values: CategoriesCreate | CategoriesUpdate) => {
     try {
+      if (values.image && values.image instanceof File) {
+        try {
+          const responseImage = await UploadImage(values.image);
+          values.image = responseImage.data.fileUrl
+        } catch (error) {
+          toast({
+            title: 'Error saat mengupload image',
+            description: 'Terjadi kesalahan saat mengupload image',
+            status: 'error',
+            duration: 5000,
+            isClosable: true,
+          });
+          return;
+        }
+      }
       if (initialValues) {
         // delete email
-        const result = await put<Categories>({
-          url: `${CATEGORY_PREFIX.EDIT}/${initialValues.id}`,
-          data: values,
+        const result = await put<Categories, CategoriesUpdate>({
+          url: `${CATEGORY_PREFIX.EDIT}/${initialValues._id}`,
+          data: values as CategoriesUpdate,
         });
         refetch();
-        toast.success(`Categories ${result?.data.title} updated successfully`);
+        toast({
+          title: 'Success',
+          description: `Data ${result?.data.name} berhasil diubah`,
+          status: 'success',
+          duration: 5000,
+          isClosable: true,
+        });
+
         setIsModalOpen(false);
       } else {
-        const result = await post<Categories>({
+        const result = await post<Categories, CategoriesCreate>({
           url: `${CATEGORY_PREFIX.CREATE}`,
           data: values,
         });
+        toast({
+          title: 'Success',
+          description: `Data ${result?.data.name} berhasil ditambahkan`,
+          status: 'success',
+          duration: 5000,
+          isClosable: true,
+        });
 
         refetch();
-        toast.success(`Categories ${result?.data.title} created successfully`);
         setIsModalOpen(false);
       }
     } catch (ErrorCatch) {
       if (ErrorCatch instanceof AxiosError) {
-        toast.error(
-          ErrorCatch.response?.data.message || 'Failed to create Categories',
-        );
+        toast({
+          title: 'Error saat menyimpan data',
+          description: ErrorCatch.response?.data.message,
+          status: 'error',
+          duration: 5000,
+          isClosable: true,
+        });
+
         return;
       }
-      toast.error('Failed to create Categories');
+      toast({
+        title: 'Error saat menyimpan data',
+        description: 'Terjadi kesalahan saat menyimpan data',
+        status: 'error',
+        duration: 5000,
+        isClosable: true,
+      });
+
       setIsModalOpen(false);
     }
   };
@@ -106,16 +124,32 @@ const TableCategories: React.FC = () => {
   const handleDelete = async (id: string | number) => {
     try {
       await del<Categories>(`${CATEGORY_PREFIX.DELETE}/${id}`);
+      toast({
+        title: 'Success',
+        description: 'Data berhasil dihapus',
+        status: 'success',
+        duration: 5000,
+        isClosable: true,
+      });
       refetch();
-      toast.success(`Categories ${id} deleted successfully`);
     } catch (ErrorCatch) {
       if (ErrorCatch instanceof AxiosError) {
-        toast.error(
-          ErrorCatch.response?.data.message || 'Failed to delete Categories',
-        );
+        toast({
+          title: 'Error saat menghapus data',
+          description: ErrorCatch.response?.data.message,
+          status: 'error',
+          duration: 5000,
+          isClosable: true,
+        });
         return;
       }
-      toast.error('Failed to delete Categories');
+      toast({
+        title: 'Error saat menghapus data',
+        description: 'Terjadi kesalahan saat menghapus data',
+        status: 'error',
+        duration: 5000,
+        isClosable: true,
+      });
     }
   };
 
@@ -132,7 +166,6 @@ const TableCategories: React.FC = () => {
   };
 
   if (loading) return <OverlaySpinner show={loading} />;
-  if (error) toast.error(error.message);
 
   return (
     <>
@@ -164,7 +197,7 @@ const TableCategories: React.FC = () => {
         <Pagination
           currentPage={data?.pagination?.page || 1}
           totalPages={
-            Math.ceil(data?.pagination?.total! / data?.pagination?.perPage!) ||
+            Math.ceil((data?.pagination?.total ?? 0) / (data?.pagination?.perPage ?? 1)) ||
             1
           }
           onPageChange={handlePageChange}

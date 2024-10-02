@@ -1,65 +1,63 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useState } from 'react';
 
 import type {
-  Categories,
-  CategoriesCreate,
-  CategoriesUpdate,
-} from '@/types/models.type';
+  InovationSchema,
+  InovationUpdateSchema,
+} from '@/types/inovation.type';
 
-import { post, del, put } from '@/hooks/useSubmit';
+import { del, put } from '@/hooks/useSubmit';
 import toast from 'react-hot-toast';
 import { AxiosError } from 'axios';
-// import useDataFetch from '@/hooks/useFetchData';
-// import { ResponseApi } from '@/lib/types/api.type';
-import { CATEGORY_PREFIX } from '@/lib/constants/api.contants';
+import useDataFetch from '@/hooks/useFetchData';
+import { ResponseApi } from '@/lib/types/api.type';
+import { INNOVATION_PREFIX } from '@/lib/constants/api.contants';
 import OverlaySpinner from '@/components/Loading/OverlayLoading';
 import Table from '@/components/Table';
-import SearchQuery from '@/components/Form/SearchQuery';
+import SearchQuery from '@/components/Form/GenericSearch';
 import Pagination from '@/components/Pagination';
 import Modal from '@/components/Modal';
-import FormCategories from '@/components/admin/categories/FormCategories';
+import FormInnovation from '@/components/admin/ManajemenProduk/FormManajemenProduk';
+import useCategories from '@/hooks/useCategories';
 
 const columns = [
-  { key: 'name', label: 'Produk Name Inovasi' },
+  { key: 'title', label: 'Produk Name Inovasi' },
   { key: 'image', label: 'Image' },
-  { key: 'kategory', label: 'Kategori' },
-  { key: 'tgl', label: 'Tanggal' },
+  { key: 'category.name', label: 'Kategori' },
+  { key: 'createdAt', label: 'Tanggal' },
   { key: 'status', label: 'Status' },
 ];
 
-const searchFields = [{ key: 'name', label: 'Nama Inovasi' }];
 
 const ManajemenInovasi: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [initialValues, setInitialValues] = useState<CategoriesUpdate | null>(
+  const [initialValues, setInitialValues] = useState<InovationUpdateSchema | null>(
     null,
   );
 
-  // const { data, loading, error, updateParams, refetch, params } = useDataFetch<
-  //   ResponseApi<Categories>
-  // >(`${CATEGORY_PREFIX.INDEX}`, { page: 1, perPage: 10 });
-  const data = {
-    requestId: 'string',
-    requestTime: 'string',
-    data: [
-      {
-        id: 'string',
-        name: 'string',
-        description: 'string',
-        type: 'string',
-      },
-    ],
-    pagination: {
-      total: 10,
-      perPage: 10,
-      page: 1,
+  const { data, loading, updateParams, refetch, params } = useDataFetch<
+    ResponseApi<InovationSchema>
+  >(`${INNOVATION_PREFIX.ADMIN}`, { page: 1, perPage: 10 });
+  const { data: categories } = useCategories();
+  const searchFields = [
+    { key: 'q', label: 'Nama Inovasi' },
+    {
+      key: 'status', label: 'status Inovasi', type: 'select', options: [
+        { value: 'pending', label: 'Pending' },
+        { value: 'approved', label: 'Approved' },
+        { value: 'rejected', label: 'Rejected' },
+      ]
     },
-  };
-  const loading = false;
-  const error = null;
-  const updateParams = (newparams) => {};
-  const refetch = () => {};
-  const params = {};
+    {
+      key: 'category', label: 'Kategori', type: 'select', options: categories?.map((category) => ({
+        value: category.name,
+        label: category.name,
+
+      })) || [],
+    }];
+
+
 
   const handleSearch = (criteria: Record<string, string>) => {
     updateParams({ ...criteria, page: 1 });
@@ -73,52 +71,44 @@ const ManajemenInovasi: React.FC = () => {
     updateParams({ ...params, page });
   };
 
-  const handleSubmit = async (values: CategoriesCreate | CategoriesUpdate) => {
+  const handleSubmit = async (values: InovationUpdateSchema) => {
     try {
       if (initialValues) {
         // delete email
-        const result = await put<Categories>({
-          url: `${CATEGORY_PREFIX.EDIT}/${initialValues.id}`,
+        const result = await put<InovationSchema, InovationUpdateSchema>({
+          url: `${INNOVATION_PREFIX.EDIT}/${initialValues._id}`,
           data: values,
         });
         refetch();
-        toast.success(`Categories ${result?.data.title} updated successfully`);
-        setIsModalOpen(false);
-      } else {
-        const result = await post<Categories>({
-          url: `${CATEGORY_PREFIX.CREATE}`,
-          data: values,
-        });
-
-        refetch();
-        toast.success(`Categories ${result?.data.title} created successfully`);
+        toast.success(`Innovation ${result?.data.title} updated successfully`);
         setIsModalOpen(false);
       }
+
     } catch (ErrorCatch) {
       if (ErrorCatch instanceof AxiosError) {
         toast.error(
-          ErrorCatch.response?.data.message || 'Failed to create Categories',
+          ErrorCatch.response?.data.message || 'Failed to create Innovation',
         );
         return;
       }
-      toast.error('Failed to create Categories');
+      toast.error('Failed to create Innovation');
       setIsModalOpen(false);
     }
   };
 
   const handleDelete = async (id: string | number) => {
     try {
-      await del<Categories>(`${CATEGORY_PREFIX.DELETE}/${id}`);
+      await del<InovationSchema>(`${INNOVATION_PREFIX.DELETE}/${id}`);
       refetch();
-      toast.success(`Categories ${id} deleted successfully`);
+      toast.success(`Innovation ${id} deleted successfully`);
     } catch (ErrorCatch) {
       if (ErrorCatch instanceof AxiosError) {
         toast.error(
-          ErrorCatch.response?.data.message || 'Failed to delete Categories',
+          ErrorCatch.response?.data.message || 'Failed to delete Innovation',
         );
         return;
       }
-      toast.error('Failed to delete Categories');
+      toast.error('Failed to delete Innovation');
     }
   };
 
@@ -129,13 +119,8 @@ const ManajemenInovasi: React.FC = () => {
     setIsModalOpen(true);
   };
 
-  const handleAdd = () => {
-    setInitialValues(null);
-    setIsModalOpen(true);
-  };
 
   if (loading) return <OverlaySpinner show={loading} />;
-  if (error) toast.error(error.message);
 
   return (
     <>
@@ -159,7 +144,7 @@ const ManajemenInovasi: React.FC = () => {
         <Pagination
           currentPage={data?.pagination?.page || 1}
           totalPages={
-            Math.ceil(data?.pagination?.total! / data?.pagination?.perPage!) ||
+            Math.ceil((data?.pagination?.total ?? 0) / (data?.pagination?.perPage ?? 1)) ||
             1
           }
           onPageChange={handlePageChange}
@@ -168,9 +153,9 @@ const ManajemenInovasi: React.FC = () => {
       <Modal
         isOpen={isModalOpen}
         onClose={closeModal}
-        title="Tambah Categories"
+        title="Tambah Innovation"
       >
-        <FormCategories
+        <FormInnovation
           handleSubmit={handleSubmit}
           initialValues={initialValues}
         />

@@ -25,8 +25,8 @@ export interface FieldConfig {
 interface GenericFormProps {
   fields: FieldConfig[];
   onSubmit: (values: { [key: string]: any }, formikHelpers: FormikHelpers<{ [key: string]: any }>) => void | Promise<void>;
-  initialValues?: { [key: string]: unknown };
-  onChange?: (fieldName: string, value: unknown) => void;
+  initialValues?: { [key: string]: any };
+  onChange?: (fieldName: string, value: any) => void;
 }
 
 const GenericForm: React.FC<GenericFormProps> = ({ fields, onSubmit, initialValues = {}, onChange }) => {
@@ -41,10 +41,9 @@ const GenericForm: React.FC<GenericFormProps> = ({ fields, onSubmit, initialValu
   );
 
   const defaultInitialValues = fields.reduce((acc, field) => {
-    acc[field.name] = initialValues[field.name] || field.type === 'checkbox' ? false : field.type === 'dateTimeRange' ? [new Date(), new Date()] : field.type === 'tags' || field.type === 'file' ? [] : '';
+    acc[field.name] = initialValues[field.name] || '';
     return acc;
-  }, {} as { [key: string]: unknown });
-
+  }, {} as { [key: string]: any });
   return (
     <Formik
       initialValues={defaultInitialValues}

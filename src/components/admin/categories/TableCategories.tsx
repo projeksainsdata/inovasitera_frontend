@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useState } from 'react';
 
@@ -16,9 +15,11 @@ import { ResponseApi } from '@/lib/types/api.type';
 import { Categories, CategoriesCreate, CategoriesUpdate } from '@/lib/types/categories.type';
 import { useToast } from '@chakra-ui/react';
 
+import ProgressBar from '@/components/ProgressBar';
+
 const columns = [
   { key: 'name', label: 'Nama Categories' },
-  { key: 'image', label: 'image Categories' },
+  { key: 'image', label: 'image Categories', type: 'image' },
   { key: 'description', label: 'Deskripsi Categories' },
 ];
 
@@ -29,6 +30,8 @@ const TableCategories: React.FC = () => {
   const [initialValues, setInitialValues] = useState<CategoriesUpdate | null>(
     null,
   );
+  const [uploadProgress, setUploadProgress] = useState(0);
+
   const toast = useToast();
 
   const { data, loading, updateParams, refetch, params } = useDataFetch<
@@ -51,19 +54,26 @@ const TableCategories: React.FC = () => {
   const handleSubmit = async (values: CategoriesCreate | CategoriesUpdate) => {
     try {
       if (values.image && values.image instanceof File) {
-        try {
-          const responseImage = await UploadImage(values.image);
-          values.image = responseImage.data.fileUrl
-        } catch (error) {
+        setUploadProgress(0);
+        const uploadResult = await UploadImage({
+          file: values.image,
+          onProgress: (progress) => {
+            setUploadProgress(progress);
+          }
+        });
+
+        if (!uploadResult.success) {
           toast({
-            title: 'Error saat mengupload image',
-            description: 'Terjadi kesalahan saat mengupload image',
+            title: 'Error during image upload',
+            description: uploadResult.message,
             status: 'error',
             duration: 5000,
             isClosable: true,
           });
           return;
         }
+
+        values.image = uploadResult.url || '';
       }
       if (initialValues) {
         // delete email
@@ -118,6 +128,8 @@ const TableCategories: React.FC = () => {
       });
 
       setIsModalOpen(false);
+    } finally {
+      setUploadProgress(0);
     }
   };
 
@@ -212,6 +224,16 @@ const TableCategories: React.FC = () => {
           handleSubmit={handleSubmit}
           initialValues={initialValues}
         />
+        {uploadProgress > 0 && (
+          <div className="mt-4">
+            <ProgressBar
+              progress={uploadProgress}
+              color="blue"
+              size="md"
+              showPercentage
+            />
+          </div>
+        )}
       </Modal>
     </>
   );

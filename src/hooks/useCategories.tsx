@@ -8,7 +8,7 @@ import { Categories } from '@/lib/types/categories.type';
 const useCategories = () => {
     const [data, setData] = useState<Categories[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
-    const [error, setError] = useState<unknown>(null);
+    const [error, setError] = useState<string | null>(null);
     const API = AxiosService.getAxiosAuth();
 
     useEffect(() => {
@@ -20,7 +20,7 @@ const useCategories = () => {
                 setData(response.data.data);
             } catch (ErrorCatch) {
                 if (ErrorCatch instanceof AxiosError) {
-                    setError(ErrorCatch.response?.data.message);
+                    setError(ErrorCatch.response?.data.message || 'An error occurred');
                     return;
                 }
                 setError('Failed to fetch data');

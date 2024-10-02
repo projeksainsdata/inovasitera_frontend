@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Navbar from "@/components/navbar";
 import Footer from "@/components/Footer";
 import Rating from "@/components/Rating";
@@ -44,25 +44,30 @@ import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
 import banner from "../assets/HeroPage.png";
-import PANGAN from "../assets/PANGAN.svg";
+import { get } from "@/hooks/useSubmit";
+import { INNOVATION_PREFIX } from "@/lib/constants/api.contants";
+import { useParams } from "react-router-dom";
 
 const DetailInovasi: React.FC = () => {
-  const [rating, setRating] = useState(0); // State to keep track of the rating
+  const params = useParams()
+  const [data, setData] = useState<any>({})
+
+  useEffect(() => {
+    async function fetchData() {
+      const res = await get(`${INNOVATION_PREFIX.INDEX}/${params.id}`)
+      console.log(res)
+      setData(res.data.data)
+    }
+    if (params.id) fetchData()
+
+
+  }, [params.id])
+
+  console.log(data)
   return (
     <>
       <Navbar />
       <img src={banner} className="h-24 w-full object-cover" />
-      <Box className="bg-orange-100 p-3 mb-5 ">
-        <Breadcrumb spacing="8px">
-          <BreadcrumbItem>
-            <BreadcrumbLink href="/inovasi">Beranda</BreadcrumbLink>
-          </BreadcrumbItem>
-
-          <BreadcrumbItem isCurrentPage>
-            <BreadcrumbLink href="#">Produk</BreadcrumbLink>
-          </BreadcrumbItem>
-        </Breadcrumb>
-      </Box>
 
       <Box className="flex flex-col lg:flex-row gap-6  justify-center lg:max-w-6xl px-3 lg:mx-auto w-full">
         <Box className="h-auto w-full lg:w-[40rem]">
@@ -228,8 +233,8 @@ const DetailInovasi: React.FC = () => {
                     <Textarea
                       placeholder="Write your comment here..."
                       size="md"
-                      // value={comment}
-                      // onChange={(e) => setComment(e.target.value)}
+                    // value={comment}
+                    // onChange={(e) => setComment(e.target.value)}
                     />
                   </FormControl>
 
@@ -246,26 +251,26 @@ const DetailInovasi: React.FC = () => {
 
                 {/* List of Comments */}
                 <VStack spacing={4} align="stretch">
-                {[1, 2, 3, 4, 5].map((x) => (
-                  <Box p={3} bg="gray.50" className="space-y-2">
-                    <Box className="flex gap-5">
-                      <Avatar name='Dan Abrahmov' src='https://bit.ly/dan-abramov' />
-                      <Box>
-                        <Text fontWeight="bold">John Doe</Text>
-                        <Text>This is a great innovation! Keep it up!</Text>
+                  {[1, 2, 3, 4, 5].map((x) => (
+                    <Box p={3} bg="gray.50" className="space-y-2">
+                      <Box className="flex gap-5">
+                        <Avatar name='Dan Abrahmov' src='https://bit.ly/dan-abramov' />
+                        <Box>
+                          <Text fontWeight="bold">John Doe</Text>
+                          <Text>This is a great innovation! Keep it up!</Text>
+                        </Box>
                       </Box>
+                      <Box className="flex items-center">
+                        {[1, 2, 3, 4, 5].map((x) => (
+                          <IconStarFilled
+                            key={x}
+                            className="text-yellow-400 text-xl"
+                          />
+                        ))}
+                      </Box>
+                      <Text className="text-sm">24-09-2024</Text>
                     </Box>
-                    <Box className="flex items-center">
-                      {[1, 2, 3, 4, 5].map((x) => (
-                        <IconStarFilled
-                          key={x}
-                          className="text-yellow-400 text-xl"
-                        />
-                      ))}
-                    </Box>
-                    <Text className="text-sm">24-09-2024</Text>
-                  </Box>
-                ))}
+                  ))}
                 </VStack>
               </Box>
             </Flex>

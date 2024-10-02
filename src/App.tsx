@@ -1,3 +1,4 @@
+import React from 'react';
 import KategoriHome from './components/KategoriHome';
 import ProdukHome from './components/ProdukHome';
 import AboutHome from './components/AboutHome';

@@ -1,14 +1,14 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 import AxiosService from "@/services/axios.service";
 import { ResponseApi } from "@/lib/types/api.type";
 import { UPLOAD_PATH } from "@/lib/constants/api.contants";
-import { UploadResponse } from "@/lib/specification/upload.spefication";
+import axios from "axios";
 interface PostProps<T> {
   url: string;
   data: T;
 }
-
-export const post = async <T, S>(
+export const post = async <T = any, S = any>(
   props: PostProps<S>
 ): Promise<ResponseApi<T> | null> => {
   const API = AxiosService.getAxiosAuth();
@@ -16,7 +16,7 @@ export const post = async <T, S>(
   return res.data;
 };
 
-export const put = async <T, S>(
+export const put = async <T = any, S = any>(
   props: PostProps<S>
 ): Promise<ResponseApi<T> | null> => {
   const API = AxiosService.getAxiosAuth();
@@ -24,43 +24,128 @@ export const put = async <T, S>(
   return res.data;
 };
 
-export const del = async <T>(url: string): Promise<ResponseApi<T> | null> => {
+export const del = async <T = any>(
+  url: string
+): Promise<ResponseApi<T> | null> => {
   const API = AxiosService.getAxiosAuth();
   const res = await API.delete(url);
   return res.data;
 };
 
-export const get = async <T>(url: string): Promise<ResponseApi<T> | null> => {
+export const get = async <T = any>(
+  url: string
+): Promise<ResponseApi<T> | null> => {
   const API = AxiosService.getAxiosAuth();
   const res = await API.get(url);
   return res.data;
 };
 
-export const UploadImage = async (
-  file: File
-): Promise<ResponseApi<UploadResponse>> => {
-  const axiosApiInstance = AxiosService.getAxiosAuth();
-  //  get token
+interface UploadImageProps {
+  file: File;
+  onProgress?: (progress: number) => void;
+}
 
-  const responseToken = await axiosApiInstance.post(UPLOAD_PATH.TOKEN_UPLOAD, {
-    fileType: file.type,
-    maxSizeBytes: file.size,
-  });
+interface UploadImageResult {
+  success: boolean;
+  imageId?: string;
+  url?: string;
+  message: string;
+}
 
-  if (!responseToken.data) {
-    throw new Error("Failed to get token");
-  }
-
-  const formData = new FormData();
-  formData.append("image", file);
-  const response = await axiosApiInstance.post(
-    responseToken.data.data.url,
-    formData,
-    {
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
+export const UploadImage = async ({
+  file,
+  onProgress,
+}: UploadImageProps): Promise<UploadImageResult> => {
+  const API = AxiosService.getAxiosAuth();
+  console.log("file", file);
+  try { 
+    // Step 1: Request an upload token
+    const { data: tokenData } = await API.post<ResponseApi<{ token: string }>>(
+      UPLOAD_PATH.TOKEN_UPLOAD
+    );
+    const token = tokenData.data && tokenData.data.token;
+    if (!token) {
+      return {
+        success: false,
+        message: "Failed to get token",
+      };
     }
+
+    // get extension from file
+    const extension = file.name.split(".").pop();
+    if (!extension) {
+      return {
+        success: false,
+        message: "Failed to get extension",
+      };
+    }
+
+    // Step 2: Request a pre-signed URL using the token
+    const { data: urlData } = await API.post<
+      ResponseApi<{
+        uploadUrl: string;
+        imageId: string;
+      }>
+    >(UPLOAD_PATH.UPLOAD, {
+      fileType: extension,
+      token,
+    });
+    const uploadUrl = urlData.data && urlData.data.uploadUrl;
+    const imageId = urlData.data && urlData.data.imageId;
+    // Step 3: Upload the file to S3
+    if (!uploadUrl) {
+      throw new Error("Upload URL is undefined");
+    }
+    await axios.put(uploadUrl, file, {
+      headers: { "Content-Type": extension },
+      onUploadProgress: (progressEvent) => {
+        if (onProgress && progressEvent.total) {
+          const percentCompleted = Math.round(
+            (progressEvent.loaded * 100) / progressEvent.total
+          );
+          onProgress(percentCompleted);
+        }
+      },
+    });
+    // Step 4: Confirm the upload
+    const { data: confirmationData } = await API.post<
+      ResponseApi<{
+        imageId: string;
+        url: string;
+      }>
+    >(UPLOAD_PATH.COMFIRM, {
+      imageId,
+      metadata: {
+        filename: file.name,
+        contentType: extension,
+        size: file.size,
+      },
+    });
+
+    return {
+      success: true,
+      imageId: confirmationData.data.imageId,
+      url: confirmationData.data.url,
+      message: "Image uploaded successfully",
+    };
+  } catch (error) {
+    return {
+      success: false,
+      message:
+        error instanceof Error ? error.message : "Failed to upload image",
+    };
+  }
+};
+
+export const UploadImageBatch = async ({
+  files,
+  onProgress,
+}: {
+  files: File[];
+  onProgress?: (progress: number) => void;
+}): Promise<UploadImageResult[]> => {
+  const results = await Promise.all(
+    files.map((file) => UploadImage({ file, onProgress }))
   );
-  return response.data;
+  return results;
 };

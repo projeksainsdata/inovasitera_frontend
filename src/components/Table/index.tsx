@@ -7,6 +7,7 @@ import { IconStarFilled } from "@tabler/icons-react";
 interface Column {
   key: string;
   label: string;
+  type?: "image" | any;
 }
 
 interface DataItem {
@@ -114,7 +115,7 @@ const Table: React.FC<TableProps> = ({
                   key={column?.key}
                   className="whitespace-nowrap px-4 py-3 text-base text-black font-semibold"
                 >
-                  {column?.key == "image" ? (
+                  {column?.type == "image" ? (
                     <img
                       src={getNestedValue(row, column?.key).toString()}
                       className="w-48 h-22 object-cover rounded"

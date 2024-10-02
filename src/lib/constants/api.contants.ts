@@ -1,8 +1,10 @@
 export const API_URL = import.meta.env.VITE_API_URL;
 
 export const UPLOAD_PATH = {
-  UPLOAD: "/api/v1/uploads",
   TOKEN_UPLOAD: "/api/v1/uploads/token",
+  UPLOAD: "/api/v1/uploads/request-url",
+  COMFIRM: "/api/v1/uploads/confirm",
+  DELETE: "/api/v1/uploads",
 };
 
 export const AUTH_PATH = {
@@ -32,8 +34,8 @@ export const INNOVATION_PREFIX = {
   CREATE: "/api/v1/inovations",
   EDIT: "/api/v1/inovations",
   DELETE: "/api/v1/inovations",
-  USER: "/api/v1/inovations/user"
-};            
+  USER: "/api/v1/inovations/user",
+};
 
 export const WHITELIST_PREFIX = {
   INDEX: "/api/v1/whitelists/user",

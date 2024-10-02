@@ -63,7 +63,7 @@
               <img src={batik} className="w-96 h-[14em] object-cover object-top"/>
             </div>
           <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-4 mx-4 md:mx-[200px]">
-            {categories.map((category, index) => (
+            {categories.map((category) => (
               <Link to="/inovasi" className="bg-white py-6 md:px-10 rounded-xl flex flex-col items-center justify-center z-10">
                 <div className="rounded-full p-2">
                   <img

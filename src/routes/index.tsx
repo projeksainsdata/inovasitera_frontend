@@ -26,6 +26,7 @@ import InnovatorTambahInovasi from '@/pages/innovator/innovations/TambahInovasi'
 import InnovatorWishlistInovasi from '@/pages/innovator/wishlist/WishlistInovasi';
 import Profil from '@/pages/Profile';
 import ResetPassword from '@/pages/ResetPassword';
+import UpdateInovasi from '@/pages/innovator/innovations/UpdateInovasi';
 
 
 const AppRoutes: React.FC = () => {
@@ -73,6 +74,7 @@ const AppRoutes: React.FC = () => {
                     <Route path="/innovator/profil" element={<Profil />} />
                     <Route path="/innovator/list-inovasi" element={<InnovatorListInovasi />} />
                     <Route path="/innovator/tambah-inovasi" element={<InnovatorTambahInovasi />} />
+                    <Route path="/innovator/update-inovasi" element={<UpdateInovasi />} />
                     <Route path="/innovator/wishlist-inovasi" element={<InnovatorWishlistInovasi />} />
                     <Route path="/forgot-password" element={
                         <PublicRoute>

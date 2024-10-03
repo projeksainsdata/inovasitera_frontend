@@ -62,48 +62,30 @@ const DetailInovasi: React.FC = () => {
 
 
   }, [params.id])
-
+  
   console.log(data)
   return (
     <>
       <Navbar />
       <img src={banner} className="h-24 w-full object-cover" />
 
-      <Box className="flex flex-col lg:flex-row gap-6  justify-center lg:max-w-6xl px-3 lg:mx-auto w-full">
+      <Box className="mt-10 flex flex-col lg:flex-row gap-6 justify-center lg:max-w-6xl px-3 lg:mx-auto w-full">
         <Box className="h-auto w-full lg:w-[40rem]">
           <Swiper
             modules={[Pagination]}
             spaceBetween={4}
             slidesPerView={1}
             pagination={{ clickable: true }}
-            className="mySwiper"
-          >
-            {/* First Image */}
-            <SwiperSlide>
-              <img
-                src={"https://placehold.co/600x600"}
-                alt="Product Image 1"
-                className="rounded-lg w-full h-full object-cover"
-              />
-            </SwiperSlide>
-
-            {/* Second Image */}
-            <SwiperSlide>
-              <img
-                src={"https://placehold.co/600x600"}
-                alt="Product Image 2"
-                className="rounded-lg w-full h-full object-cover"
-              />
-            </SwiperSlide>
-
-            {/* Third Image */}
-            <SwiperSlide>
-              <img
-                src={"https://placehold.co/600x600"}
-                alt="Product Image 3"
-                className="rounded-lg w-full h-full object-cover"
-              />
-            </SwiperSlide>
+            className="mySwiper">
+            {data.images?.map((imageUrl, index) => (
+              <SwiperSlide key={index}>
+                <img
+                  src={imageUrl}
+                  alt={`Product Image ${index + 1}`}
+                  className="rounded-lg w-full h-full object-cover"
+                />
+              </SwiperSlide>
+            ))}
           </Swiper>
         </Box>
 
@@ -113,12 +95,12 @@ const DetailInovasi: React.FC = () => {
               Produk Inovasi ITERA
             </Text>
             <Text className="text-xl md:text-3xl font-bold">
-              Ini Adalah Contoh Produk Inovasi ITERA
+              {data?.title}
             </Text>
 
             <Box className="flex gap-6 items-center">
               <div className="bg-green-500 text-white text-sm font-semibold px-3 py-2 gap-3 rounded-full flex items-center">
-                Pangan
+                {data?.category}
               </div>
               <Box className="flex items-center">
                 {[1, 2, 3, 4, 5].map((x) => (
@@ -131,16 +113,9 @@ const DetailInovasi: React.FC = () => {
             <Box className="p-3 bg-gray-100 rounded space-y-2">
               <Text className="font-semibold">Innovator</Text>
               <ul>
-                <li>Dr. Sarah Ahmed</li>
-                <li>Dr. Michael Tanaka</li>
-                <li>Dr. Priya Kapoor</li>
-                <li>Dr. James O'Connor</li>
-                <li>Dr. Maria Gonzalez</li>
-                <li>Dr. Chen Wei</li>
-                <li>Dr. Aisha Yusuf</li>
-                <li>Dr. David Stein</li>
-                <li>Dr. Amira Haddad</li>
-                <li>Dr. Hugo Martins</li>
+                {data.collaboration?.map((innovator, index) => (
+                  <li key={index}>{innovator}</li>
+                ))}
               </ul>
             </Box>
           </Box>
@@ -176,33 +151,30 @@ const DetailInovasi: React.FC = () => {
           <TabPanel>
             <Text className="font-semibold">Deskripsi</Text>
             <Text>
-              Lorem ipsum dolor sit amet consectetur adipisicing elit. Animi
-              tempora harum, maiores deserunt blanditiis recusandae repudiandae,
-              quaerat quisquam, nobis sapiente voluptatum iusto. Officia
-              distinctio tempore nobis voluptatum et recusandae error.
+              {data?.deskripsi}
             </Text>
             <TableContainer className="border mt-5">
               <Table variant="simple">
                 <Tbody>
                   <Tr>
                     <Td>Status Paten</Td>
-                    <Td>Dalam Proses Permohonan Paten</Td>
+                    <Td>{data?.status_paten}</Td>
                   </Tr>
                   <Tr>
                     <Td>Tahap Pengembangan</Td>
-                    <Td>Lainnya</Td>
+                    <Td>{data?.development_stage}</Td>
                   </Tr>
                   <Tr>
                     <Td>Nilai TKT</Td>
-                    <Td>6</Td>
+                    <Td>{data?.score_tkt}</Td>
                   </Tr>
                   <Tr>
                     <Td>Kata kunci Teknologi</Td>
-                    <Td>..</Td>
+                    <Td>{data?.adventage}</Td>
                   </Tr>
                   <Tr>
                     <Td>Kolaborasi Yang Diinginkan</Td>
-                    <Td>..</Td>
+                    <Td>{data?.collaboration_details}</Td>
                   </Tr>
                 </Tbody>
               </Table>
@@ -281,54 +253,20 @@ const DetailInovasi: React.FC = () => {
               Pertanyaan yang sering diajukan
             </Text>
             <Accordion allowToggle>
-              <AccordionItem>
+            {data.faq?.map((item, index) => (
+              <AccordionItem key={index}>
                 <h2>
                   <AccordionButton>
                     <Box flex="1" textAlign="left">
-                      Section 1 Title
+                      {item?.question}
                     </Box>
                     <AccordionIcon />
                   </AccordionButton>
                 </h2>
-                <AccordionPanel pb={4}>
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                  Integer nec odio. Praesent libero. Sed cursus ante dapibus
-                  diam.
-                </AccordionPanel>
+                <AccordionPanel pb={4}>{item?.answer}</AccordionPanel>
               </AccordionItem>
-
-              <AccordionItem>
-                <h2>
-                  <AccordionButton>
-                    <Box flex="1" textAlign="left">
-                      Section 2 Title
-                    </Box>
-                    <AccordionIcon />
-                  </AccordionButton>
-                </h2>
-                <AccordionPanel pb={4}>
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                  Integer nec odio. Praesent libero. Sed cursus ante dapibus
-                  diam.
-                </AccordionPanel>
-              </AccordionItem>
-
-              <AccordionItem>
-                <h2>
-                  <AccordionButton>
-                    <Box flex="1" textAlign="left">
-                      Section 3 Title
-                    </Box>
-                    <AccordionIcon />
-                  </AccordionButton>
-                </h2>
-                <AccordionPanel pb={4}>
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                  Integer nec odio. Praesent libero. Sed cursus ante dapibus
-                  diam.
-                </AccordionPanel>
-              </AccordionItem>
-            </Accordion>
+            ))}
+          </Accordion> 
           </TabPanel>
         </TabPanels>
       </Tabs>

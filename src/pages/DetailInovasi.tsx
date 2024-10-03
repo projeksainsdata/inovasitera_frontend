@@ -1,17 +1,10 @@
-import { useEffect, useState } from "react";
-import Navbar from "@/components/navbar";
-import Footer from "@/components/Footer";
-import Rating from "@/components/Rating";
-import { Swiper, SwiperSlide } from "swiper/react";
-import { Pagination } from "swiper/modules";
+import React, { useEffect, useState } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import { useFormik } from "formik";
+import * as Yup from "yup";
 import {
-  Avatar, AvatarBadge, AvatarGroup,
-  Icon,
   Box,
   Text,
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
   Button,
   Tabs,
   TabList,
@@ -33,244 +26,346 @@ import {
   FormLabel,
   Textarea,
   Flex,
+  Avatar,
+  useToast,
 } from "@chakra-ui/react";
-import {
-  IconStarFilled,
-  IconZoomQuestion,
-  IconMessageCircle,
-  IconInfoCircle,
-} from "@tabler/icons-react";
+import { Swiper, SwiperSlide } from "swiper/react";
+import { Pagination } from "swiper/modules";
+import { IconStarFilled, IconZoomQuestion, IconMessageCircle, IconInfoCircle } from "@tabler/icons-react";
 import "swiper/css";
-import "swiper/css/navigation";
 import "swiper/css/pagination";
+
+import Navbar from "@/components/navbar";
+import Footer from "@/components/Footer";
+import { get, post } from "@/hooks/useSubmit";
+import { INNOVATION_PREFIX, RATINGS_PREFIX, WHITELIST_PREFIX } from "@/lib/constants/api.contants";
+import { useAuth } from "@/hooks/useAuth";
+
 import banner from "../assets/HeroPage.png";
-import { get } from "@/hooks/useSubmit";
-import { INNOVATION_PREFIX } from "@/lib/constants/api.contants";
-import { useParams } from "react-router-dom";
+import Rating from "@/components/Rating";
+import { isAxiosError } from "axios";
+
+const StarRating: React.FC<{ rating: number; size?: number }> = ({ rating, size = 24 }) => {
+  return (
+    <Flex>
+      {[1, 2, 3, 4, 5].map((star) => (
+        <IconStarFilled
+          key={star}
+          size={size}
+          className={star <= rating ? "text-yellow-400" : "text-gray-300"}
+        />
+      ))}
+    </Flex>
+  );
+};
 
 const DetailInovasi: React.FC = () => {
-  const params = useParams()
-  const [data, setData] = useState<any>({})
+  const params = useParams();
+  const [data, setData] = useState<any>({});
+  const auth = useAuth();
+  const navigate = useNavigate();
+  const toast = useToast();
 
   useEffect(() => {
     async function fetchData() {
-      const res = await get(`${INNOVATION_PREFIX.INDEX}/${params.id}`)
-      console.log(res)
-      setData(res.data.data)
+      const res = await get(`${INNOVATION_PREFIX.INDEX}/${params.id}`);
+      setData(res?.data);
     }
-    if (params.id) fetchData()
 
+    fetchData();
+  }, [params.id]);
 
-  }, [params.id])
-  
-  console.log(data)
+  const avgRating = Math.floor(
+    data?.rating?.reduce((acc: number, rating: any) => acc + rating.rating, 0) / (data?.rating?.length || 1)
+  );
+
+  const addWhitelist = async () => {
+    try {
+      await post({
+        url: WHITELIST_PREFIX.CREATE,
+        data: {
+          inovation_id: data._id,
+        }
+      });
+      toast({
+        title: "Added to whitelist",
+        status: "success",
+        duration: 3000,
+        isClosable: true,
+      });
+    } catch (error) {
+      if (isAxiosError(error)) {
+        const { response } = error;
+        if (response?.data?.message) {
+          toast({
+            title: response.data.message,
+            status: "error",
+            duration: 3000,
+            isClosable: true,
+          });
+          return;
+        }
+      }
+
+      toast({
+        title: "Error adding to whitelist",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+    }
+  }
+
+  const formik = useFormik({
+    initialValues: {
+      rating: 0,
+      comment: "",
+    },
+    validationSchema: Yup.object({
+      rating: Yup.number().min(1).max(5).required("Rating is required"),
+      comment: Yup.string().required("Comment is required"),
+    }),
+    onSubmit: async (values, { resetForm }) => {
+      try {
+        await post({
+          url: RATINGS_PREFIX.CREATE,
+          data: {
+            ...values,
+            inovation_id: data._id,
+          }
+        });
+        toast({
+          title: "Rating submitted",
+          status: "success",
+          duration: 3000,
+          isClosable: true,
+        });
+        resetForm();
+        // Refresh data after submitting
+        const res = await get(`${INNOVATION_PREFIX.INDEX}/${params.id}`);
+        setData(res?.data);
+      } catch (error) {
+        toast({
+          title: "Error submitting rating",
+          status: "error",
+          duration: 3000,
+          isClosable: true,
+        });
+      }
+    },
+  });
+
   return (
     <>
       <Navbar />
-      <img src={banner} className="h-24 w-full object-cover" />
+      <img src={banner} className="h-24 w-full object-cover" alt="Hero Banner" />
+      <Box as="main" maxWidth="6xl" margin="auto" padding={6}>
+        <Flex direction={{ base: "column", lg: "row" }} gap={6}>
+          <Box className="h-auto w-full lg:w-[40rem]">
+            <Swiper
+              modules={[Pagination]}
+              spaceBetween={4}
+              slidesPerView={1}
+              pagination={{ clickable: true }}
+              className="rounded-lg overflow-hidden"
+            >
+              {data?.thumbnail && (
+                <SwiperSlide>
+                  <Box height="400px">
+                    <img src={data.thumbnail} alt="Product Thumbnail" className="w-full h-full object-contain" />
+                  </Box>
+                </SwiperSlide>
+              )}
+              {data?.images?.map((imageUrl: string, index: number) => (
+                <SwiperSlide key={index}>
+                  <Box height="400px">
+                    <img src={imageUrl} alt={`Product Image ${index + 1}`} className="w-full h-full object-contain" />
+                  </Box>
+                </SwiperSlide>
+              ))}
+            </Swiper>
+          </Box>
 
-      <Box className="mt-10 flex flex-col lg:flex-row gap-6 justify-center lg:max-w-6xl px-3 lg:mx-auto w-full">
-        <Box className="h-auto w-full lg:w-[40rem]">
-          <Swiper
-            modules={[Pagination]}
-            spaceBetween={4}
-            slidesPerView={1}
-            pagination={{ clickable: true }}
-            className="mySwiper">
-            {data.images?.map((imageUrl, index) => (
-              <SwiperSlide key={index}>
-                <img
-                  src={imageUrl}
-                  alt={`Product Image ${index + 1}`}
-                  className="rounded-lg w-full h-full object-cover"
-                />
-              </SwiperSlide>
-            ))}
-          </Swiper>
-        </Box>
-
-        <Box className="h-auto flex flex-col justify-between">
-          <Box className="space-y-5 flex-grow">
-            <Text fontSize="sm" fontWeight="semibold">
+          <Box flex={1} className="space-y-6">
+            <Text fontSize="sm" fontWeight="semibold" color="gray.600">
               Produk Inovasi ITERA
             </Text>
-            <Text className="text-xl md:text-3xl font-bold">
+            <Text fontSize="3xl" fontWeight="bold">
               {data?.title}
             </Text>
 
-            <Box className="flex gap-6 items-center">
-              <div className="bg-green-500 text-white text-sm font-semibold px-3 py-2 gap-3 rounded-full flex items-center">
-                {data?.category}
-              </div>
-              <Box className="flex items-center">
-                {[1, 2, 3, 4, 5].map((x) => (
-                  <IconStarFilled key={x} className="text-yellow-400 text-xl" />
-                ))}
-                <Text className="ml-2 text-xl text-gray-600">(10)</Text>
-              </Box>
-            </Box>
-
-            <Box className="p-3 bg-gray-100 rounded space-y-2">
-              <Text className="font-semibold">Innovator</Text>
-              <ul>
-                {data.collaboration?.map((innovator, index) => (
-                  <li key={index}>{innovator}</li>
-                ))}
-              </ul>
-            </Box>
-          </Box>
-
-          <Box className="flex flex-col space-y-2 mt-5">
-            <Button colorScheme="blue" variant="outline" size="md">
-              Tambah ke Favorit
-            </Button>
-            <Button colorScheme="blue" size="md">
-              Hubungi Inovator
-            </Button>
-          </Box>
-        </Box>
-      </Box>
-
-      <Tabs variant="enclosed" className="m-3 md:max-w-6xl md:mx-auto md:mb-5">
-        <TabList>
-          <Tab className="space-x-1 font-bold">
-            <IconInfoCircle size={16} />
-            <span>Deskripsi</span>
-          </Tab>
-          <Tab className="space-x-1 font-bold">
-            <IconMessageCircle size={16} />
-            <span>Ulasan</span>
-          </Tab>
-          <Tab className="space-x-2">
-            <IconZoomQuestion size={16} />
-            <span>Pertanyaan</span>
-          </Tab>
-        </TabList>
-
-        <TabPanels className="border">
-          <TabPanel>
-            <Text className="font-semibold">Deskripsi</Text>
-            <Text>
-              {data?.deskripsi}
-            </Text>
-            <TableContainer className="border mt-5">
-              <Table variant="simple">
-                <Tbody>
-                  <Tr>
-                    <Td>Status Paten</Td>
-                    <Td>{data?.status_paten}</Td>
-                  </Tr>
-                  <Tr>
-                    <Td>Tahap Pengembangan</Td>
-                    <Td>{data?.development_stage}</Td>
-                  </Tr>
-                  <Tr>
-                    <Td>Nilai TKT</Td>
-                    <Td>{data?.score_tkt}</Td>
-                  </Tr>
-                  <Tr>
-                    <Td>Kata kunci Teknologi</Td>
-                    <Td>{data?.adventage}</Td>
-                  </Tr>
-                  <Tr>
-                    <Td>Kolaborasi Yang Diinginkan</Td>
-                    <Td>{data?.collaboration_details}</Td>
-                  </Tr>
-                </Tbody>
-              </Table>
-            </TableContainer>
-          </TabPanel>
-
-          <TabPanel>
-            <Text className="font-semibold">
-              Berikan ulasan untuk Inovasi ini
-            </Text>
-
-            {/* Two-column layout */}
-            <Flex direction={{ base: "column", md: "row" }} gap={6}>
-              {/* Left Column: Form to Post Comment */}
-              <Box flex={1}>
-                <VStack spacing={4} align="stretch">
-                  <Box>
-                    {/* Rating Component */}
-                    <Rating
-                      maxRating={5}
-                      onChange={(value) => setRating(value)}
-                    />
-                  </Box>
-
-                  {/* Textarea for Comment */}
-                  <FormControl>
-                    <FormLabel>Ulasan</FormLabel>
-                    <Textarea
-                      placeholder="Write your comment here..."
-                      size="md"
-                    // value={comment}
-                    // onChange={(e) => setComment(e.target.value)}
-                    />
-                  </FormControl>
-
-                  {/* Submit Button */}
-                  <Button colorScheme="yellow">Post Comment</Button>
-                </VStack>
-              </Box>
-
-              {/* Right Column: Comments from Other Members */}
-              <Box flex={1}>
-                <Text fontSize="lg" mb={4} fontWeight="bold">
-                  Semua Ulasan (90)
+            <Flex alignItems="center" gap={4}>
+              <Box bg="green.500" color="white" px={3} py={2} borderRadius="full">
+                <Text fontSize="sm" fontWeight="semibold">
+                  {data?.category?.name}
                 </Text>
-
-                {/* List of Comments */}
-                <VStack spacing={4} align="stretch">
-                  {[1, 2, 3, 4, 5].map((x) => (
-                    <Box p={3} bg="gray.50" className="space-y-2">
-                      <Box className="flex gap-5">
-                        <Avatar name='Dan Abrahmov' src='https://bit.ly/dan-abramov' />
-                        <Box>
-                          <Text fontWeight="bold">John Doe</Text>
-                          <Text>This is a great innovation! Keep it up!</Text>
-                        </Box>
-                      </Box>
-                      <Box className="flex items-center">
-                        {[1, 2, 3, 4, 5].map((x) => (
-                          <IconStarFilled
-                            key={x}
-                            className="text-yellow-400 text-xl"
-                          />
-                        ))}
-                      </Box>
-                      <Text className="text-sm">24-09-2024</Text>
-                    </Box>
-                  ))}
-                </VStack>
               </Box>
+              <Flex alignItems="center">
+                <StarRating rating={avgRating} />
+                <Text ml={2} color="gray.600">
+                  ({data?.rating?.length})
+                </Text>
+              </Flex>
             </Flex>
-          </TabPanel>
 
-          <TabPanel className="space-y-4">
-            <Text className="font-semibold">
-              Pertanyaan yang sering diajukan
-            </Text>
-            <Accordion allowToggle>
-            {data.faq?.map((item, index) => (
-              <AccordionItem key={index}>
-                <h2>
-                  <AccordionButton>
-                    <Box flex="1" textAlign="left">
-                      {item?.question}
-                    </Box>
-                    <AccordionIcon />
-                  </AccordionButton>
-                </h2>
-                <AccordionPanel pb={4}>{item?.answer}</AccordionPanel>
-              </AccordionItem>
-            ))}
-          </Accordion> 
-          </TabPanel>
-        </TabPanels>
-      </Tabs>
+            <Box bg="gray.100" p={4} borderRadius="md">
+              <Text fontWeight="semibold" mb={2}>
+                Innovator
+              </Text>
+              <VStack align="stretch" spacing={1}>
+                {data?.collaboration?.map((innovator: string, index: number) => (
+                  <Text key={index}>{innovator}</Text>
+                ))}
+              </VStack>
+            </Box>
 
+            <Flex gap={4}>
+              <Button onClick={
+                auth.user ? addWhitelist : () => navigate("/login")
+              } colorScheme="blue" variant="outline" flex={1}>
+                Tambah ke Favorit
+              </Button>
+              <Button colorScheme="blue" flex={1}>
+                Hubungi Inovator
+              </Button>
+            </Flex>
+          </Box>
+        </Flex>
+
+        <Tabs variant="enclosed" mt={10}>
+          <TabList>
+            <Tab>
+              <IconInfoCircle size={16} />
+              <Text ml={2}>Deskripsi</Text>
+            </Tab>
+            <Tab>
+              <IconMessageCircle size={16} />
+              <Text ml={2}>Ulasan</Text>
+            </Tab>
+            <Tab>
+              <IconZoomQuestion size={16} />
+              <Text ml={2}>Pertanyaan</Text>
+            </Tab>
+          </TabList>
+
+          <TabPanels>
+            <TabPanel>
+              <VStack align="stretch" spacing={6}>
+                <Text>{data?.description}</Text>
+                <TableContainer>
+                  <Table variant="simple">
+                    <Tbody>
+                      <Tr>
+                        <Td fontWeight="semibold">Status Paten</Td>
+                        <Td>{data?.status_paten}</Td>
+                      </Tr>
+                      <Tr>
+                        <Td fontWeight="semibold">Tahap Pengembangan</Td>
+                        <Td>{data?.development_stage}</Td>
+                      </Tr>
+                      <Tr>
+                        <Td fontWeight="semibold">Nilai TKT</Td>
+                        <Td>{data?.score_tkt}</Td>
+                      </Tr>
+                      <Tr>
+                        <Td fontWeight="semibold">Kelebihan Teknologi</Td>
+                        <Td>{data?.adventage}</Td>
+                      </Tr>
+                      <Tr>
+                        <Td fontWeight="semibold">Kolaborasi Yang Diinginkan</Td>
+                        <Td>{data?.collaboration_details}</Td>
+                      </Tr>
+                    </Tbody>
+                  </Table>
+                </TableContainer>
+              </VStack>
+            </TabPanel>
+
+            <TabPanel>
+              <Flex direction={{ base: "column", md: "row" }} gap={6}>
+                {auth.user ? (
+                  <Box flex={1}>
+                    <form onSubmit={formik.handleSubmit}>
+                      <VStack spacing={4} align="stretch">
+                        <FormControl isInvalid={formik.touched.rating && !!formik.errors.rating}>
+                          <FormLabel>Rating</FormLabel>
+                          <Rating
+                            value={formik.values.rating}
+                            onChange={(value) => formik.setFieldValue("rating", value)}
+                          />
+                        </FormControl>
+                        <FormControl isInvalid={formik.touched.comment && !!formik.errors.comment}>
+                          <FormLabel>Ulasan</FormLabel>
+                          <Textarea
+                            {...formik.getFieldProps("comment")}
+                            placeholder="Write your comment here..."
+                          />
+                        </FormControl>
+                        <Button type="submit" colorScheme="yellow">
+                          Post Comment
+                        </Button>
+                      </VStack>
+                    </form>
+                  </Box>
+                ) : (
+                  <Box flex={1}>
+                    <Text mb={4}>
+                      Anda harus login terlebih dahulu untuk memberikan ulasan
+                    </Text>
+                    <Button onClick={() => navigate("/login")} colorScheme="blue">
+                      Login
+                    </Button>
+                  </Box>
+                )}
+
+                <Box flex={1}>
+                  <Text fontSize="lg" mb={4} fontWeight="bold">
+                    Semua Ulasan ({data?.rating?.length})
+                  </Text>
+                  <VStack spacing={4} align="stretch">
+                    {data?.rating?.map((rating: any, index: number) => (
+                      <Box key={index} p={4} bg="gray.50" borderRadius="md">
+                        <Flex gap={4}>
+                          <Avatar name={rating?.user_id?.fullname} src={rating?.user_id?.profile || "https://bit.ly/dan-abramov"} />
+                          <Box>
+                            <Text fontWeight="bold">{rating?.user_id?.fullname}</Text>
+                            <StarRating rating={rating.rating} size={16} />
+                            <Text mt={2}>{rating.comment}</Text>
+                            <Text fontSize="sm" color="gray.500" mt={1}>
+                              {new Date(rating.createdAt).toLocaleDateString()}
+                            </Text>
+                          </Box>
+                        </Flex>
+                      </Box>
+                    ))}
+                  </VStack>
+                </Box>
+              </Flex>
+            </TabPanel>
+
+            <TabPanel>
+              <Text fontSize="xl" fontWeight="semibold" mb={4}>
+                Pertanyaan yang sering diajukan
+              </Text>
+              <Accordion allowToggle>
+                {data?.faq?.map((item: any, index: number) => (
+                  <AccordionItem key={index}>
+                    <h2>
+                      <AccordionButton>
+                        <Box flex="1" textAlign="left">
+                          {item?.question}
+                        </Box>
+                        <AccordionIcon />
+                      </AccordionButton>
+                    </h2>
+                    <AccordionPanel pb={4}>{item?.answer}</AccordionPanel>
+                  </AccordionItem>
+                ))}
+              </Accordion>
+            </TabPanel>
+          </TabPanels>
+        </Tabs>
+      </Box>
       <Footer />
     </>
   );

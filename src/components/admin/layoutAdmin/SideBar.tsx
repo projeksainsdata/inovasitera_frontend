@@ -1,7 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { navItems, NavItem } from './NavItems';
 import { motion, AnimatePresence } from 'framer-motion';
+import Logo from "@/assets/Logo1.png"
+import { useAuth } from '@/hooks/useAuth';
+import { useToast } from '@chakra-ui/react';
+import AuthApiService from '@/services/apiServices/auth.api.service';
+import { isAxiosError } from 'axios';
 
 interface SidebarProps {
   isOpen: boolean;
@@ -26,6 +31,43 @@ const Sidebar: React.FC<SidebarProps> = ({
     (item) =>
       item.access.includes('*') || item.access.includes(userAccess as never),
   );
+  const auth = useAuth();
+  const toast = useToast();
+  const navigate = useNavigate();
+
+  const handleLogout = async () => {
+    try {
+      await AuthApiService.logout();
+      auth.logout();
+      toast({
+        title: 'Success',
+        description: 'Logout successfully',
+        status: 'success',
+        duration: 5000,
+        isClosable: true
+      });
+      navigate('/');
+    } catch (error) {
+      if (isAxiosError(error)) {
+        toast({
+          title: 'Error',
+          description: error.response?.data.message || 'Failed to logout',
+          status: 'error',
+          duration: 5000,
+          isClosable: true
+        });
+        return
+      }
+      toast({
+        title: 'Error',
+        description: 'Failed to logout',
+        status: 'error',
+        duration: 5000,
+        isClosable: true
+      });
+
+    }
+  };
 
   useEffect(() => {
     const handleResize = () => {
@@ -64,18 +106,18 @@ const Sidebar: React.FC<SidebarProps> = ({
         initial={isMobile ? { x: '-100%' } : false}
         animate={isMobile ? { x: isOpen ? 0 : '-100%' } : {}}
         transition={{ duration: 0.3, ease: 'easeInOut' }}
-        className="fixed inset-y-0 left-0 z-50 w-64 overflow-y-auto bg-black lg:relative lg:translate-x-0"
+        className="fixed inset-y-0 left-0 z-50 w-64 overflow-y-auto bg-orange-100 lg:relative lg:translate-x-0"
       >
-        <div className="flex h-full flex-col">
+        <div className="flex h-full flex-col justify-between">
           <div className="flex items-center justify-between p-4">
-            <Link to="/admin" className="text-2xl font-bold text-white">
-              Admin Panel
+            <Link to="/" className="text-2xl font-bold text-black">
+              <img src={Logo} className='w-32' />
             </Link>
             {isMobile && (
-              <button onClick={toggleSidebar} className="text-white">
+              <button onClick={toggleSidebar} className="text-black">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
-                  className="size-6"
+                  className="size-5"
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
@@ -96,7 +138,7 @@ const Sidebar: React.FC<SidebarProps> = ({
                 <li key={group} className="mb-2">
                   <button
                     onClick={() => toggleDropdown(group)}
-                    className="flex w-full items-center justify-between px-6 py-2 text-white transition-colors duration-200 hover:bg-[#1c5a7a]"
+                    className="font-bold flex w-full items-center justify-between px-6 py-2 text-black transition-colors duration-200 hover:bg-blue-700 hover:text-white"
                   >
                     <span>{group}</span>
                     <motion.svg
@@ -126,11 +168,10 @@ const Sidebar: React.FC<SidebarProps> = ({
                           <li key={item.href}>
                             <Link
                               to={item.href}
-                              className={`flex items-center px-6 py-2 text-sm text-white transition-colors duration-200 hover:bg-[#1c5a7a] ${
-                                location.pathname === item.href
-                                  ? 'bg-[#1c5a7a]'
-                                  : ''
-                              }`}
+                              className={`flex items-center px-6 py-2 text-sm text-black transition-colors duration-200 hover:bg-orange-300 ${location.pathname === item.href
+                                ? 'bg-orange-300'
+                                : ''
+                                }`}
                               onClick={isMobile ? toggleSidebar : undefined}
                             >
                               {item.icon}
@@ -145,6 +186,7 @@ const Sidebar: React.FC<SidebarProps> = ({
               ))}
             </ul>
           </nav>
+          <button onClick={handleLogout} className='bg-red-600 px-3 py-2 rounded m-5 text-white'>Keluar Sistem</button>
         </div>
       </motion.aside>
     </>

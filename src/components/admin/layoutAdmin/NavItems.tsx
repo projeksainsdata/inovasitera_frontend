@@ -1,4 +1,5 @@
 import React from 'react';
+import { IconDashboard, IconUsers, IconCategory, IconBox,IconPlus } from '@tabler/icons-react';
 
 export interface NavItem {
   href: string;
@@ -12,66 +13,36 @@ export const navItems: NavItem[] = [
   {
     href: '/admin',
     label: 'Dashboard',
-    icon: (
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        className="size-5"
-        viewBox="0 0 20 20"
-        fill="currentColor"
-      >
-        <path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z" />
-      </svg>
-    ),
+    icon: <IconDashboard size={24} />,  // Use Tabler Icon here
     group: 'Analytics',
     access: ['*'],
   },
   {
     href: '/admin/user',
     label: 'Users',
-    icon: (
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        className="size-5"
-        viewBox="0 0 20 20"
-        fill="currentColor"
-      >
-        <path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z" />
-      </svg>
-    ),
-    access: ['*'],
+    icon: <IconUsers size={24} />,  // Use Tabler Icon here
     group: 'Users',
+    access: ['*'],
   },
   {
     href: '/admin/kategori',
     label: 'Categories',
-    icon: (
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        className="size-5"
-        viewBox="0 0 20 20"
-        fill="currentColor"
-      >
-        <path d="M7 3a1 1 0 000 2h6a1 1 0 100-2H7zM4 7a1 1 0 011-1h10a1 1 0 110 2H5a1 1 0 01-1-1zM2 11a2 2 0 012-2h12a2 2 0 012 2v4a2 2 0 01-2 2H4a2 2 0 01-2-2v-4z" />
-      </svg>
-    ),
-    access: ['*'],
+    icon: <IconCategory size={24} />,  // Use Tabler Icon here
     group: 'Kategori',
+    access: ['*'],
   },
   {
     href: '/admin/manajemeninovasi',
-    label: 'Manajemen Produk Inovasi',
-    icon: (
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        className="size-5"
-        viewBox="0 0 20 20"
-        fill="currentColor"
-      >
-        <path d="M7 3a1 1 0 000 2h6a1 1 0 100-2H7zM4 7a1 1 0 011-1h10a1 1 0 110 2H5a1 1 0 01-1-1zM2 11a2 2 0 012-2h12a2 2 0 012 2v4a2 2 0 01-2 2H4a2 2 0 01-2-2v-4z" />
-      </svg>
-    ),
+    label: 'Produk Inovasi',
+    icon: <IconBox size={24} />,  // Use Tabler Icon here
+    group: 'Manajemen Inovasi',
     access: ['*'],
-    group: 'Manajemen Admin Inovasi',
   },
-  
+  {
+    href: '/admin/tambahinovasi',
+    label: 'Tambah Inovasi',
+    icon: <IconPlus size={20} />,
+    group: 'Manajemen Inovasi',
+    access: ['*'],
+  },
 ];

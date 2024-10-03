@@ -10,13 +10,21 @@ import InnovationCard from "../components/InovationCard";
 import useDataFetch from "@/hooks/useFetchData";
 import { INNOVATION_PREFIX } from "@/lib/constants/api.contants";
 import { InovationResponse } from "@/lib/types/inovation.type";
+import LoadingSpinner from './Loading/LoadingSpinner';
 
 const ProdukHome: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
 
   const { data, loading, error } = useDataFetch<InovationResponse>(`${INNOVATION_PREFIX.INDEX}`, {
-    q: searchQuery, // Send the search query to filter data
+    page: 1,
+    perPage: 10,
   });
+
+  console.log(data)
+
+  if (loading) {
+    return <div className="text-center"><LoadingSpinner /></div>
+  }
 
   // Handle search input
   const handleSearch = (query: string) => {
@@ -28,7 +36,7 @@ const ProdukHome: React.FC = () => {
       <VStack spacing={4} align="stretch">
         <h1 className='text-center font-bold text-xl sm:text-3xl'>Jelajahi Riset & Inovasi ITERA</h1>
         <h2 className='text-center text-base mb-6'>Lihat Semua Inovasi yang ada di ITERA</h2>
-        
+
         {/* Search Input */}
         <InputGroup maxW="600px" mx="auto" mb={6}>
           <Input

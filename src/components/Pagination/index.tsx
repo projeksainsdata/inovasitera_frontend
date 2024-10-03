@@ -67,11 +67,10 @@ const Pagination: React.FC<PaginationProps> = ({
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3 }}
-      className="mt-10 flex items-center justify-center"
+      className="mt-10 flex gap-2 items-center justify-center"
     >
-      <Button
+      <button
         onClick={handlePrevPage}
-        colorScheme="red"
         className={`rounded-l-md px-6 py-2 ${currentPage === 1
           ? 'cursor-not-allowed bg-gray-300 text-gray-500'
           : 'bg-gray-200 text-gray-700 hover:bg-primary-100'
@@ -79,7 +78,7 @@ const Pagination: React.FC<PaginationProps> = ({
         disabled={currentPage === 1}
       >
         Prev
-      </Button>
+      </button>
 
       {getPageNumbers().map((page, index) => (
         <React.Fragment key={page}>
@@ -101,17 +100,16 @@ const Pagination: React.FC<PaginationProps> = ({
         </React.Fragment>
       ))}
 
-      <Button
+      <button
         onClick={handleNextPage}
-        colorScheme="red"
-        className={`rounded-r-md px-4 py-2 ${currentPage === totalPages
+        className={`rounded-r-md px-4 py-2 ${currentPage == totalPages
           ? 'cursor-not-allowed bg-gray-300 text-gray-500'
-          : 'bg-gray-200 text-gray-700 hover:bg-primary-100'
+          : 'bg-red-500 text-white hover:bg-red-400'
           }`}
         disabled={currentPage === totalPages}
       >
         Next
-      </Button>
+      </button>
     </motion.div>
   );
 };

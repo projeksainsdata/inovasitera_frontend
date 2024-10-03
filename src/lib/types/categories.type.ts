@@ -15,11 +15,11 @@ export interface Categories {
 export interface CategoriesCreate {
   name: string;
   description: string;
-  image: string;
+  image: string | File;
 }
 export interface CategoriesUpdate {
   _id: string;
   name: string;
   description: string;
-  image: string;
+  image: string | File;
 }

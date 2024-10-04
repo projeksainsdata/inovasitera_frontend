@@ -1,8 +1,6 @@
 import React from "react";
 
-import type {
-  WhiteList
-} from "@/types/whitelist.type";
+import type { WhiteList } from "@/types/whitelist.type";
 
 import { del } from "@/hooks/useSubmit";
 import toast from "react-hot-toast";
@@ -16,50 +14,17 @@ import SearchQuery from "@/components/Form/SearchQuery";
 import Pagination from "@/components/Pagination";
 
 const columns = [
-  {
-    key: "image",
-    label: "Gambar",
-  },
-  { 
-    key: "name",
-    label: "Judul Inovasi"
-  },
-  { 
-    key: "rating",
-    label: "Rating Inovasi"
-  },
+  { key: "image", label: "Gambar" },
+  { key: "name", label: "Judul Inovasi" },
+  { key: "rating", label: "Rating Inovasi" },
 ];
 
 const searchFields = [{ key: "name", label: "Wishlist" }];
 
 const TableWishlist: React.FC = () => {
-
   const { data, loading, error, updateParams, refetch, params } = useDataFetch<
     ResponseApi<WhiteList>
   >(`${WHITELIST_PREFIX.INDEX}`, { page: 1, perPage: 10 });
-  // const data = {
-  //   requestId: "string",
-  //   requestTime: "string",
-  //   data: [
-  //       {
-  //           id: 1,
-  //           image: "https://images.pexels.com/photos/586415/pexels-photo-586415.jpeg",
-  //           name: "Fabrikasi dan Hilirisasi Rompi Anti Peluru Berbahan Biomass Sawit",
-  //           link: `/inovasi/0`,
-  //           rating: 4,
-  //         },
-  //   ],    
-  //   pagination: {
-  //     total: 10,
-  //     perPage: 10,
-  //     page: 1,
-  //   },
-  // };
-  // const loading = false;
-  // const error = null;
-  // const updateParams = (newparams) => {};
-  // const refetch = () => {};
-  // const params = {};
 
   const handleSearch = (criteria: Record<string, string>) => {
     updateParams({ ...criteria, page: 1 });
@@ -89,12 +54,10 @@ const TableWishlist: React.FC = () => {
     }
   };
 
-
   const handleEdit = (row: any) => {
     setInitialValues(row);
     setIsModalOpen(true);
   };
-
 
   if (loading) return <OverlaySpinner show={loading} />;
   if (error) toast.error(error.message);
@@ -116,12 +79,10 @@ const TableWishlist: React.FC = () => {
           onEdit={handleEdit}
           onDelete={handleDelete}
         />
-
         <Pagination
           currentPage={data?.pagination?.page || 1}
           totalPages={
-            Math.ceil(data?.pagination?.total! / data?.pagination?.perPage!) ||
-            1
+            Math.ceil(data?.pagination?.total! / data?.pagination?.perPage!) || 1
           }
           onPageChange={handlePageChange}
         />

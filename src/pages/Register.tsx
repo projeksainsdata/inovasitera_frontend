@@ -84,8 +84,10 @@ const initialValues: RegisterSpecification = {
   dateOfBirth: "",
   gender: "",
   role: "member",
-  fakultas: "",
-  prodi: "",
+  inovator: {
+    fakultas: "",
+    prodi: ""
+  },
   password: "",
   confirmPassword: "",
 };
@@ -103,7 +105,7 @@ const FormField = ({ formik, name, label, type = "text", ...props }: { formik: a
       type={type}
       {...props}
     />
-    <FormErrorMessage>{formik.errors[name]}</FormErrorMessage>
+    <FormErrorMessage>{formik.errors[name] as string}</FormErrorMessage>
   </FormControl>
 );
 
@@ -163,12 +165,6 @@ const RegisterPage: React.FC = () => {
     onSubmit: async (values: RegisterSpecification) => {
       try {
         // convert format fakultas and prodi to inovator.fakultas and inovator.prodi
-        if (values.role === "innovator") {
-          values["inovator.fakultas"] = values.fakultas;
-          values["inovator.prodi"] = values.prodi;
-        }
-        delete values.fakultas;
-        delete values.prodi;
 
         const response = await AuthApiService.register(values);
 
@@ -190,7 +186,7 @@ const RegisterPage: React.FC = () => {
           password: values.password
         })
 
-        await auth?.login(responseLogin?.data?.data?.access);
+        auth?.login(responseLogin?.data?.data?.access);
 
 
         toast({
@@ -237,12 +233,12 @@ const RegisterPage: React.FC = () => {
   );
 
   const prodiOptions = useMemo(() => {
-    const selectedFakultas = formik.values.fakultas;
+    const selectedFakultas = formik.values.inovator.fakultas;
     if (!selectedFakultas) return [];
     return selectedFakultas && PRODI[selectedFakultas]
       ? Object.entries(PRODI[selectedFakultas]).map(([, value]) => ({ value: value, label: value }))
       : [];
-  }, [formik.values.fakultas]);
+  }, [formik.values.inovator.fakultas]);
 
   const renderStepContent = (step: number) => {
     switch (step) {
@@ -285,20 +281,16 @@ const RegisterPage: React.FC = () => {
 
                 <SelectField
                   formik={formik}
-                  name="fakultas"
+                  name="inovator.fakultas"
                   label="Fakultas"
                   options={fakultasOptions}
-                  onChange={(e: any) => {
-                    formik.setFieldValue("fakultas", e.target.value);
-                    formik.setFieldValue("prodi", "");
-                  }}
                 />
                 <SelectField
                   formik={formik}
-                  name="prodi"
+                  name="inovator.prodi"
                   label="Program Studi"
                   options={prodiOptions}
-                  isDisabled={!formik.values.fakultas}
+                  isDisabled={!formik.values.inovator.fakultas}
                 />
               </>
             )}

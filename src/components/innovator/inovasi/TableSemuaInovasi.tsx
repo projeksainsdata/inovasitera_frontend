@@ -8,25 +8,29 @@ import { ResponseApi } from '@/lib/types/api.type';
 import { INNOVATION_PREFIX } from "@/lib/constants/api.contants";
 import OverlaySpinner from "@/components/Loading/OverlayLoading";
 import Table from "@/components/Table";
-import SearchQuery from "@/components/Form/SearchQuery";
+import SearchQuery from "@/components/Form/GenericSearch";
 import Pagination from "@/components/Pagination";
+import { useNavigate } from "react-router-dom";
 
 const columns = [
   {
-    key: "image",
+    key: "thumbnail",
     label: "Gambar",
+    type: "image"
   },
   {
-    key: "name",
+    key: "title",
     label: "Judul Inovasi"
   },
   {
-    key: "tanggal",
-    label: "Tanggal Pembuatan"
+    key: "createdAt",
+    label: "Tanggal Pembuatan",
+    type: "date"
   },
   {
     key: "average_rating",
-    label: "Rating Inovasi"
+    label: "Rating Inovasi",
+    type: "rating"
   },
   {
     key: "status",
@@ -34,15 +38,22 @@ const columns = [
   },
 ];
 
-const searchFields = [{ key: "name", label: "Nama Inovator" }];
+const searchFields = [
+  { key: "name", label: "Nama Inovator" },
+  {
+    key: 'status', label: 'status Inovasi', type: 'select', options: [
+      { value: 'pending', label: 'Pending' },
+      { value: 'approved', label: 'Approved' },
+      { value: 'rejected', label: 'Rejected' },
+    ]
+  },];
 
 const TableSemuaInovasi: React.FC = () => {
-  const { data, loading, error, updateParams, refetch, params } = useDataFetch<
+  const { data, loading, updateParams, refetch, params } = useDataFetch<
     ResponseApi<Inovator>
   >(`${INNOVATION_PREFIX.USER}`, { page: 1, perPage: 10 });
+  const navigate = useNavigate();
 
-
-  console.log(data)
 
   const handleSearch = (criteria: Record<string, string>) => {
     updateParams({ ...criteria, page: 1 });
@@ -75,10 +86,10 @@ const TableSemuaInovasi: React.FC = () => {
   };
 
   const handleEdit = (row: any) => {
+    navigate(`/innovator/detail-inovasi/${row._id}`);
   };
 
   if (loading) return <OverlaySpinner show={loading} />;
-  if (error) toast.error(error.message);
 
   return (
     <>

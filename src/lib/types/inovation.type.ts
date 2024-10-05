@@ -25,27 +25,31 @@ export interface Pagination {
 }
 
 export interface InovationSchema {
+  _id: string;
   title: string;
-  description?: string;
+  description: string;
   category: string;
   user_id: string;
-  status?: string;
-  Image?: string;
-  adventage?: string;
-  status_paten?: string;
-  score_tkt?: string;
-  invesment_value?: string;
-  collaboration?: string[];
-  collaboration_details?: string;
+  status: string;
+  thun: string;
+  adventage: string;
+  status_paten: string;
+  score_tkt: string;
+  collaboration: string[];
+  collaboration_details: string;
+
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 export interface InovationUpdateSchema {
-  _id: string;
+  _id: any;
   title: string;
-  description?: string;
+  description: string;
   category: string;
+  user_id: string;
   status?: string;
-  Image?: string;
+  Image: string;
   adventage?: string;
   status_paten?: string;
   score_tkt?: string;

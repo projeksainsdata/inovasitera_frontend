@@ -1,8 +1,10 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import GenericForm, { FieldConfig } from '@/components/Form/GenericForm';
 import * as Yup from 'yup';
 
 import { UserCreate, UserUpdate } from '@/lib/types/user.type';
+import { FAKULTAS } from '@/lib/constants/fakultas.constans';
+import { PRODI_ARRAY } from '@/lib/constants/prodi.constans';
 
 interface PropsFormUser {
   handleSubmit: (props: UserCreate | UserUpdate) => void;
@@ -13,29 +15,37 @@ const FormUser: React.FC<PropsFormUser> = ({
   handleSubmit,
   initialValues,
 }) => {
+
+  const initialValuesForm: UserCreate | UserUpdate =
+    initialValues || {
+      role: '',
+      fullname: '',
+      username: '',
+      email: '',
+      profile: '',
+      address: '',
+      phonenumber: '',
+      gender: '',
+      dateOfBirth: '',
+      inovator: {
+        unit: '',
+        fields: [],
+        fakultas: '',
+        prodi: '',
+        status: '',
+      },
+    };
+  const fakultasOptions = useMemo(() =>
+    Object.entries(FAKULTAS).map(([, value]) => ({ value: value, label: value })),
+    []
+  );
+
+
+
+
+
   // Remove the declaration of FormUser variable
   const fields: FieldConfig[] = [
-
-    //   role?: string;
-    // fullname: string;
-    // username: string;
-    // email: string;
-    // password: string;
-    // provider?: string;
-    // profile?: string;
-    // address?: string;
-    // phonenumber?: string;
-    // gender?: string;
-    // dateOfBirth?: string;
-    // forgotPassword?: string;
-    // resetPassword?: string;
-    // inovator?: {
-    //   unit?: string;
-    //   fields?: any[];
-    //   itera_fakultas?: string;
-    //   itera_prodi?: string;
-    // };
-
     {
       name: 'role',
       label: 'Role',
@@ -43,7 +53,7 @@ const FormUser: React.FC<PropsFormUser> = ({
       options: [
         { value: 'admin', label: 'Admin' },
         { value: 'member', label: 'Member' },
-        { value: 'inovator', label: 'Inovator' },
+        { value: 'innovator', label: 'Inovator' },
       ],
 
       validation: Yup.string().required('Role is required'),
@@ -67,16 +77,6 @@ const FormUser: React.FC<PropsFormUser> = ({
       validation: Yup.string().required('Email is required'),
     },
     {
-      name: 'password',
-      label: 'Password',
-      type: 'text',
-    },
-    {
-      name: 'profile',
-      label: 'Profile',
-      type: 'text',
-    },
-    {
       name: 'address',
       label: 'Address',
       type: 'text',
@@ -98,25 +98,50 @@ const FormUser: React.FC<PropsFormUser> = ({
     {
       name: 'dateOfBirth',
       label: 'Date of Birth',
-      type: 'text',
+      type: 'date'
     },
+    // check if role is inovator
 
-
+    {
+      name: 'profile',
+      label: 'Profile',
+      type: 'file',
+      accept: 'image/*',
+    },
   ];
 
-  const initialValuesForm: UserCreate | UserUpdate =
-    initialValues || {
-      role: '',
-      fullname: '',
-      username: '',
-      email: '',
-      profile: '',
-      address: '',
-      phonenumber: '',
-      gender: '',
-      dateOfBirth: '',
+  // check if role is innovator
+  const role = initialValues?.role;
 
-    };
+
+  if (role === 'innovator') {
+    fields.push(
+      {
+        name: 'inovator.fakultas',
+        label: 'Fakultas',
+        type: 'select',
+        options: fakultasOptions,
+      },
+      {
+        name: 'inovator.prodi',
+        label: 'Prodi',
+        type: 'select',
+        options: PRODI_ARRAY.map((value) => ({ value: value.label, label: value.label })),
+      },
+      {
+        name: "inovator.status",
+        label: "Status user",
+        type: "select",
+        options: [
+          { value: "pending", label: "Pending" },
+          { value: "active", label: "Active" },
+          { value: "inactive", label: "inactive" },
+        ],
+      },
+    );
+  }
+
+
 
 
   return (

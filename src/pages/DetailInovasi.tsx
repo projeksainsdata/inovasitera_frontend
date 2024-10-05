@@ -60,12 +60,12 @@ const StarRating: React.FC<{ rating: number; size?: number }> = ({ rating, size 
 };
 
 const DetailInovasi: React.FC = () => {
-  const params = useParams();
   const [data, setData] = useState<any>({});
   const auth = useAuth();
   const navigate = useNavigate();
   const toast = useToast();
 
+  const params = useParams();
   useEffect(() => {
     async function fetchData() {
       const res = await get(`${INNOVATION_PREFIX.INDEX}/${params.id}`);
@@ -145,6 +145,18 @@ const DetailInovasi: React.FC = () => {
         const res = await get(`${INNOVATION_PREFIX.INDEX}/${params.id}`);
         setData(res?.data);
       } catch (error) {
+        if (isAxiosError) {
+          const { response } = error;
+          if (response?.data?.message) {
+            toast({
+              title: response.data.message,
+              status: "error",
+              duration: 3000,
+              isClosable: true,
+            });
+            return;
+          }
+        }
         toast({
           title: "Error submitting rating",
           status: "error",

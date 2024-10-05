@@ -9,11 +9,11 @@ const DragDropFileInput = React.lazy(() => import('@/components/Form/DragDropFil
 const Checkbox = React.lazy(() => import('@/components/Form/CheckBoxInput'));
 const DateTimeRange = React.lazy(() => import('@/components/Form/DateTimeRangeInput'));
 const Radio = React.lazy(() => import('@/components/Form/RadioInput'));
-
+const Date = React.lazy(() => import('@/components/Form/DateInput'));
 export interface FieldConfig {
   name: string;
   label: string;
-  type: 'text' | 'email' | 'password' | 'select' | 'tags' | 'file' | 'checkbox' | 'dateTimeRange' | 'radio' | 'number' | 'textarea' | 'currency' | 'markdown' | 'multiselect' | 'url';
+  type: 'text' | 'email' | 'password' | 'select' | 'tags' | 'file' | 'checkbox' | 'dateTimeRange' | 'radio' | 'number' | 'textarea' | 'currency' | 'markdown' | 'multiselect' | 'url' | 'date';
   options?: { value: string; label: string }[];
   validation?: Yup.AnySchema;
   placeholder?: string;
@@ -77,6 +77,8 @@ const GenericForm: React.FC<GenericFormProps> = ({ fields, onSubmit, initialValu
                 return <DateTimeRange key={`dateTimeRange-${index}`} {...commonProps} />;
               case 'radio':
                 return <Radio key={`radio-${index}`} {...commonProps} options={field.options || []} />;
+              case 'date':
+                return <Date key={`date-${index}`} {...commonProps} />;
               default:
                 return <GenericInput key={`default-${index}`} {...commonProps} type={field.type as 'number' | 'text' | 'email' | 'password' | 'textarea' | 'currency' | 'multiselect' | 'url'} />;
             }

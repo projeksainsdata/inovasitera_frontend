@@ -1,3 +1,5 @@
+import { Token } from "./auth.type";
+
 /* eslint-disable @typescript-eslint/no-explicit-any */
 export interface USER {
   inovator: Inovator;
@@ -13,7 +15,7 @@ export interface USER {
   resetPassword: string;
   emailVerify: string;
   emailVerified: boolean;
-  profile: string;
+  profile: string | File;
   dateOfBirth: string;
   gender: string;
 }
@@ -21,11 +23,9 @@ export interface USER {
 export interface Inovator {
   unit: string;
   fields: any[];
-  itera_fakultas?: string;
-  itera_prodi?: string;
+  fakultas?: string;
+  prodi?: string;
   status: string;
-  fakultas: string;
-  prodi: string;
 }
 
 export interface UserCreate {
@@ -35,7 +35,7 @@ export interface UserCreate {
   email: string;
   password: string;
   provider?: string;
-  profile?: string;
+  profile?: string | File;
   address?: string;
   phonenumber?: string;
   gender?: string;
@@ -45,8 +45,9 @@ export interface UserCreate {
   inovator?: {
     unit?: string;
     fields?: any[];
-    itera_fakultas?: string;
-    itera_prodi?: string;
+    fakultas?: string;
+    prodi?: string;
+    status?: string;
   };
 }
 export interface UserUpdate {
@@ -57,7 +58,7 @@ export interface UserUpdate {
   email?: string;
   password?: string;
   provider?: string;
-  profile?: string;
+  profile?: string | File;
   address?: string;
   phonenumber?: string;
   gender?: string;
@@ -67,7 +68,13 @@ export interface UserUpdate {
   inovator?: {
     unit?: string;
     fields?: any[];
-    itera_fakultas?: string;
-    itera_prodi?: string;
+    fakultas?: string;
+    prodi?: string;
+    status?: string;
   };
+}
+
+export interface ResponseUpdateUser {
+  tokens: Token;
+  user: USER;
 }

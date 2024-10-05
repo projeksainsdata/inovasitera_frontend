@@ -1,13 +1,12 @@
-/* eslint-disable tailwindcss/no-custom-classname */
 import React, { useState } from "react";
 // import { IconChevronUp, FaSortDown, FaEdit, FaTrash } from "react-icons/fa";
-import {IconTrash,IconEdit,IconChevronDown,IconChevronUp} from "@tabler/icons-react"
+import { IconTrash, IconEdit, IconChevronDown, IconChevronUp } from "@tabler/icons-react"
 import { motion } from "framer-motion";
 import { IconStarFilled } from "@tabler/icons-react";
 interface Column {
   key: string;
   label: string;
-  type?: "image" | any;
+  type?: "image" | "status" | "rating" | "date" | any;
 }
 
 interface DataItem {
@@ -22,6 +21,8 @@ interface TableProps {
   onSort: (column: string, direction: "asc" | "desc") => void;
   onEdit: (row: any) => void;
   onDelete: (id: string | number) => void;
+  isDelete?: boolean;
+  isEdit?: boolean;
 }
 
 const Table: React.FC<TableProps> = ({
@@ -31,6 +32,8 @@ const Table: React.FC<TableProps> = ({
   onSort,
   onEdit,
   onDelete,
+  isDelete = true,
+  isEdit = true,
 }) => {
   const [sortColumn, setSortColumn] = useState<string | null>(
     params.sort || null
@@ -94,12 +97,14 @@ const Table: React.FC<TableProps> = ({
                   ))}
               </th>
             ))}
-            <th
-              scope="col"
-              className="px-6 py-3 text-left text-sm font-bold uppercase tracking-wider text-black"
-            >
-              Aksi
-            </th>
+            {(isDelete || isEdit) && (
+              <th
+                scope="col"
+                className="px-6 py-3 text-left text-sm font-bold uppercase tracking-wider text-black"
+              >
+                Aksi
+              </th>
+            )}
           </tr>
         </thead>
         <tbody className="divide-y divide-gray-200 bg-white">
@@ -120,22 +125,23 @@ const Table: React.FC<TableProps> = ({
                       src={getNestedValue(row, column?.key).toString()}
                       className="w-48 h-22 object-cover rounded"
                     />
-                  ) : column?.key == "status" ? (
+                  ) : column?.type == "status" ? (
                     <div
-                      className={`px-3 py-2 rounded-full text-white text-center font-bold uppercase ${
-                        getNestedValue(row, column?.key).toString() ==
+                      className={`px-3 py-2 rounded-full text-white text-center font-bold uppercase ${getNestedValue(row, column?.key).toString() ==
                         "diterima"
-                          ? "bg-green-500"
-                          : "bg-red-500"
-                      }`}
+                        ? "bg-green-500"
+                        : "bg-red-500"
+                        }`}
                     >
                       {getNestedValue(row, column?.key).toString()}
                     </div>
-                  ) : column?.key == "rating" ? (
+                  ) : column?.type == "rating" ? (
                     <span className="flex gap-3 items-center">
                       <IconStarFilled className="text-yellow-300" />
                       <h1 className="font-bold text-lg">{getNestedValue(row, column?.key).toString()}</h1>
                     </span>
+                  ) : column?.type == "date" ? (
+                    new Date(getNestedValue(row, column?.key).toString()).toLocaleDateString()
                   ) : (
                     truncateContent(
                       getNestedValue(row, column?.key).toString(),
@@ -144,22 +150,29 @@ const Table: React.FC<TableProps> = ({
                   )}
                 </td>
               ))}
-              <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
-                <motion.button
-                  whileHover={{ scale: 1.1 }}
-                  onClick={() => onEdit({ ...row })}
-                  className="mr-2 text-green-600 hover:text-green-900"
-                >
-                  <IconEdit />
-                </motion.button>
-                <motion.button
-                  whileHover={{ scale: 1.1 }}
-                  onClick={() => onDelete(row._id)}
-                  className="text-red-600 hover:text-red-900"
-                >
-                  <IconTrash />
-                </motion.button>
-              </td>
+              {(isDelete || isEdit) && (
+
+                <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
+                  {isEdit && (
+                    <motion.button
+                      whileHover={{ scale: 1.1 }}
+                      onClick={() => onEdit({ ...row })}
+                      className="mr-2 text-green-600 hover:text-green-900"
+                    >
+                      <IconEdit />
+                    </motion.button>
+                  )}
+                  {isDelete && (
+                    <motion.button
+                      whileHover={{ scale: 1.1 }}
+                    onClick={() => onDelete(row._id)}
+                      className="text-red-600 hover:text-red-900"
+                    >
+                      <IconTrash />
+                    </motion.button>
+                  )}
+                </td>
+              )}
             </motion.tr>
           ))}
         </tbody>

@@ -4,7 +4,7 @@ import { useAuth } from '@/hooks/useAuth';
 import OverlaySpinner from '@/components/Loading/OverlayLoading';
 interface PrivateRouteProps {
     children: React.ReactNode;
-    role?: [string];
+    role?: string[];
 }
 
 export const PrivateRoute: React.FC<PrivateRouteProps> = ({ children, role }) => {

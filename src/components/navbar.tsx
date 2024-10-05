@@ -17,7 +17,7 @@ const Navbar: React.FC = () => {
       case "innovator":
         return "/innovator/profil";
       case "member":
-        return "/member";
+        return "/member/profil";
       default:
         return "/admin";
     }

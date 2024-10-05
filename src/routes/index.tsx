@@ -29,6 +29,7 @@ import ResetPassword from '@/pages/ResetPassword';
 import UpdateInovasi from '@/pages/innovator/innovations/UpdateInovasi';
 import NotFoundPage from '@/components/NotFound';
 import ROLE, { ROLE_PERMISSION } from '@/lib/constants/role.contants';
+import TambahInovasi from '@/pages/admin/manajemenTambahInovasi';
 
 
 const AppRoutes: React.FC = () => {
@@ -71,6 +72,11 @@ const AppRoutes: React.FC = () => {
                             <ManajemenInovasiAdmin />
                         </PrivateRoute>}
                     />
+                    <Route path="/admin/tambahinovasi" element={
+                        <PrivateRoute role={ROLE_PERMISSION[ROLE.ADMIN]}>
+                            <TambahInovasi/>
+                        </PrivateRoute>
+                    }/>
 
                     <Route path="/inovasi" element={<ListInovasi />} />
                     <Route path="/inovasi/:id" element={<DetailInovasi />} />
@@ -97,6 +103,18 @@ const AppRoutes: React.FC = () => {
                     } />
                     <Route path="/innovator/wishlist-inovasi" element={
                         <PrivateRoute role={ROLE_PERMISSION[ROLE.INOVATOR]}>
+                            <InnovatorWishlistInovasi />
+                        </PrivateRoute>
+                    } />
+
+                    <Route path="/member/profil" element={
+                        <PrivateRoute role={ROLE_PERMISSION[ROLE.MEMBER]}>
+                            <Profil />
+                        </PrivateRoute>
+                    } />
+
+                    <Route path="/member/wishlist-inovasi" element={
+                        <PrivateRoute role={ROLE_PERMISSION[ROLE.MEMBER]}>
                             <InnovatorWishlistInovasi />
                         </PrivateRoute>
                     } />

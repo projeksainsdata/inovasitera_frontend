@@ -36,8 +36,6 @@ const AppRoutes: React.FC = () => {
         <Router>
             <AuthProvider>
                 <Routes>
-                    <Route path="*" exact={true} element={<NotFoundPage/>}/>
-
                     <Route path="/login" element={
                         <PublicRoute>
                             <Login />
@@ -115,7 +113,9 @@ const AppRoutes: React.FC = () => {
                         </PublicRoute>
                     } />
 
-                    
+
+                    <Route path="*" element={<NotFoundPage />} />
+
                 </Routes>
             </AuthProvider >
         </Router >

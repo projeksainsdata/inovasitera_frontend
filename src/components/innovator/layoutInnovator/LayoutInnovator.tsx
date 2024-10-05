@@ -2,6 +2,8 @@ import React, { ReactNode } from 'react';
 import Sidebar from './SideBar';
 import Header from './Header';
 import Footer from './Footer';
+import { useAuth } from '@/hooks/useAuth';
+
 interface LayoutInnovator {
   children: ReactNode;
 }
@@ -9,7 +11,8 @@ interface LayoutInnovator {
 const LayoutInnovator: React.FC<LayoutInnovator> = ({ children }) => {
   const [isSidebarOpen, setIsSidebarOpen] = React.useState(false);
 
-  const userAccess = 'admin';
+  const auth = useAuth();
+  const userAccess = auth.user?.role;
   const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
 
   return (

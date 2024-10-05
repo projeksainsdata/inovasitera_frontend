@@ -28,26 +28,28 @@ import {
   StepTitle,
   Stepper,
   FormErrorMessage,
-  useToast
+  useToast,
+  InputGroup,
+  InputRightElement,
 } from "@chakra-ui/react";
+import { IconEye, IconEyeOff } from "@tabler/icons-react";
 import { Link, useNavigate } from "react-router-dom";
 import ImageLogin from "../assets/ImageLogin.png";
 import Logo from "../assets/Logo1.png";
 import { FAKULTAS } from "@/lib/constants/fakultas.constans";
-import { PRODI } from '@/lib/constants/prodi.constans'
+import { PRODI } from "@/lib/constants/prodi.constans";
 import { RegisterSpecification } from "@/lib/specification/auth.spefication";
-
 
 // Validation schemas for each step
 const step1Schema = Yup.object().shape({
   fullname: Yup.string().required("Nama Lengkap is required"),
   username: Yup.string().required("Username is required"),
   email: Yup.string().email("Invalid email").required("Email is required"),
-  phonenumber: Yup.string().matches(/^[0-9]+$/, "Hanya angka yang diperbolehkan")
+  phonenumber: Yup.string()
+    .matches(/^[0-9]+$/, "Hanya angka yang diperbolehkan")
     .min(10, "Nomor telepon minimal 10 digit")
     .max(15, "Nomor telepon maksimal 15 digit")
     .required("No Telepon is required"),
-
 });
 
 const step2Schema = Yup.object().shape({
@@ -63,11 +65,15 @@ const step2Schema = Yup.object().shape({
 const step3Schema = Yup.object().shape({
   password: Yup.string()
     .min(8, "Password minimal 8 karakter")
-    .matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d@$!%*?&]{8,}$/,
-      "Password harus mengandung huruf besar, huruf kecil, angka")
+    .matches(
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d@$!%*?&]{8,}$/,
+      "Password harus mengandung huruf besar, huruf kecil, angka"
+    )
     .required("Password diperlukan"),
-  confirmPassword: Yup.string().oneOf([Yup.ref("password"), undefined], "Password tidak cocok")
-
+  confirmPassword: Yup.string().oneOf(
+    [Yup.ref("password"), undefined],
+    "Password tidak cocok"
+  ),
 });
 
 // Combined schema for all steps
@@ -97,19 +103,50 @@ import { AxiosError } from "axios";
 import AuthApiService from "@/services/apiServices/auth.api.service";
 import { useAuth } from "@/hooks/useAuth";
 
-const FormField = ({ formik, name, label, type = "text", ...props }: { formik: any, name: keyof typeof initialValues, label: string, type?: string, [key: string]: any }) => (
+const FormField = ({
+  formik,
+  name,
+  label,
+  type = "text",
+  passwordState,
+  onClick,
+  ...props
+}: {
+  formik: any;
+  name: keyof typeof initialValues;
+  label: string;
+  type?: string;
+  [key: string]: any;
+  passwordState: boolean;
+  onClick?: () => void;
+}) => (
   <FormControl isInvalid={!!formik.errors[name] && !!formik.touched[name]}>
     <FormLabel>{label}</FormLabel>
-    <Input
-      {...formik.getFieldProps(name)}
-      type={type}
-      {...props}
-    />
-    <FormErrorMessage>{formik.errors[name] as string}</FormErrorMessage>
+    <InputGroup>
+      <Input {...formik.getFieldProps(name)} type={type} {...props} />
+      {label.includes("Password") && 
+      <InputRightElement width="4.5rem" onClick={onClick}>
+        <Button h="1.75rem" size="sm">
+          {passwordState ? <IconEyeOff /> : <IconEye />}
+        </Button>
+      </InputRightElement>
+      }
+      </InputGroup>
+      <FormErrorMessage>{formik.errors[name]}</FormErrorMessage>
   </FormControl>
 );
 
-const RadioField = ({ formik, name, label, options }: { formik: any, name: string, label: string, options: { value: string, label: string }[] }) => (
+const RadioField = ({
+  formik,
+  name,
+  label,
+  options,
+}: {
+  formik: any;
+  name: string;
+  label: string;
+  options: { value: string; label: string }[];
+}) => (
   <FormControl isInvalid={!!formik.errors[name] && !!formik.touched[name]}>
     <FormLabel>{label}</FormLabel>
     <RadioGroup
@@ -128,7 +165,19 @@ const RadioField = ({ formik, name, label, options }: { formik: any, name: strin
   </FormControl>
 );
 
-const SelectField = ({ formik, name, label, options, ...props }: { formik: FormikProps<typeof initialValues>, name: keyof typeof initialValues, label: string, options: { value: string, label: string }[], [key: string]: any }) => (
+const SelectField = ({
+  formik,
+  name,
+  label,
+  options,
+  ...props
+}: {
+  formik: FormikProps<typeof initialValues>;
+  name: keyof typeof initialValues;
+  label: string;
+  options: { value: string; label: string }[];
+  [key: string]: any;
+}) => (
   <FormControl isInvalid={!!(formik.errors[name] && formik.touched[name])}>
     <FormLabel>{label}</FormLabel>
     <Select
@@ -180,14 +229,13 @@ const RegisterPage: React.FC = () => {
         // reset form
         formik.resetForm();
 
-        // login 
+        // login
         const responseLogin = await AuthApiService.login({
           email: values.email,
-          password: values.password
-        })
+          password: values.password,
+        });
 
-        auth?.login(responseLogin?.data?.data?.access);
-
+        await auth?.login(responseLogin?.data?.data?.access);
 
         toast({
           title: "Login berhasil",
@@ -198,10 +246,9 @@ const RegisterPage: React.FC = () => {
         });
 
         // redirect to dashboard
-        navigate("/", { replace: true, state: { from: "/register", } });
-      }
-      catch (error) {
-        // 
+        navigate("/", { replace: true, state: { from: "/register" } });
+      } catch (error) {
+        //
         if (error instanceof AxiosError) {
           toast({
             title: "Gagal membuat akun",
@@ -221,14 +268,16 @@ const RegisterPage: React.FC = () => {
           duration: 9000,
           isClosable: true,
         });
-
-
       }
-    }
+    },
   });
 
-  const fakultasOptions = useMemo(() =>
-    Object.entries(FAKULTAS).map(([, value]) => ({ value: value, label: value })),
+  const fakultasOptions = useMemo(
+    () =>
+      Object.entries(FAKULTAS).map(([, value]) => ({
+        value: value,
+        label: value,
+      })),
     []
   );
 
@@ -236,7 +285,10 @@ const RegisterPage: React.FC = () => {
     const selectedFakultas = formik.values.inovator.fakultas;
     if (!selectedFakultas) return [];
     return selectedFakultas && PRODI[selectedFakultas]
-      ? Object.entries(PRODI[selectedFakultas]).map(([, value]) => ({ value: value, label: value }))
+      ? Object.entries(PRODI[selectedFakultas]).map(([, value]) => ({
+          value: value,
+          label: value,
+        }))
       : [];
   }, [formik.values.inovator.fakultas]);
 
@@ -247,14 +299,28 @@ const RegisterPage: React.FC = () => {
           <>
             <FormField formik={formik} name="fullname" label="Nama Lengkap" />
             <FormField formik={formik} name="username" label="Username Anda" />
-            <FormField formik={formik} name="email" label="Email" type="email" />
-            <FormField formik={formik} name="phonenumber" label="Nomor Handphone" />
+            <FormField
+              formik={formik}
+              name="email"
+              label="Email"
+              type="email"
+            />
+            <FormField
+              formik={formik}
+              name="phonenumber"
+              label="Nomor Handphone"
+            />
           </>
         );
       case 2:
         return (
           <>
-            <FormField formik={formik} name="dateOfBirth" label="Tanggal Lahir" type="date" />
+            <FormField
+              formik={formik}
+              name="dateOfBirth"
+              label="Tanggal Lahir"
+              type="date"
+            />
             <RadioField
               formik={formik}
               name="gender"
@@ -269,8 +335,8 @@ const RegisterPage: React.FC = () => {
               name="role"
               label="Daftar Sebagai"
               options={[
-                { value: "innovator", label: "innovator" },
-                { value: "member", label: "member" },
+                { value: "innovator", label: "Innovator" },
+                { value: "member", label: "Member" },
               ]}
             />
             {formik.values.role === "innovator" && (
@@ -305,6 +371,8 @@ const RegisterPage: React.FC = () => {
               label="Password"
               type={showPassword ? "text" : "password"}
               autoComplete="new-password"
+              onClick={() => setShowPassword(!showPassword)}
+              passwordState={showPassword}
             />
             <FormField
               formik={formik}
@@ -312,30 +380,18 @@ const RegisterPage: React.FC = () => {
               label="Konfirmasi Password"
               type={showConfirmPassword ? "text" : "password"}
               autoComplete="new-password"
+              onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+              passwordState={showConfirmPassword}
             />
-            <HStack spacing={4}>
-              <Button
-                size="sm"
-                onClick={() => setShowPassword(!showPassword)}
-              >
-                {showPassword ? "Sembunyikan Password" : "Tampilkan Password"}
-              </Button>
-              <Button
-                size="sm"
-                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-              >
-                {showConfirmPassword ? "Sembunyikan Password" : "Tampilkan Password"}
-              </Button>
-            </HStack>
           </>
         );
       default:
         return null;
     }
-  }
+  };
 
   return (
-    <Flex alignItems="center" justifyContent="center" bg="gray.50">
+    <Flex alignItems="center" justifyContent="center">
       <Box w="full" h="full" shadow="lg" display={{ md: "flex" }}>
         <Box flex={1} display={{ base: "none", md: "block" }}>
           <Image

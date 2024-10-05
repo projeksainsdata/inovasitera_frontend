@@ -27,6 +27,7 @@ import InnovatorWishlistInovasi from '@/pages/innovator/wishlist/WishlistInovasi
 import Profil from '@/pages/Profile';
 import ResetPassword from '@/pages/ResetPassword';
 import UpdateInovasi from '@/pages/innovator/innovations/UpdateInovasi';
+import NotFoundPage from '@/components/NotFound';
 import ROLE, { ROLE_PERMISSION } from '@/lib/constants/role.contants';
 
 
@@ -35,6 +36,7 @@ const AppRoutes: React.FC = () => {
         <Router>
             <AuthProvider>
                 <Routes>
+                    <Route path="*" exact={true} element={<NotFoundPage/>}/>
 
                     <Route path="/login" element={
                         <PublicRoute>

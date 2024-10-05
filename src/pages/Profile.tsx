@@ -30,14 +30,12 @@ const validationSchema = Yup.object({
   phonenumber: Yup.string()
     .matches(/^[0-9]+$/, "Hanya angka yang diperbolehkan")
     .min(10, "Nomor telepon minimal 10 digit")
-    .max(15, "Nomor telepon maksimal 15 digit")
-    .required("No Telepon is required"),
+    .max(15, "Nomor telepon maksimal 15 digit"),
   dateOfBirth: Yup.date()
-    .max(new Date(), "Tanggal Lahir tidak boleh di masa depan")
-    .required("Tanggal Lahir is required"),
-  gender: Yup.string().required("Jenis Kelamin is required"),
-  fakultas: Yup.string().required("Fakultas is required"),
-  prodi: Yup.string().required("Program Studi is required"),
+    .max(new Date(), "Tanggal Lahir tidak boleh di masa depan"),
+  gender: Yup.string(),
+  fakultas: Yup.string(),
+  prodi: Yup.string(),
 });
 
 const EditProfile = () => {
@@ -78,8 +76,8 @@ const EditProfile = () => {
       try {
         let constructForm = {
           ...values,
-          // "inovator.fakultas":values.fakultas,
-          // "inovator.prodi":values.prodi
+          "inovator.fakultas": values.fakultas,
+          "inovator.prodi": values.prodi
         };
         // delete constructForm.fakultas;
         // delete constructForm.prodi;

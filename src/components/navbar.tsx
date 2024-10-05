@@ -8,9 +8,20 @@ import { useAuth } from '@/hooks/useAuth';
 const Navbar: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const auth = useAuth();
+  console.log(auth)
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
   };
+  const getProfilePath=(role) => {
+    switch (role) {
+      case "innovator":
+        return "/innovator/profil";
+      case "member":
+        return "/member";
+      default:
+        return "/admin";
+    }
+  }
 
   return (
     <>
@@ -30,7 +41,7 @@ const Navbar: React.FC = () => {
           {/* Conditionally render login/profile button */}
           <div className="hidden lg:flex items-center">
             {auth.isAuthenticated ? (
-              <Link to={'/innovator/profil'}>
+              <Link to={`${getProfilePath(auth.user?.role)}`}>
                 <Button colorScheme='red' borderRadius='full'>
                   Profile
                 </Button>
@@ -56,7 +67,7 @@ const Navbar: React.FC = () => {
             <Link to={'/inovasi'}><a className="text-black hover:text-gray-600 transition duration-200">Semua Inovasi</a></Link>
             <Link to={'/tentang'}><a className="text-black hover:text-gray-600 transition duration-200">Tentang</a></Link>
             {auth.isAuthenticated ? (
-              <Link to={'/innovator/profil'} className='text-sm'>
+              <Link to={`${getProfilePath(auth.user?.role)}`} className='text-sm'>
                 <Button colorScheme='red' size="sm">Profile</Button>
               </Link>
             ) : (

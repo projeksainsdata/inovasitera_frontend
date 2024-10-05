@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from "react";
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import React, { useState, useEffect, useMemo } from "react";
 import {
   Box,
   Badge,
@@ -14,7 +15,13 @@ import {
   GridItem,
   useToast,
   FormErrorMessage,
-  Link,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalFooter,
+  ModalBody,
+  ModalCloseButton,
 } from "@chakra-ui/react";
 import { useFormik } from "formik";
 import { IconPhotoPlus } from "@tabler/icons-react";
@@ -23,7 +30,12 @@ import AuthApiService from "@/services/apiServices/auth.api.service";
 import Layout from "@/components/innovator/layoutInnovator/LayoutInnovator";
 import { FAKULTAS } from "@/lib/constants/fakultas.constans";
 import { PRODI } from "@/lib/constants/prodi.constans";
-import { put } from "@/hooks/useSubmit";
+import { put, UploadImage } from "@/hooks/useSubmit";
+import { ErrorApiToast } from "@/helpers/ErrorApiToast";
+import { ResponseUpdateUser, USER } from "@/lib/types/user.type";
+import { USER_PREFIX } from "@/lib/constants/api.contants";
+import ROLE from "@/lib/constants/role.contants";
+import { useAuth } from "@/hooks/useAuth";
 
 const validationSchema = Yup.object({
   fullname: Yup.string().required("Nama is required"),
@@ -38,11 +50,25 @@ const validationSchema = Yup.object({
   prodi: Yup.string(),
 });
 
+
+const passwordChangeSchema = Yup.object({
+  currentPassword: Yup.string().required("Current password is required"),
+  newPassword: Yup.string()
+    .min(8, "Password minimal 8 karakter")
+    .matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d@$!%*?&]{8,}$/,
+      "Password harus mengandung huruf besar, huruf kecil, angka")
+    .required("Password diperlukan"),
+  confirmNewPassword: Yup.string().oneOf([Yup.ref("newPassword"), undefined], "Password tidak cocok")
+    .required('Confirm new password is required'),
+});
+
+
 const EditProfile = () => {
-  const [profileData, setProfileData] = useState(null);
-  const [tempProfileData, setTempProfileData] = useState(null);
+  const [profileData, setProfileData] = useState<USER | null>(null);
   const [profilePic, setProfilePic] = useState("");
+  const [isPasswordChangeModalOpen, setIsPasswordChangeModalOpen] = useState(false);
   const toast = useToast();
+  const auth = useAuth()
 
   const getProfile = async () => {
     try {
@@ -50,16 +76,54 @@ const EditProfile = () => {
       setProfileData(response.data.data);
       setProfilePic(response.data.data.profile);
 
-      setTempProfileData(response.data.data);
-    } catch (error) {
-      console.error("Failed to fetch profile:", error);
-    }
-  };
+    } catch (error: any) {
+      ErrorApiToast({ error });
 
+    };
+  }
   useEffect(() => {
     getProfile();
   }, []);
+  const passwordChangeFormik = useFormik({
+    initialValues: {
+      currentPassword: '',
+      newPassword: '',
+      confirmNewPassword: '',
+    },
+    validationSchema: passwordChangeSchema,
+    onSubmit: async (values, { setSubmitting, resetForm }) => {
+      try {
+        // Add API call to change password here
+        const responseUser = await put<ResponseUpdateUser>({
+          url: `${USER_PREFIX.INDEX}/${profileData?._id}`,
+          data: values,
+        });
 
+        auth.login(responseUser?.data?.tokens.access);
+
+        toast({
+          title: "Password changed successfully",
+          status: "success",
+          duration: 3000,
+          isClosable: true,
+        });
+        setIsPasswordChangeModalOpen(false);
+        resetForm();
+      } catch (error) {
+        toast({
+          title: "Error changing password",
+          description: "Please try again",
+          status: "error",
+          duration: 3000,
+          isClosable: true,
+        });
+      } finally {
+        setSubmitting(false);
+      }
+    },
+  })
+
+  console.log(passwordChangeFormik.errors);
   const formik = useFormik({
     initialValues: {
       fullname: profileData?.fullname || "",
@@ -67,25 +131,46 @@ const EditProfile = () => {
       phonenumber: profileData?.phonenumber || "",
       dateOfBirth: profileData?.dateOfBirth || "",
       gender: profileData?.gender || "1",
-      fakultas: profileData?.inovator.fakultas || "",
-      prodi: profileData?.inovator.prodi || "",
+      inovator: {
+        fakultas: profileData?.inovator?.fakultas || "",
+        prodi: profileData?.inovator?.prodi || "",
+      },
+      profile: profileData?.profile || "",
+
     },
     validationSchema,
     enableReinitialize: true,
     onSubmit: async (values, { setSubmitting }) => {
       try {
-        let constructForm = {
-          ...values,
-          "inovator.fakultas": values.fakultas,
-          "inovator.prodi": values.prodi
-        };
-        // delete constructForm.fakultas;
-        // delete constructForm.prodi;
 
-        await put({
-          url: `/api/v1/users/${profileData?._id}`,
-          data: constructForm,
+        if (values.profile && values.profile instanceof File) {
+          const uploadResult = await UploadImage({
+            file: values.profile,
+
+          });
+
+          if (!uploadResult.success) {
+            toast({
+              title: 'Error during image upload',
+              description: uploadResult.message,
+              status: 'error',
+              duration: 5000,
+              isClosable: true,
+            });
+            return;
+          }
+
+          values.profile = uploadResult.url || '';
+        }
+        const responseUser = await put<ResponseUpdateUser>({
+          url: `${USER_PREFIX.INDEX}/${profileData?._id}`,
+          data: values,
         });
+
+        setProfilePic(responseUser?.data?.user.profile);
+        setProfileData(responseUser?.data?.user);
+        auth.login(responseUser?.data?.tokens.access);
+
         toast({
           title: "Profil diperbarui.",
           description: "Informasi profil Anda telah diperbarui.",
@@ -95,7 +180,6 @@ const EditProfile = () => {
           position: "top-right",
         });
       } catch (error) {
-        console.error("Failed to update profile:", error);
         toast({
           title: "Error",
           description: "Gagal memperbarui profil.",
@@ -108,16 +192,25 @@ const EditProfile = () => {
       }
     },
   });
+  const fakultasOptions = useMemo(() =>
+    Object.entries(FAKULTAS).map(([, value]) => ({ value: value, label: value })),
+    []
+  );
 
-  const handleProfilePicChange = (e) => {
+  const prodiOptions = useMemo(() => {
+    const selectedFakultas = formik.values.inovator.fakultas;
+    if (!selectedFakultas) return [];
+    return selectedFakultas && PRODI[selectedFakultas]
+      ? Object.entries(PRODI[selectedFakultas]).map(([, value]) => ({ value: value, label: value }))
+      : [];
+  }, [formik.values.inovator.fakultas]);
+
+  const handleProfilePicChange = (e: any) => {
     const file = e.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = (event) => {
-        setProfilePic(event.target.result);
-      };
-      reader.readAsDataURL(file);
-    }
+    // set temp profile pic for preview
+    setProfilePic(URL.createObjectURL(file));
+
+    formik.setFieldValue("profile", file);
   };
 
   return (
@@ -155,9 +248,12 @@ const EditProfile = () => {
                     <h1 className="text-lg font-bold">
                       Ingin mengubah password?
                     </h1>
-                    <Link href="/forgot-password">
-                      <Button colorScheme="blue">Ubah Password</Button>
-                    </Link>
+                    <Button
+                      colorScheme="blue"
+                      onClick={() => setIsPasswordChangeModalOpen(true)}
+                    >
+                      Ubah Password
+                    </Button>
                   </Box>
                 </VStack>
               </FormControl>
@@ -167,7 +263,7 @@ const EditProfile = () => {
             <GridItem>
               <VStack spacing={4} align="stretch">
                 <Box className="w-full">
-                  {profileData.inovator.status === "pending" && (
+                  {(profileData.inovator.status === "pending" || profileData.role !== ROLE.ADMIN) && (
                     <Box className="rounded p-3 bg-orange-600 text-white font-medium space-y-2">
                       <Badge colorScheme="orange" fontSize={"sm"}>
                         Pending
@@ -193,9 +289,9 @@ const EditProfile = () => {
                 </Box>
                 {/* Nama */}
                 <FormControl
-                  isInvalid={formik.touched.fullname && formik.errors.fullname}
+                  isInvalid={formik.touched?.fullname && formik.errors?.fullname}
                 >
-                  <FormLabel>Nama</FormLabel>
+                  <FormLabel>Nama Lengkap</FormLabel>
                   <Input
                     {...formik.getFieldProps("fullname")}
                     placeholder="Masukkan Nama"
@@ -272,76 +368,37 @@ const EditProfile = () => {
 
                 {/* Fakultas */}
                 {profileData.role == "innovator" && (
-                  <>
-                    <FormControl
-                      isInvalid={
-                        formik.touched.fakultas && formik.errors.fakultas
-                      }
+                  <FormControl>
+                    <FormLabel>Fakultas</FormLabel>
+                    <Select
+                      {...formik.getFieldProps("inovator.fakultas")}
+                      placeholder="Pilih Fakultas"
                     >
-                      <FormLabel>Fakultas</FormLabel>
-                      <Select
-                        {...formik.getFieldProps("fakultas")}
-                        onChange={(e) => {
-                          setTempProfileData((prev) => ({
-                            ...prev,
-                            inovator: {
-                              ...prev.inovator,
-                              fakultas: e.target.value,
-                            },
-                          }));
-                          formik.handleChange(e);
-                        }}
-                        placeholder="Pilih Fakultas"
-                      >
-                        <option value="Fakultas Sains">Fakultas Sains</option>
-                        <option value="Fakultas Teknologi Infrastruktur & Kewilayahan">
-                          Fakultas Teknologi Infrastruktur & Kewilayahan
+                      {fakultasOptions.map((option) => (
+                        <option key={option.value} value={option.value}>
+                          {option.label}
                         </option>
-                        <option value="Fakultas Teknologi Industri">
-                          Fakultas Teknologi Industri
-                        </option>
-                      </Select>
-                      <FormErrorMessage>
-                        {formik.errors.fakultas}
-                      </FormErrorMessage>
-                    </FormControl>
+                      ))}
+                    </Select>
+                  </FormControl>
+                )}
 
-                    {/* Program Studi */}
-                    <FormControl
-                      isInvalid={formik.touched.prodi && formik.errors.prodi}
+                {/* Prodi */}
+                {profileData.role == "innovator" && (
+                  <FormControl>
+                    <FormLabel>Prodi</FormLabel>
+                    <Select
+                      {...formik.getFieldProps("inovator.prodi")}
+                      placeholder="Pilih Prodi"
                     >
-                      <FormLabel>Program Studi</FormLabel>
-                      <Select
-                        {...formik.getFieldProps("prodi")}
-                        placeholder="Pilih Program Studi"
-                      >
-                        {tempProfileData.inovator.fakultas ===
-                          "Fakultas Teknologi Industri" &&
-                          Object.keys(PRODI[FAKULTAS.FTI]).map((prodi, key) => (
-                            <option key={key} value={prodi}>
-                              {PRODI[FAKULTAS.FTI][prodi]}
-                            </option>
-                          ))}
-                        {tempProfileData.inovator.fakultas ===
-                          "Fakultas Teknologi Infrastruktur & Kewilayahan" &&
-                          Object.keys(PRODI[FAKULTAS.FTIK]).map(
-                            (prodi, key) => (
-                              <option key={key} value={prodi.nama}>
-                                {PRODI[FAKULTAS.FTIK][prodi]}
-                              </option>
-                            )
-                          )}
-                        {tempProfileData.inovator.fakultas ===
-                          "Fakultas Sains" &&
-                          Object.keys(PRODI[FAKULTAS.FS]).map((prodi, key) => (
-                            <option key={key} value={prodi.nama}>
-                              {PRODI[FAKULTAS.FS][prodi]}
-                            </option>
-                          ))}
-                      </Select>
-                      <FormErrorMessage>{formik.errors.prodi}</FormErrorMessage>
-                    </FormControl>
-                  </>
+                      {prodiOptions.map((option) => (
+                        <option key={option.value} value={option.value}>
+                          {option.label}
+                        </option>
+                      ))}
+                    </Select>
+                  </FormControl>
+
                 )}
 
                 <Button
@@ -358,9 +415,53 @@ const EditProfile = () => {
             </GridItem>
           </Grid>
         </form>
+
       )}
+      <Modal isOpen={isPasswordChangeModalOpen} onClose={() => setIsPasswordChangeModalOpen(false)}>
+        <ModalOverlay />
+        <ModalContent>
+          <form onSubmit={passwordChangeFormik.handleSubmit}>
+            <ModalHeader>Change Password</ModalHeader>
+            <ModalCloseButton />
+            <ModalBody>
+              <VStack spacing={4}>
+                <FormControl isInvalid={passwordChangeFormik.touched.currentPassword && passwordChangeFormik.errors.currentPassword}>
+                  <FormLabel>Current Password</FormLabel>
+                  <Input
+                    type="password"
+                    {...passwordChangeFormik.getFieldProps('currentPassword')}
+                  />
+                  <FormErrorMessage>{passwordChangeFormik.errors.currentPassword}</FormErrorMessage>
+                </FormControl>
+                <FormControl isInvalid={passwordChangeFormik.touched.newPassword && passwordChangeFormik.errors.newPassword}>
+                  <FormLabel>New Password</FormLabel>
+                  <Input
+                    type="password"
+                    {...passwordChangeFormik.getFieldProps('newPassword')}
+                  />
+                  <FormErrorMessage>{passwordChangeFormik.errors.newPassword}</FormErrorMessage>
+                </FormControl>
+                <FormControl isInvalid={passwordChangeFormik.touched.confirmNewPassword && passwordChangeFormik.errors.confirmNewPassword}>
+                  <FormLabel>Confirm New Password</FormLabel>
+                  <Input
+                    type="password"
+                    {...passwordChangeFormik.getFieldProps('confirmNewPassword')}
+
+                  />
+                  <FormErrorMessage>{passwordChangeFormik.errors.confirmNewPassword}</FormErrorMessage>
+                </FormControl>
+              </VStack>
+            </ModalBody>
+            <ModalFooter>
+              <Button colorScheme="blue" mr={3} type="submit" isLoading={passwordChangeFormik.isSubmitting}>
+                Change Password
+              </Button>
+              <Button variant="ghost" onClick={() => setIsPasswordChangeModalOpen(false)}>Cancel</Button>
+            </ModalFooter>
+          </form>
+        </ModalContent>
+      </Modal>
     </Layout>
   );
 };
-
 export default EditProfile;

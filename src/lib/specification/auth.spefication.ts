@@ -5,8 +5,10 @@ export interface RegisterSpecification {
   email: string;
   fakultas?: string;
   prodi?: string;
-  "inovator.fakultas"?: string;
-  "inovator.prodi"?: string;
+  inovator: {
+    fakultas: string;
+    prodi: string;
+  };
   password: string;
   confirmPassword: string;
   phonenumber: string;

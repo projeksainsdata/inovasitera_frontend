@@ -54,11 +54,9 @@ interface UploadImageResult {
 
 export const UploadImage = async ({
   file,
-  onProgress,
 }: UploadImageProps): Promise<UploadImageResult> => {
   const API = AxiosService.getAxiosAuth();
-  console.log("file", file);
-  try { 
+  try {
     // Step 1: Request an upload token
     const { data: tokenData } = await API.post<ResponseApi<{ token: string }>>(
       UPLOAD_PATH.TOKEN_UPLOAD
@@ -98,14 +96,6 @@ export const UploadImage = async ({
     }
     await axios.put(uploadUrl, file, {
       headers: { "Content-Type": extension },
-      onUploadProgress: (progressEvent) => {
-        if (onProgress && progressEvent.total) {
-          const percentCompleted = Math.round(
-            (progressEvent.loaded * 100) / progressEvent.total
-          );
-          onProgress(percentCompleted);
-        }
-      },
     });
     // Step 4: Confirm the upload
     const { data: confirmationData } = await API.post<
@@ -139,13 +129,9 @@ export const UploadImage = async ({
 
 export const UploadImageBatch = async ({
   files,
-  onProgress,
 }: {
   files: File[];
-  onProgress?: (progress: number) => void;
 }): Promise<UploadImageResult[]> => {
-  const results = await Promise.all(
-    files.map((file) => UploadImage({ file, onProgress }))
-  );
+  const results = await Promise.all(files.map((file) => UploadImage({ file })));
   return results;
 };

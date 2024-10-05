@@ -28,6 +28,7 @@ import Profil from '@/pages/Profile';
 import ResetPassword from '@/pages/ResetPassword';
 import UpdateInovasi from '@/pages/innovator/innovations/UpdateInovasi';
 import NotFoundPage from '@/components/NotFound';
+import ROLE, { ROLE_PERMISSION } from '@/lib/constants/role.contants';
 
 
 const AppRoutes: React.FC = () => {
@@ -35,33 +36,6 @@ const AppRoutes: React.FC = () => {
         <Router>
             <AuthProvider>
                 <Routes>
-                    <Route path="*" exact={true} element={<NotFoundPage/>}/>
-                    <Route path="/" element={
-                        <App />
-                    } />
-                    <Route path="/tentang" element={<Tentang />} />
-                    <Route path="/admin/" element={
-                        <PrivateRoute role={['admin']}>
-                            <AdminIndex />
-                        </PrivateRoute>
-                    } />
-                    <Route path="/admin/kategori" element={
-                        <PrivateRoute role={['admin']}>
-                            <KategoriesAdmin />
-                        </PrivateRoute>
-                    } />
-                    {/* <Route path="/admin/inovation" element={<PrivateRoute role={['admin']}><InovationAdmin /></PrivateRoute>} /> */}
-                    <Route path="/admin/user" element={<PrivateRoute role={['admin']}>
-                        <UserAdmin /></PrivateRoute>} />
-                    <Route path="/admin/manajemeninovasi" element={<PrivateRoute role={['admin']}>
-                        <ManajemenInovasiAdmin /></PrivateRoute>}
-                    />
-                    {/* <Route path="/admin/detailinovasi" element={
-                        <PrivateRoute role={['admin']}>
-                            <InovationAdminDetail />
-                        </PrivateRoute>
-                    } /> */}
-                    <Route path="/inovasi" element={<ListInovasi />} />
                     <Route path="/login" element={
                         <PublicRoute>
                             <Login />
@@ -72,12 +46,62 @@ const AppRoutes: React.FC = () => {
                             <Register />
                         </PublicRoute>
                     } />
+
+                    <Route path="/" element={
+                        <App />
+                    } />
+                    <Route path="/tentang" element={<Tentang />} />
+                    <Route path="/admin/" element={
+                        <PrivateRoute role={ROLE_PERMISSION[ROLE.ADMIN]}>
+                            <AdminIndex />
+                        </PrivateRoute>
+                    } />
+                    <Route path="/admin/kategori" element={
+                        <PrivateRoute role={ROLE_PERMISSION[ROLE.ADMIN]}>
+                            <KategoriesAdmin />
+                        </PrivateRoute>
+                    } />
+                    {/* <Route path="/admin/inovation" element={<PrivateRoute role={['admin']}><InovationAdmin /></PrivateRoute>} /> */}
+                    <Route path="/admin/user" element={
+                        <PrivateRoute role={ROLE_PERMISSION[ROLE.ADMIN]}>
+                            <UserAdmin />
+                        </PrivateRoute>} />
+                    <Route path="/admin/manajemeninovasi" element={
+                        <PrivateRoute role={ROLE_PERMISSION[ROLE.ADMIN]}>
+                            <ManajemenInovasiAdmin />
+                        </PrivateRoute>}
+                    />
+
+                    <Route path="/inovasi" element={<ListInovasi />} />
                     <Route path="/inovasi/:id" element={<DetailInovasi />} />
-                    <Route path="/innovator/profil" element={<Profil />} />
-                    <Route path="/innovator/list-inovasi" element={<InnovatorListInovasi />} />
-                    <Route path="/innovator/tambah-inovasi" element={<InnovatorTambahInovasi />} />
-                    <Route path="/innovator/update-inovasi" element={<UpdateInovasi />} />
-                    <Route path="/innovator/wishlist-inovasi" element={<InnovatorWishlistInovasi />} />
+
+                    <Route path="/innovator/profil" element={
+                        <PrivateRoute role={ROLE_PERMISSION[ROLE.MEMBER]}>
+                            <Profil />
+                        </PrivateRoute>
+                    } />
+                    <Route path="/innovator/list-inovasi" element={
+                        <PrivateRoute role={ROLE_PERMISSION[ROLE.INOVATOR]}>
+                            <InnovatorListInovasi />
+                        </PrivateRoute>
+                    } />
+                    <Route path="/innovator/tambah-inovasi" element={
+                        <PrivateRoute role={ROLE_PERMISSION[ROLE.INOVATOR]}>
+                            <InnovatorTambahInovasi />
+                        </PrivateRoute>
+                    } />
+                    <Route path="/innovator/detail-inovasi/:id" element={
+                        <PrivateRoute role={ROLE_PERMISSION[ROLE.INOVATOR]}>
+                            <UpdateInovasi />
+                        </PrivateRoute>
+                    } />
+                    <Route path="/innovator/wishlist-inovasi" element={
+                        <PrivateRoute role={ROLE_PERMISSION[ROLE.INOVATOR]}>
+                            <InnovatorWishlistInovasi />
+                        </PrivateRoute>
+                    } />
+
+
                     <Route path="/forgot-password" element={
                         <PublicRoute>
                             <ForgotPassword />
@@ -88,6 +112,10 @@ const AppRoutes: React.FC = () => {
                             <ResetPassword />
                         </PublicRoute>
                     } />
+
+
+                    <Route path="*" element={<NotFoundPage />} />
+
                 </Routes>
             </AuthProvider >
         </Router >

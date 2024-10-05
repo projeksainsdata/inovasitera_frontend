@@ -186,7 +186,9 @@ const Sidebar: React.FC<SidebarProps> = ({
               ))}
             </ul>
           </nav>
+
           <button onClick={handleLogout} className='bg-red-600 px-3 py-2 rounded m-5 text-white'>Keluar Sistem</button>
+      
         </div>
       </motion.aside>
     </>

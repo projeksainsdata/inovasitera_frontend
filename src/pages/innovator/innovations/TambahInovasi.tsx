@@ -54,7 +54,6 @@ const validationSchema = Yup.object({
 const TambahInovasi = () => {
   const [files, setFiles] = useState<any[]>([]);
   const { data, loading } = useCategories();
-  const [uploadProgress, setUploadProgress] = useState(0);
 
   const navigate = useNavigate()
 
@@ -62,11 +61,9 @@ const TambahInovasi = () => {
     try {
       const response = await UploadImageBatch({
         files: images,
-        onProgress: setUploadProgress
       });
       return response.map(res => res.url || "");
     } catch (error) {
-      console.error("Error uploading images:", error);
       throw error;
     }
   };
@@ -75,11 +72,9 @@ const TambahInovasi = () => {
     try {
       const response = await UploadImage({
         file: thumbnail,
-        onProgress: setUploadProgress
       });
       return response.url || "";
     } catch (error) {
-      console.error("Error uploading thumbnail:", error);
       throw error;
     }
   };
@@ -188,7 +183,7 @@ const TambahInovasi = () => {
           <Button colorScheme="red" variant="outline" size="md" onClick={resetForm}>
             Reset Formulir
           </Button>
-          <Button colorScheme="blue" size="md" onClick={formik.handleSubmit}>
+          <Button colorScheme="blue" size="md" onClick={formik.handleSubmit} isLoading={formik.isSubmitting} >
             Kirim Inovasi
           </Button>
 

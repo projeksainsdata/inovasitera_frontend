@@ -90,8 +90,10 @@ const initialValues: RegisterSpecification = {
   dateOfBirth: "",
   gender: "",
   role: "member",
-  fakultas: "",
-  prodi: "",
+  inovator: {
+    fakultas: "",
+    prodi: ""
+  },
   password: "",
   confirmPassword: "",
 };
@@ -212,12 +214,6 @@ const RegisterPage: React.FC = () => {
     onSubmit: async (values: RegisterSpecification) => {
       try {
         // convert format fakultas and prodi to inovator.fakultas and inovator.prodi
-        if (values.role === "innovator") {
-          values["inovator.fakultas"] = values.fakultas;
-          values["inovator.prodi"] = values.prodi;
-        }
-        delete values.fakultas;
-        delete values.prodi;
 
         const response = await AuthApiService.register(values);
 
@@ -286,7 +282,7 @@ const RegisterPage: React.FC = () => {
   );
 
   const prodiOptions = useMemo(() => {
-    const selectedFakultas = formik.values.fakultas;
+    const selectedFakultas = formik.values.inovator.fakultas;
     if (!selectedFakultas) return [];
     return selectedFakultas && PRODI[selectedFakultas]
       ? Object.entries(PRODI[selectedFakultas]).map(([, value]) => ({
@@ -294,7 +290,7 @@ const RegisterPage: React.FC = () => {
           label: value,
         }))
       : [];
-  }, [formik.values.fakultas]);
+  }, [formik.values.inovator.fakultas]);
 
   const renderStepContent = (step: number) => {
     switch (step) {
@@ -351,20 +347,16 @@ const RegisterPage: React.FC = () => {
 
                 <SelectField
                   formik={formik}
-                  name="fakultas"
+                  name="inovator.fakultas"
                   label="Fakultas"
                   options={fakultasOptions}
-                  onChange={(e: any) => {
-                    formik.setFieldValue("fakultas", e.target.value);
-                    formik.setFieldValue("prodi", "");
-                  }}
                 />
                 <SelectField
                   formik={formik}
-                  name="prodi"
+                  name="inovator.prodi"
                   label="Program Studi"
                   options={prodiOptions}
-                  isDisabled={!formik.values.fakultas}
+                  isDisabled={!formik.values.inovator.fakultas}
                 />
               </>
             )}

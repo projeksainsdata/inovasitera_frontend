@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { Formik, Field, FieldArray, Form } from "formik";
+import { useCallback, useEffect, useState } from "react";
+import { useFormik } from "formik";
 import {
   Flex,
   FormControl,
@@ -10,423 +10,439 @@ import {
   Box,
   IconButton,
   Select,
-  Heading,
   HStack,
   FormErrorMessage,
   ButtonGroup,
+  useToast,
 } from "@chakra-ui/react";
-import { IconPlus, IconMinus } from "@tabler/icons-react";
+import { IconMinus } from "@tabler/icons-react";
 import { Dropzone, FileMosaic } from "@files-ui/react";
 import Layout from "@/components/innovator/layoutInnovator/LayoutInnovator";
 import * as Yup from "yup";
+import useCategories from "@/hooks/useCategories";
+import OverlaySpinner from "@/components/Loading/OverlayLoading";
+import { get, post, put, UploadImage, UploadImageBatch } from "@/hooks/useSubmit";
+import { INNOVATION_PREFIX } from "@/lib/constants/api.contants";
+import { useNavigate, useParams } from "react-router-dom";
+import { urlsToFiles, urlToFile } from "@/utils/UrlFile";
 
-// Updated validation schema using Yup
+// Validation schema remains the same
 const validationSchema = Yup.object({
-  namaInovasi: Yup.string().required("Nama Inovasi is required"),
-  kategori: Yup.string().required("Kategori is required"),
-  deskripsi: Yup.string().required("Deskripsi is required"),
-  innovators: Yup.array().of(
-    Yup.string().required("Name of Innovator is required")
-  ),
-  statusPaten: Yup.string().required("Status Paten is required"),
-  tahapPengembangan: Yup.string().required("Tahap Pengembangan is required"),
-  nilaiTKT: Yup.number()
-    .required("Nilai TKT is required")
-    .min(1, "Nilai TKT must be at least 1")
-    .max(9, "Nilai TKT must be less than or equal to 9"),
-  kolaborasi: Yup.string().required("Kolaborasi Yang Diinginkan is required"),
-  inovasiPertanyaan: Yup.object({
-    apa: Yup.string().required("This field is required"),
-    mengapa: Yup.string().required("This field is required"),
-    kapan: Yup.string().required("This field is required"),
-    dimana: Yup.string().required("This field is required"),
-    siapa: Yup.string().required("This field is required"),
-    bagaimana: Yup.string().required("This field is required"),
-  }),
+  title: Yup.string().required(),
+  description: Yup.string().required(),
+  category: Yup.string().required(),
+  collaboration: Yup.array().optional(),
+  adventage: Yup.string().optional(),
+  images: Yup.array().optional(),
+  thumbnail: Yup.string().required(),
+  development_stage: Yup.string().optional(),
+  status_paten: Yup.string().optional(),
+  score_tkt: Yup.string().optional(),
+  collaboration_details: Yup.string().optional(),
+  faq: Yup.array().of(
+    Yup.object().shape({
+      question: Yup.string().required(),
+      answer: Yup.string()
+    })
+  ).optional(),
 });
 
+
+const initialFormValues = {
+  title: "",
+  description: "",
+  category: "",
+  collaboration: [""],
+  adventage: "",
+  images: [],
+  thumbnail: "",
+  development_stage: "",
+  status_paten: "",
+  score_tkt: "",
+  collaboration_details: "",
+  faq: [
+    { question: "Apa produk inovasi yang sedang dikembangkan?", answer: "" },
+    { question: "Mengapa produk inovasi ini diperlukan?", answer: "" },
+    { question: "Kapan inovasi ini mulai dikembangkan dan kapan akan diluncurkan?", answer: "" },
+    { question: "Di mana inovasi ini akan digunakan?", answer: "" },
+    { question: "Siapa target pasar atau pengguna?", answer: "" },
+    { question: "Bagaimana produk ini diakses atau digunakan?", answer: "" }
+  ]
+};
+
+
 const UpdateInovasi = () => {
-  const [files, setFiles] = useState([]);
-  const updateFiles = (incomingFiles) => {
-    setFiles(incomingFiles);
+  const [files, setFiles] = useState<any[]>([]);
+  const { data: categories, loading: categoriesLoading } = useCategories();
+  const [loadingData, setLoadingData] = useState(false);
+  const navigate = useNavigate();
+  const { id } = useParams();
+  const toast = useToast();
+
+
+  const fetchInnovationData = useCallback(async () => {
+    if (!id) return;
+    setLoadingData(true);
+    try {
+      const res = await get(`${INNOVATION_PREFIX.INDEX}/${id}`);
+      const { _id, user_id, rating, createdAt, updatedAt, __v, ...innovationData } = res?.data;
+
+      const fileObjects = await urlsToFiles(innovationData.images);
+      setFiles(fileObjects);
+
+      if (innovationData.thumbnail) {
+        const thumbnailFile = await urlToFile(innovationData.thumbnail);
+        setFiles(prev => [...prev, thumbnailFile]);
+      }
+
+      return {
+        ...innovationData,
+        category: innovationData.category._id,
+      };
+    } catch (error) {
+      toast({
+        title: 'Error',
+        description: 'Failed to fetch innovation data',
+        status: 'error',
+        duration: 5000,
+        isClosable: true,
+      });
+    } finally {
+      setLoadingData(false);
+    }
+  }, [id, toast]);
+
+  const formik = useFormik({
+    initialValues: initialFormValues,
+    validationSchema,
+    onSubmit: async (values) => {
+      try {
+        const updatedValues = { ...values };
+
+        if (Array.isArray(values.images)) {
+          const imagesToUpload = values.images.filter(image => image instanceof File);
+          if (imagesToUpload.length > 0) {
+            const uploadedImages = await handleImageUpload(imagesToUpload);
+            updatedValues.images = [
+              ...values.images.filter(image => typeof image === 'string'),
+              ...uploadedImages
+            ];
+          }
+        }
+
+        if (values.thumbnail instanceof File) {
+          updatedValues.thumbnail = await handleThumbnailUpload(values.thumbnail);
+        }
+
+        const result = id
+          ? await put({ url: `${INNOVATION_PREFIX.INDEX}/${id}`, data: updatedValues })
+          : await post({ url: `${INNOVATION_PREFIX.CREATE}`, data: updatedValues });
+
+        toast({
+          title: 'Success',
+          description: `Innovation ${result?.data.name} has been ${id ? 'updated' : 'created'} successfully`,
+          status: 'success',
+          duration: 5000,
+          isClosable: true,
+        });
+
+        navigate(`/inovasi/${result?.data._id}`);
+      } catch (error) {
+        toast({
+          title: 'Error',
+          description: error.message || "An error occurred",
+          status: 'error',
+          duration: 5000,
+          isClosable: true,
+        });
+      }
+    },
+  });
+
+  useEffect(() => {
+    fetchInnovationData().then(data => {
+      if (data) formik.setValues(data);
+    });
+  }, [fetchInnovationData]);
+
+
+  const handleImageUpload = async (images: File[]) => {
+    try {
+      const response = await UploadImageBatch({ files: images });
+      return response.map(res => res.url || "");
+    } catch (error) {
+      throw error;
+    }
   };
-  const removeFile = (id) => {
-    setFiles(files.filter((x) => x.id !== id));
+
+  const handleThumbnailUpload = async (thumbnail: File) => {
+    try {
+      const response = await UploadImage({ file: thumbnail });
+      return response.url || "";
+    } catch (error) {
+      throw error;
+    }
   };
+
+  const updateFiles = (incomingFiles: any[]) => {
+    const newFiles = [...files, ...incomingFiles];
+    setFiles(newFiles);
+    formik.setFieldValue("images", newFiles.map(file => file.file || file.url));
+    if (!formik.values.thumbnail) {
+      formik.setFieldValue("thumbnail", incomingFiles[0]?.file || incomingFiles[0]?.url || "");
+    }
+  };
+
+  const removeFile = (id: string) => {
+    const updatedFiles = files.filter((x: any) => x.id !== id);
+    setFiles(updatedFiles);
+    formik.setFieldValue("images", updatedFiles.map(file => file.file || file.url));
+    if (formik.values.thumbnail && files.find(f => f.id === id)?.file === formik.values.thumbnail) {
+      formik.setFieldValue("thumbnail", updatedFiles[0]?.file || updatedFiles[0]?.url || "");
+    }
+  };
+
+  if (loadingData || categoriesLoading) {
+    return <OverlaySpinner show />;
+  }
+
+
   return (
     <Layout>
       <Box className="flex flex-col md:flex-row md:items-center justify-between mb-4">
-        <h1>Update Inovasi ITERA</h1>
+        <h1>{id ? 'Update' : 'Create'} Innovation</h1>
         <ButtonGroup className="z-40">
-          <Button colorScheme="red" variant={"outline"} size={"md"}>Reset Formulir</Button>
-          <Button colorScheme="blue" size={"md"}>Kirim Inovasi</Button>
+          <Button colorScheme="red" variant="outline" size="md" onClick={formik.resetForm}>
+            Reset Form
+          </Button>
+          <Button colorScheme="blue" size="md" onClick={formik.handleSubmit} isLoading={formik.isSubmitting}>
+            {id ? 'Update' : 'Submit'} Innovation
+          </Button>
         </ButtonGroup>
       </Box>
-      <Formik
-        initialValues={{
-          namaInovasi: "",
-          kategori: "",
-          deskripsi: "",
-          innovators: [""],
-          statusPaten: "",
-          tahapPengembangan: "",
-          nilaiTKT: "",
-          kolaborasi: "",
-          inovasiPertanyaan: {
-            apa: "",
-            mengapa: "",
-            kapan: "",
-            dimana: "",
-            siapa: "",
-            bagaimana: "",
-          },
-        }}
-        validationSchema={validationSchema}
-        onSubmit={(values, actions) => {
-          console.log(values);
-          actions.setSubmitting(false);
-        }}
-      >
-        {({ values, errors, touched }) => (
-          <Box className="space-y-6">
-            <Flex gap={6} direction={{ base: "column", md: "row" }}>
-              <Box className="w-full md:w-6/12 space-y-6" order={{base:1,md:2}}>
-                <h1 className="text-xl font-black mb-3">
-                  Upload Gambar Inovasi
-                </h1>
-                <Dropzone
-                  onChange={updateFiles}
-                  value={files}
-                  maxFiles={10}
-                  accept={"image/*"}
-                >
-                  {files.map((file) => (
-                    <FileMosaic
-                      key={file.id}
-                      {...file}
-                      onDelete={removeFile}
-                      info
-                      preview
-                    />
+      <form onSubmit={formik.handleSubmit}>
+        <Box className="space-y-6">
+          <Flex gap={6} direction={{ base: "column", md: "row" }}>
+            <Box className="w-full md:w-6/12 space-y-6" order={{ base: 1, md: 2 }}>
+              <h1 className="text-xl font-black mb-3">Upload Gambar Inovasi</h1>
+              <Dropzone
+                onChange={updateFiles}
+                value={files}
+                maxFiles={10}
+                accept="image/*"
+              >
+                {files.map((file) => (
+                  <FileMosaic
+                    key={file.id}
+                    {...file}
+                    onDelete={removeFile}
+                    info
+                    preview
+
+                  />
+                ))}
+              </Dropzone>
+            </Box>
+            <Box className="w-full h-fit md:w-6/12 p-4 border rounded" order={{ base: 2, md: 1 }}>
+              <h1 className="text-xl font-black mb-3">Deskripsi Inovasi</h1>
+
+              {/* Title Field */}
+              <FormControl
+                isInvalid={formik.touched.title && !!formik.errors.title}
+                mb={4}
+              >
+                <FormLabel>Nama Inovasi</FormLabel>
+                <Input
+                  {...formik.getFieldProps("title")}
+                  placeholder="Masukkan nama inovasi"
+                />
+                <FormErrorMessage>{formik.errors.title}</FormErrorMessage>
+              </FormControl>
+
+              {/* Category Field */}
+              <FormControl
+                isInvalid={formik.touched.category && !!formik.errors.category}
+                mb={4}
+              >
+                <FormLabel>Kategori</FormLabel>
+                <Select {...formik.getFieldProps("category")} placeholder="Pilih kategori" >
+                  {categories?.map((category: any) => (
+                    <option key={category._id} value={category._id}>
+                      {category.name}
+                    </option>
                   ))}
-                </Dropzone>
-              </Box>
-              <Box className="w-full h-fit md:w-6/12 p-4 border rounded" order={{base:2,md:1}}>
-                <Form>
-                  <h1 className="text-xl font-black mb-3">Deskripsi Inovasi</h1>
-                  {/* Nama Inovasi Field */}
-                  <Field name="namaInovasi">
-                    {({ field, form }) => (
-                      <FormControl
-                        isInvalid={
-                          form.errors.namaInovasi && form.touched.namaInovasi
-                        }
-                        mb={4}
-                      >
-                        <FormLabel>Nama Inovasi</FormLabel>
-                        <Input {...field} placeholder="Masukkan nama inovasi" />
-                        <FormErrorMessage>
-                          {form.errors.namaInovasi}
-                        </FormErrorMessage>
-                      </FormControl>
-                    )}
-                  </Field>
+                </Select>
+                <FormErrorMessage>{formik.errors.category}</FormErrorMessage>
+              </FormControl>
 
-                  {/* Kategori Field */}
-                  <Field name="kategori">
-                    {({ field, form }) => (
-                      <FormControl
-                        isInvalid={
-                          form.errors.kategori && form.touched.kategori
-                        }
-                        mb={4}
-                      >
-                        <FormLabel>Kategori</FormLabel>
-                        <Select {...field} placeholder="Pilih kategori">
-                          <option value="teknologi">Teknologi</option>
-                          <option value="kesehatan">Kesehatan</option>
-                          <option value="pendidikan">Pendidikan</option>
-                          <option value="lainnya">Lainnya</option>
-                        </Select>
-                        <FormErrorMessage>
-                          {form.errors.kategori}
-                        </FormErrorMessage>
-                      </FormControl>
-                    )}
-                  </Field>
+              {/* Description Field */}
+              <FormControl
+                isInvalid={formik.touched.description && !!formik.errors.description}
+                mb={4}
+              >
+                <FormLabel>Deskripsi</FormLabel>
+                <Textarea
+                  {...formik.getFieldProps("description")}
+                  placeholder="Masukkan deskripsi inovasi"
+                />
+                <FormErrorMessage>{formik.errors.description}</FormErrorMessage>
+              </FormControl>
 
-                  {/* Deskripsi Field */}
-                  <Field name="deskripsi">
-                    {({ field, form }) => (
-                      <FormControl
-                        isInvalid={
-                          form.errors.deskripsi && form.touched.deskripsi
-                        }
-                        mb={4}
-                      >
-                        <FormLabel>Deskripsi</FormLabel>
-                        <Textarea
-                          {...field}
-                          placeholder="Masukkan deskripsi inovasi"
-                        />
-                        <FormErrorMessage>
-                          {form.errors.deskripsi}
-                        </FormErrorMessage>
-                      </FormControl>
-                    )}
-                  </Field>
+              {/* Adventage Field */}
+              <FormControl
+                isInvalid={formik.touched.adventage && !!formik.errors.adventage}
+                mb={4}
+              >
+                <FormLabel>Kelebihan Inovasi</FormLabel>
+                <Textarea
+                  {...formik.getFieldProps("adventage")}
+                  placeholder="Jelaskan kelebihan inovasi"
+                />
+                <FormErrorMessage>{formik.errors.adventage}</FormErrorMessage>
+              </FormControl>
 
-                  {/* Innovators (Dynamic Input Fields) */}
-                  <FieldArray name="innovators">
-                    {({ insert, remove, push }) => (
-                      <Box mb={4}>
-                        <HStack justify={"between"}>
-                          <FormLabel>Daftar Innovator</FormLabel>
-                          <Button
-                            colorScheme="blue"
-                            onClick={() => push("")}
-                            size={"sm"}
-                          >
-                            Tambah Innovator
-                          </Button>
-                        </HStack>
-                        {values.innovators.length > 0 &&
-                          values.innovators.map((innovator, index) => (
-                            <HStack key={index} mb={2} mt={2}>
-                              <Field name={`innovators.${index}`}>
-                                {({ field, form }) => (
-                                  <FormControl
-                                    isInvalid={
-                                      form.errors.innovators?.[index] &&
-                                      form.touched.innovators?.[index]
-                                    }
-                                  >
-                                    <Input
-                                      {...field}
-                                      placeholder="Masukkan nama innovator"
-                                    />
-                                    <FormErrorMessage>
-                                      {form.errors.innovators?.[index]}
-                                    </FormErrorMessage>
-                                  </FormControl>
-                                )}
-                              </Field>
-                              <IconButton
-                                size={"xs"}
-                                colorScheme="red"
-                                icon={<IconMinus />}
-                                onClick={() => remove(index)}
-                                isDisabled={values.innovators.length === 1} // Disable removal if there's only one field
-                              />
-                            </HStack>
-                          ))}
-                      </Box>
-                    )}
-                  </FieldArray>
-                </Form>
-              </Box>
-            </Flex>
-
-            {/* Additional Sections */}
-            <Flex gap={6} direction={{ base: "column", md: "row" }}>
-              <Box className="w-full h-fit md:w-6/12 p-4 border rounded">
-                <h1 className="text-xl font-black mb-3">Informasi Penting</h1>
-
-                {/* Status Paten */}
-                <Field name="statusPaten">
-                  {({ field, form }) => (
+              {/* Innovators (Dynamic Input Fields) */}
+              <Box mb={4}>
+                <HStack justify="between">
+                  <FormLabel>Daftar Innovator</FormLabel>
+                  <Button
+                    colorScheme="blue"
+                    onClick={() => formik.setFieldValue("collaboration", [...formik.values.collaboration, ""])}
+                    size="sm"
+                  >
+                    Tambah Innovator
+                  </Button>
+                </HStack>
+                {formik.values.collaboration.map((_, index) => (
+                  <HStack key={index} mb={2} mt={2}>
                     <FormControl
-                      isInvalid={form.errors.statusPaten && form.touched.statusPaten}
-                      mb={4}
+                      isInvalid={
+                        formik.touched.collaboration?.[index] &&
+                        !!formik.errors.collaboration?.[index]
+                      }
                     >
-                      <FormLabel>Status Paten</FormLabel>
-                      <Select {...field} placeholder="Pilih Status Paten">
-                        <option value="terdaftar">Terdaftar</option>
-                        <option value="tidakTerdaftar">Tidak Terdaftar</option>
-                      </Select>
-                      <FormErrorMessage>
-                        {form.errors.statusPaten}
-                      </FormErrorMessage>
-                    </FormControl>
-                  )}
-                </Field>
-
-                {/* Tahap Pengembangan */}
-                <Field name="tahapPengembangan">
-                  {({ field, form }) => (
-                    <FormControl
-                      isInvalid={form.errors.tahapPengembangan && form.touched.tahapPengembangan}
-                      mb={4}
-                    >
-                      <FormLabel>Tahap Pengembangan</FormLabel>
-                      <Select {...field} placeholder="Pilih Tahap Pengembangan">
-                        <option value="penelitian">Penelitian</option>
-                        <option value="prototipe">Prototipe</option>
-                        <option value="produksi">Produksi</option>
-                      </Select>
-                      <FormErrorMessage>
-                        {form.errors.tahapPengembangan}
-                      </FormErrorMessage>
-                    </FormControl>
-                  )}
-                </Field>
-
-                {/* Nilai TKT */}
-                <Field name="nilaiTKT">
-                  {({ field, form }) => (
-                    <FormControl
-                      isInvalid={form.errors.nilaiTKT && form.touched.nilaiTKT}
-                      mb={4}
-                    >
-                      <FormLabel>Nilai TKT</FormLabel>
                       <Input
-                        {...field}
-                        placeholder="Masukkan Nilai TKT (1-9)"
-                        type="number"
+                        {...formik.getFieldProps(`collaboration[${index}]`)}
+                        placeholder="Masukkan nama innovator"
                       />
                       <FormErrorMessage>
-                        {form.errors.nilaiTKT}
+                        {(formik.errors.collaboration?.[index] as string)}
                       </FormErrorMessage>
                     </FormControl>
-                  )}
-                </Field>
-
-                {/* Kolaborasi Field */}
-                <Field name="kolaborasi">
-                  {({ field, form }) => (
-                    <FormControl
-                      isInvalid={form.errors.kolaborasi && form.touched.kolaborasi}
-                      mb={4}
-                    >
-                      <FormLabel>Kolaborasi Yang Diinginkan</FormLabel>
-                      <Textarea
-                        {...field}
-                        placeholder="Masukkan jenis kolaborasi yang diinginkan"
-                      />
-                      <FormErrorMessage>
-                        {form.errors.kolaborasi}
-                      </FormErrorMessage>
-                    </FormControl>
-                  )}
-                </Field>
+                    <IconButton
+                      size="xs"
+                      colorScheme="red"
+                      icon={<IconMinus />}
+                      onClick={() => {
+                        const newCollaboration = [...formik.values.collaboration];
+                        newCollaboration.splice(index, 1);
+                        formik.setFieldValue("collaboration", newCollaboration);
+                      }}
+                      isDisabled={formik.values.collaboration.length === 1}
+                      aria-label="Remove Innovator"
+                    />
+                  </HStack>
+                ))}
               </Box>
+            </Box>
+          </Flex>
 
-              {/* Pertanyaan terkait inovasi */}
-              <Box className="w-full md:w-6/12 p-4 border rounded">
-                <h1 className="text-xl font-black mb-3">Pertanyaan Terkait Inovasi</h1>
+          {/* Additional Sections */}
+          <Flex gap={6} direction={{ base: "column", md: "row" }}>
+            <Box className="w-full h-fit md:w-6/12 p-4 border rounded">
+              <h1 className="text-xl font-black mb-3">Informasi Penting</h1>
 
-                <Field name="inovasiPertanyaan.apa">
-                  {({ field, form }) => (
-                    <FormControl
-                      isInvalid={form.errors.inovasiPertanyaan?.apa && form.touched.inovasiPertanyaan?.apa}
-                      mb={4}
-                    >
-                      <FormLabel>Apa produk inovasi yang sedang dikembangkan?</FormLabel>
-                      <Textarea
-                        {...field}
-                        placeholder="Jelaskan produk inovasi"
-                      />
-                      <FormErrorMessage>
-                        {form.errors.inovasiPertanyaan?.apa}
-                      </FormErrorMessage>
-                    </FormControl>
-                  )}
-                </Field>
+              {/* Status Paten */}
+              <FormControl
+                isInvalid={formik.touched.status_paten && !!formik.errors.status_paten}
+                mb={4}
+              >
+                <FormLabel>Status Paten</FormLabel>
+                <Select {...formik.getFieldProps("status_paten")} placeholder="Pilih Status Paten">
+                  <option value="terdaftar">Terdaftar</option>
+                  <option value="tidakTerdaftar">Tidak Terdaftar</option>
+                </Select>
+                <FormErrorMessage>{formik.errors.status_paten}</FormErrorMessage>
+              </FormControl>
 
-                <Field name="inovasiPertanyaan.mengapa">
-                  {({ field, form }) => (
-                    <FormControl
-                      isInvalid={form.errors.inovasiPertanyaan?.mengapa && form.touched.inovasiPertanyaan?.mengapa}
-                      mb={4}
-                    >
-                      <FormLabel>Mengapa produk inovasi ini diperlukan?</FormLabel>
-                      <Textarea
-                        {...field}
-                        placeholder="Jelaskan alasan inovasi"
-                      />
-                      <FormErrorMessage>
-                        {form.errors.inovasiPertanyaan?.mengapa}
-                      </FormErrorMessage>
-                    </FormControl>
-                  )}
-                </Field>
+              {/* Development Stage */}
+              <FormControl
+                isInvalid={formik.touched.development_stage && !!formik.errors.development_stage}
+                mb={4}
+              >
+                <FormLabel>Tahap Pengembangan</FormLabel>
+                <Select {...formik.getFieldProps("development_stage")} placeholder="Pilih Tahap Pengembangan">
+                  <option value="penelitian">Penelitian</option>
+                  <option value="prototipe">Prototipe</option>
+                  <option value="produksi">Produksi</option>
+                </Select>
+                <FormErrorMessage>{formik.errors.development_stage}</FormErrorMessage>
+              </FormControl>
 
-                <Field name="inovasiPertanyaan.kapan">
-                  {({ field, form }) => (
-                    <FormControl
-                      isInvalid={form.errors.inovasiPertanyaan?.kapan && form.touched.inovasiPertanyaan?.kapan}
-                      mb={4}
-                    >
-                      <FormLabel>Kapan inovasi ini mulai dikembangkan dan kapan akan diluncurkan?</FormLabel>
-                      <Textarea
-                        {...field}
-                        placeholder="Jelaskan timeline inovasi"
-                      />
-                      <FormErrorMessage>
-                        {form.errors.inovasiPertanyaan?.kapan}
-                      </FormErrorMessage>
-                    </FormControl>
-                  )}
-                </Field>
+              {/* Score TKT */}
+              <FormControl
+                isInvalid={formik.touched.score_tkt && !!formik.errors.score_tkt}
+                mb={4}
+              >
+                <FormLabel>Nilai TKT</FormLabel>
+                <Input
+                  {...formik.getFieldProps("score_tkt")}
+                  placeholder="Masukkan Nilai TKT (1-9)"
+                  type="text  "
+                />
+                <FormErrorMessage>{formik.errors.score_tkt}</FormErrorMessage>
+              </FormControl>
 
-                <Field name="inovasiPertanyaan.dimana">
-                  {({ field, form }) => (
-                    <FormControl
-                      isInvalid={form.errors.inovasiPertanyaan?.dimana && form.touched.inovasiPertanyaan?.dimana}
-                      mb={4}
-                    >
-                      <FormLabel>Di mana inovasi ini akan digunakan?</FormLabel>
-                      <Textarea
-                        {...field}
-                        placeholder="Jelaskan area penerapan inovasi"
-                      />
-                      <FormErrorMessage>
-                        {form.errors.inovasiPertanyaan?.dimana}
-                      </FormErrorMessage>
-                    </FormControl>
-                  )}
-                </Field>
+              {/* Collaboration Details */}
+              <FormControl
+                isInvalid={formik.touched.collaboration_details && !!formik.errors.collaboration_details}
+                mb={4}
+              >
+                <FormLabel>Kolaborasi Yang Diinginkan</FormLabel>
+                <Textarea
+                  {...formik.getFieldProps("collaboration_details")}
+                  placeholder="Masukkan jenis kolaborasi yang diinginkan"
+                />
+                <FormErrorMessage>{formik.errors.collaboration_details}</FormErrorMessage>
+              </FormControl>
+            </Box>
 
-                <Field name="inovasiPertanyaan.siapa">
-                  {({ field, form }) => (
-                    <FormControl
-                      isInvalid={form.errors.inovasiPertanyaan?.siapa && form.touched.inovasiPertanyaan?.siapa}
-                      mb={4}
-                    >
-                      <FormLabel>Siapa target pasar atau pengguna?</FormLabel>
-                      <Textarea
-                        {...field}
-                        placeholder="Jelaskan target pasar"
-                      />
-                      <FormErrorMessage>
-                        {form.errors.inovasiPertanyaan?.siapa}
-                      </FormErrorMessage>
-                    </FormControl>
-                  )}
-                </Field>
+            {/* FAQ */}
+            <Box className="w-full md:w-6/12 p-4 border rounded">
+              <h1 className="text-xl font-black mb-3">Pertanyaan Terkait Inovasi</h1>
 
-                <Field name="inovasiPertanyaan.bagaimana">
-                  {({ field, form }) => (
-                    <FormControl
-                      isInvalid={form.errors.inovasiPertanyaan?.bagaimana && form.touched.inovasiPertanyaan?.bagaimana}
-                      mb={4}
-                    >
-                      <FormLabel>Bagaimana produk ini diakses atau digunakan?</FormLabel>
-                      <Textarea
-                        {...field}
-                        placeholder="Jelaskan cara kerja inovasi"
-                      />
-                      <FormErrorMessage>
-                        {form.errors.inovasiPertanyaan?.bagaimana}
-                      </FormErrorMessage>
-                    </FormControl>
-                  )}
-                </Field>
-              </Box>
-            </Flex>
-          </Box>
-        )}
-      </Formik>
+              {formik.values.faq.map((_, index) => (
+                <FormControl
+                  key={index}
+                  isInvalid={formik.touched.faq?.[index]?.answer && !!formik.errors.faq?.[index]?.answer}
+                  mb={4}
+                >
+                  <Input
+                    {...formik.getFieldProps(`faq[${index}].question`)}
+                    placeholder="Pertanyaan"
+                    isReadOnly={index < 6} // Make the first 6 questions read-only
+                  />
+
+                  <Textarea
+                    {...formik.getFieldProps(`faq[${index}].answer`)}
+                    placeholder="Jawaban"
+                    mt={2}
+                  />
+                  <FormErrorMessage>{(formik.errors.faq?.[index] as any)?.answer}</FormErrorMessage>
+                </FormControl>
+              ))}
+
+              <Button
+                mt={4}
+                colorScheme="blue"
+                onClick={() => formik.setFieldValue("faq", [...formik.values.faq, { question: "", answer: "" }])}
+              >
+                Tambah Pertanyaan
+              </Button>
+            </Box>
+          </Flex>
+        </Box>
+      </form>
     </Layout>
   );
 };

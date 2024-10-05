@@ -12,54 +12,37 @@ import { ResponseApi } from '@/lib/types/api.type';
 import { WHITELIST_PREFIX } from "@/lib/constants/api.contants";
 import OverlaySpinner from "@/components/Loading/OverlayLoading";
 import Table from "@/components/Table";
-import SearchQuery from "@/components/Form/SearchQuery";
+import SearchQuery from "@/components/Form/GenericSearch";
 import Pagination from "@/components/Pagination";
+import { useNavigate } from "react-router-dom";
 
 const columns = [
   {
-    key: "image",
-    label: "Gambar",
+    key: "thumbnail",
+    label: "thumbnail inovasi",
+    type: "image"
   },
-  { 
-    key: "name",
+  {
+    key: "title",
     label: "Judul Inovasi"
   },
-  { 
+  {
     key: "rating",
-    label: "Rating Inovasi"
+    label: "Rating Inovasi",
+    type: "rating"
   },
+
 ];
 
 const searchFields = [{ key: "name", label: "Wishlist" }];
 
 const TableWishlist: React.FC = () => {
+  const navigate = useNavigate();
 
-  const { data, loading, error, updateParams, refetch, params } = useDataFetch<
+  const { data, loading, updateParams, refetch, params } = useDataFetch<
     ResponseApi<WhiteList>
   >(`${WHITELIST_PREFIX.INDEX}`, { page: 1, perPage: 10 });
-  // const data = {
-  //   requestId: "string",
-  //   requestTime: "string",
-  //   data: [
-  //       {
-  //           id: 1,
-  //           image: "https://images.pexels.com/photos/586415/pexels-photo-586415.jpeg",
-  //           name: "Fabrikasi dan Hilirisasi Rompi Anti Peluru Berbahan Biomass Sawit",
-  //           link: `/inovasi/0`,
-  //           rating: 4,
-  //         },
-  //   ],    
-  //   pagination: {
-  //     total: 10,
-  //     perPage: 10,
-  //     page: 1,
-  //   },
-  // };
-  // const loading = false;
-  // const error = null;
-  // const updateParams = (newparams) => {};
-  // const refetch = () => {};
-  // const params = {};
+
 
   const handleSearch = (criteria: Record<string, string>) => {
     updateParams({ ...criteria, page: 1 });
@@ -77,27 +60,25 @@ const TableWishlist: React.FC = () => {
     try {
       await del<WhiteList>(`${WHITELIST_PREFIX.DELETE}/${id}`);
       refetch();
-      toast.success(`Categories ${id} deleted successfully`);
+      toast.success("Berhasil menghapus Wishlist");
     } catch (ErrorCatch) {
       if (ErrorCatch instanceof AxiosError) {
         toast.error(
-          ErrorCatch.response?.data.message || "Failed to delete Categories"
+          ErrorCatch.response?.data.message || "Failed to delete whitelist"
         );
         return;
       }
-      toast.error("Failed to delete Categories");
+      toast.error("Failed to delete whitelist");
     }
   };
 
 
   const handleEdit = (row: any) => {
-    setInitialValues(row);
-    setIsModalOpen(true);
+    navigate(`/inovasi/${row._id}`);
   };
 
 
   if (loading) return <OverlaySpinner show={loading} />;
-  if (error) toast.error(error.message);
 
   return (
     <>

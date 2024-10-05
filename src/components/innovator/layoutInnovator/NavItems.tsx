@@ -2,8 +2,6 @@ import React from 'react';
 import {
   IconDashboard,
   IconFileText,
-  IconUsers,
-  IconFolders,
   IconPlus,
   IconHeartFilled
 } from '@tabler/icons-react';

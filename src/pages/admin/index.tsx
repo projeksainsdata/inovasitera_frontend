@@ -1,4 +1,4 @@
-import DashboardHomePage from '@/components/admin/DashboardHomePage/index';
+import DashboardHomePage from '@/components/admin/DashboardHomePage/InnovationOverview';
 import LayoutAdmin from '@/components/admin/layoutAdmin/LayoutAdmin';
 // import OverlaySpinner from '@/components/Loading/OverlayLoading';
 // import { useAnalyticDashboard } from '@/hooks/useAnalytic';

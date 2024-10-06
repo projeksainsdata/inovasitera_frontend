@@ -8,11 +8,10 @@ import { useAuth } from '@/hooks/useAuth';
 const Navbar: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const auth = useAuth();
-  console.log(auth)
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
   };
-  const getProfilePath=(role) => {
+  const getProfilePath = (role) => {
     switch (role) {
       case "innovator":
         return "/innovator/profil";

@@ -20,7 +20,6 @@ const ProdukHome: React.FC = () => {
     perPage: 10,
   });
 
-  console.log(data)
 
   if (loading) {
     return <div className="text-center"><LoadingSpinner /></div>
@@ -30,6 +29,9 @@ const ProdukHome: React.FC = () => {
   const handleSearch = (query: string) => {
     setSearchQuery(query);
   };
+  const navigate = (url: string) => {
+    window.location.href = url;
+  }
 
   return (
     <div className="py-6 px-4 sm:py-10 sm:px-6 md:mt-0 mt-20">
@@ -46,6 +48,7 @@ const ProdukHome: React.FC = () => {
             size="md"
             variant="outline"
             borderRadius='full'
+            onKeyDown={(e) => e.key === 'Enter' && navigate(`/inovasi?q=${searchQuery}`)}
           />
           <InputRightElement>
             <button

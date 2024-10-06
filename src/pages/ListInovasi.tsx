@@ -23,11 +23,14 @@ const SearchFields: SearchField[] = [
 
 const InnovationPage: React.FC = () => {
   const [filterMobile, setFilterMobile] = useState(false);
+  // use query params to fetch data
+  const query = new URLSearchParams(window.location.search);
   const { data, loading, error, updateParams, params } = useDataFetch<InovationResponse>(`${INNOVATION_PREFIX.INDEX}`, {
     page: 1,
     perPage: 6,
     sort: 'createdAt',
     order: 'desc',
+    q: query.get('q') || '',
   });
 
   const { data: categories } = useCategories();
@@ -35,7 +38,7 @@ const InnovationPage: React.FC = () => {
 
   const filterGroups: FilterGroup[] = [
     {
-      id: 'category.name',
+      id: 'category',
       label: 'Categories',
       type: 'checkbox',
       options: categories?.map((category) => ({
@@ -48,8 +51,6 @@ const InnovationPage: React.FC = () => {
       label: 'Sort By',
       type: 'radio',
       options: [
-        { id: 'rating_desc', label: 'Highest Rating' },
-        { id: 'rating_asc', label: 'Lowest Rating' },
         { id: 'title_asc', label: 'A-Z' },
         { id: 'title_desc', label: 'Z-A' },
         { id: 'createdAt_desc', label: 'Newest' },
@@ -65,10 +66,10 @@ const InnovationPage: React.FC = () => {
 
   const handleFilter = (selections: Record<string, string | string[]>) => {
     const [sortColumn, sortDirection] = (selections.sort as string).split('_');
-    const categories = selections['category.name'] as string[];
+    const categories = selections['category'] as string[];
     updateParams({
       ...params,
-      'category.name': categories.join(','),
+      'category': categories.join(','),
       sort: sortColumn,
       order: sortDirection,
       page: 1,

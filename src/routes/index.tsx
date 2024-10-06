@@ -8,7 +8,6 @@ import '@/index.css';
 import '@/App.css';
 import { AuthProvider } from '@/contexts/AuthContext';
 import Tentang from '@/pages/Tentang';
-import AdminIndex from '@/pages/admin/index';
 import KategoriesAdmin from '@/pages/admin/categories';
 import ListInovasi from '@/pages/ListInovasi';
 import Login from '@/pages/Login';
@@ -29,7 +28,12 @@ import ResetPassword from '@/pages/ResetPassword';
 import UpdateInovasi from '@/pages/innovator/innovations/UpdateInovasi';
 import NotFoundPage from '@/components/NotFound';
 import ROLE, { ROLE_PERMISSION } from '@/lib/constants/role.contants';
-import TambahInovasi from '@/pages/admin/manajemenInovasi';
+import TambahInovasi from '@/pages/admin/manajemenInovasi/TambahInovasi';
+import UserOverviewPage from '@/pages/admin/dashboard/UserOverview';
+import InnovationOverviewPage from '@/pages/admin/dashboard/InnovatorOverview';
+import MyListInovasi from '@/components/admin/ManajemenProduk/MyListInovasi';
+import AdminDetailInovasi from '@/components/admin/ManajemenProduk/DetailInovasi';
+import AdminWhitelistInovasi from '@/components/admin/ManajemenProduk/WhiteListAdmin';
 
 
 const AppRoutes: React.FC = () => {
@@ -54,7 +58,12 @@ const AppRoutes: React.FC = () => {
                     <Route path="/tentang" element={<Tentang />} />
                     <Route path="/admin/" element={
                         <PrivateRoute role={ROLE_PERMISSION[ROLE.ADMIN]}>
-                            <AdminIndex />
+                            <InnovationOverviewPage />
+                        </PrivateRoute>
+                    } />
+                    <Route path="/admin/user-overview" element={
+                        <PrivateRoute role={ROLE_PERMISSION[ROLE.ADMIN]}>
+                            <UserOverviewPage />
                         </PrivateRoute>
                     } />
                     <Route path="/admin/kategori" element={
@@ -67,16 +76,32 @@ const AppRoutes: React.FC = () => {
                         <PrivateRoute role={ROLE_PERMISSION[ROLE.ADMIN]}>
                             <UserAdmin />
                         </PrivateRoute>} />
-                    <Route path="/admin/manajemeninovasi" element={
+                    <Route path="/admin/manajemen-inovasi" element={
                         <PrivateRoute role={ROLE_PERMISSION[ROLE.ADMIN]}>
                             <ManajemenInovasiAdmin />
                         </PrivateRoute>}
                     />
-                    <Route path="/admin/tambahinovasi" element={
+                    <Route path="/admin/tambah-inovasi" element={
                         <PrivateRoute role={ROLE_PERMISSION[ROLE.ADMIN]}>
-                            <TambahInovasi/>
+                            <TambahInovasi />
                         </PrivateRoute>
-                    }/>
+                    } />
+                    <Route path="/admin/my-inovasi" element={
+                        <PrivateRoute role={ROLE_PERMISSION[ROLE.ADMIN]}>
+                            <MyListInovasi />
+                        </PrivateRoute>
+                    } />
+
+                    <Route path="/admin/detail-inovasi/:id" element={
+                        <PrivateRoute role={ROLE_PERMISSION[ROLE.ADMIN]}>
+                            <AdminDetailInovasi />
+                        </PrivateRoute>
+                    } />
+                    <Route path="/admin/wishlist-inovasi" element={
+                        <PrivateRoute role={ROLE_PERMISSION[ROLE.INOVATOR]}>
+                            <AdminWhitelistInovasi />
+                        </PrivateRoute>
+                    } />
 
                     <Route path="/inovasi" element={<ListInovasi />} />
                     <Route path="/inovasi/:id" element={<DetailInovasi />} />

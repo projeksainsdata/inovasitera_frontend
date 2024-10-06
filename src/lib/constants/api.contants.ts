@@ -53,3 +53,8 @@ export const USER_PREFIX = {
   EDIT: "/api/v1/users",
   DELETE: "/api/v1/users",
 };
+
+export const DASHBOARD_PREFIX = {
+  USER: "/api/v1/dashboard/user",
+  INNOVATION: "/api/v1/dashboard/innovation",
+};

@@ -1,8 +1,4 @@
-
-// Updated validation schema using Yup
-
-
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useFormik } from "formik";
 import {
   Flex,
@@ -18,6 +14,14 @@ import {
   FormErrorMessage,
   ButtonGroup,
   useToast,
+  useDisclosure,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
+  ModalCloseButton,
 } from "@chakra-ui/react";
 import { IconMinus } from "@tabler/icons-react";
 import { Dropzone, FileMosaic } from "@files-ui/react";
@@ -29,6 +33,7 @@ import { post, UploadImage, UploadImageBatch } from "@/hooks/useSubmit";
 import { INNOVATION_PREFIX } from "@/lib/constants/api.contants";
 import { useNavigate } from "react-router-dom";
 import { isAxiosError } from "axios";
+import { useAuth } from "@/hooks/useAuth"; 
 
 // Validation schema remains the same
 const validationSchema = Yup.object({
@@ -43,26 +48,36 @@ const validationSchema = Yup.object({
   status_paten: Yup.string().optional(),
   score_tkt: Yup.string().optional(),
   collaboration_details: Yup.string().optional(),
-  faq: Yup.array().of(
-    Yup.object().shape({
-      question: Yup.string().required(),
-      answer: Yup.string()
-    })
-  ).optional(),
+  faq: Yup.array()
+    .of(
+      Yup.object().shape({
+        question: Yup.string().required(),
+        answer: Yup.string(),
+      })
+    )
+    .optional(),
 });
 
 const TambahInovasi = () => {
+  const { user } = useAuth();
+  const { isOpen, onOpen, onClose } = useDisclosure();
   const [files, setFiles] = useState<any[]>([]);
   const { data, loading } = useCategories();
+  const navigate = useNavigate();
+  const toast = useToast();
 
-  const navigate = useNavigate()
+  useEffect(() => {
+    if (user?.status === "pending") {
+      onOpen();
+    }
+  }, [user, onOpen]);
 
   const handleImageUpload = async (images: File[] | FileList) => {
     try {
       const response = await UploadImageBatch({
         files: images,
       });
-      return response.map(res => res.url || "");
+      return response.map((res) => res.url || "");
     } catch (error) {
       throw error;
     }
@@ -79,7 +94,6 @@ const TambahInovasi = () => {
     }
   };
 
-  const toast = useToast();
   const formik = useFormik({
     initialValues: {
       title: "",
@@ -96,11 +110,14 @@ const TambahInovasi = () => {
       faq: [
         { question: "Apa produk inovasi yang sedang dikembangkan?", answer: "" },
         { question: "Mengapa produk inovasi ini diperlukan?", answer: "" },
-        { question: "Kapan inovasi ini mulai dikembangkan dan kapan akan diluncurkan?", answer: "" },
+        {
+          question: "Kapan inovasi ini mulai dikembangkan dan kapan akan diluncurkan?",
+          answer: "",
+        },
         { question: "Di mana inovasi ini akan digunakan?", answer: "" },
         { question: "Siapa target pasar atau pengguna?", answer: "" },
-        { question: "Bagaimana produk ini diakses atau digunakan?", answer: "" }
-      ]
+        { question: "Bagaimana produk ini diakses atau digunakan?", answer: "" },
+      ],
     },
     validationSchema: validationSchema,
     onSubmit: async (values) => {
@@ -121,37 +138,36 @@ const TambahInovasi = () => {
         });
 
         toast({
-          title: 'Success',
+          title: "Success",
           description: `Data ${result?.data.name} berhasil ditambahkan`,
-          status: 'success',
+          status: "success",
           duration: 5000,
           isClosable: true,
         });
 
         navigate(`/inovasi/${result?.data._id}`);
-      } catch (error) {
+      } catch (error: any) {
         const errorMessage = isAxiosError(error)
           ? error.response?.data.message || "Failed to upload image"
           : error.message || "An error occurred";
 
         toast({
-          title: 'Error',
+          title: "Error",
           description: errorMessage,
-          status: 'error',
+          status: "error",
           duration: 5000,
           isClosable: true,
         });
       }
-    }
+    },
   });
-
-
-
-
 
   const updateFiles = (incomingFiles: any[]) => {
     setFiles(incomingFiles);
-    formik.setFieldValue("images", incomingFiles.map(file => file.file));
+    formik.setFieldValue(
+      "images",
+      incomingFiles.map((file) => file.file)
+    );
     if (incomingFiles.length > 0 && !formik.values.thumbnail) {
       formik.setFieldValue("thumbnail", incomingFiles[0].file);
     }
@@ -160,8 +176,14 @@ const TambahInovasi = () => {
   const removeFile = (id: string) => {
     const updatedFiles = files.filter((x: any) => x.id !== id);
     setFiles(updatedFiles);
-    formik.setFieldValue("images", updatedFiles.map(file => file.file));
-    if (formik.values.thumbnail && files.find(f => f.id === id)?.file === formik.values.thumbnail) {
+    formik.setFieldValue(
+      "images",
+      updatedFiles.map((file) => file.file)
+    );
+    if (
+      formik.values.thumbnail &&
+      files.find((f) => f.id === id)?.file === formik.values.thumbnail
+    ) {
       formik.setFieldValue("thumbnail", updatedFiles[0]?.file || "");
     }
   };
@@ -175,6 +197,28 @@ const TambahInovasi = () => {
     return <OverlaySpinner show />;
   }
 
+  if (user?.status === "pending") {
+    return (
+      <Layout>
+        <Modal isOpen={isOpen} onClose={() => navigate("/")}>
+          <ModalOverlay />
+          <ModalContent>
+            <ModalHeader>Akun Pending</ModalHeader>
+            <ModalCloseButton />
+            <ModalBody>
+              Akun Anda masih dalam status pending. Anda tidak dapat mengunggah inovasi saat ini.
+            </ModalBody>
+            <ModalFooter>
+              <Button colorScheme="blue" mr={3} onClick={() => navigate("/")}>
+                Kembali ke Beranda
+              </Button>
+            </ModalFooter>
+          </ModalContent>
+        </Modal>
+      </Layout>
+    );
+  }
+
   return (
     <Layout>
       <Box className="flex flex-col md:flex-row md:items-center justify-between mb-4">
@@ -183,10 +227,14 @@ const TambahInovasi = () => {
           <Button colorScheme="red" variant="outline" size="md" onClick={resetForm}>
             Reset Formulir
           </Button>
-          <Button colorScheme="blue" size="md" onClick={formik.handleSubmit} isLoading={formik.isSubmitting} >
+          <Button
+            colorScheme="blue"
+            size="md"
+            onClick={formik.handleSubmit}
+            isLoading={formik.isSubmitting}
+          >
             Kirim Inovasi
           </Button>
-
         </ButtonGroup>
       </Box>
       <form onSubmit={formik.handleSubmit}>
@@ -194,12 +242,7 @@ const TambahInovasi = () => {
           <Flex gap={6} direction={{ base: "column", md: "row" }}>
             <Box className="w-full md:w-6/12 space-y-6" order={{ base: 1, md: 2 }}>
               <h1 className="text-xl font-black mb-3">Upload Gambar Inovasi</h1>
-              <Dropzone
-                onChange={updateFiles}
-                value={files}
-                maxFiles={10}
-                accept="image/*"
-              >
+              <Dropzone onChange={updateFiles} value={files} maxFiles={10} accept="image/*">
                 {files.map((file) => (
                   <FileMosaic
                     key={(file as any).id}
@@ -211,7 +254,10 @@ const TambahInovasi = () => {
                 ))}
               </Dropzone>
             </Box>
-            <Box className="w-full h-fit md:w-6/12 p-4 border rounded" order={{ base: 2, md: 1 }}>
+            <Box
+              className="w-full h-fit md:w-6/12 p-4 border rounded"
+              order={{ base: 2, md: 1 }}
+            >
               <h1 className="text-xl font-black mb-3">Deskripsi Inovasi</h1>
 
               {/* Title Field */}
@@ -233,7 +279,10 @@ const TambahInovasi = () => {
                 mb={4}
               >
                 <FormLabel>Kategori</FormLabel>
-                <Select {...formik.getFieldProps("category")} placeholder="Pilih kategori">
+                <Select
+                  {...formik.getFieldProps("category")}
+                  placeholder="Pilih kategori"
+                >
                   {data?.map((category: any) => (
                     <option key={category._id} value={category._id}>
                       {category.name}
@@ -275,7 +324,12 @@ const TambahInovasi = () => {
                   <FormLabel>Daftar Innovator</FormLabel>
                   <Button
                     colorScheme="blue"
-                    onClick={() => formik.setFieldValue("collaboration", [...formik.values.collaboration, ""])}
+                    onClick={() =>
+                      formik.setFieldValue("collaboration", [
+                        ...formik.values.collaboration,
+                        "",
+                      ])
+                    }
                     size="sm"
                   >
                     Tambah Innovator
@@ -294,7 +348,7 @@ const TambahInovasi = () => {
                         placeholder="Masukkan nama innovator"
                       />
                       <FormErrorMessage>
-                        {(formik.errors.collaboration?.[index] as string)}
+                        {formik.errors.collaboration?.[index] as string}
                       </FormErrorMessage>
                     </FormControl>
                     <IconButton
@@ -326,7 +380,10 @@ const TambahInovasi = () => {
                 mb={4}
               >
                 <FormLabel>Status Paten</FormLabel>
-                <Select {...formik.getFieldProps("status_paten")} placeholder="Pilih Status Paten">
+                <Select
+                  {...formik.getFieldProps("status_paten")}
+                  placeholder="Pilih Status Paten"
+                >
                   <option value="terdaftar">Terdaftar</option>
                   <option value="tidakTerdaftar">Tidak Terdaftar</option>
                 </Select>
@@ -335,16 +392,23 @@ const TambahInovasi = () => {
 
               {/* Development Stage */}
               <FormControl
-                isInvalid={formik.touched.development_stage && !!formik.errors.development_stage}
+                isInvalid={
+                  formik.touched.development_stage && !!formik.errors.development_stage
+                }
                 mb={4}
               >
                 <FormLabel>Tahap Pengembangan</FormLabel>
-                <Select {...formik.getFieldProps("development_stage")} placeholder="Pilih Tahap Pengembangan">
+                <Select
+                  {...formik.getFieldProps("development_stage")}
+                  placeholder="Pilih Tahap Pengembangan"
+                >
                   <option value="penelitian">Penelitian</option>
                   <option value="prototipe">Prototipe</option>
                   <option value="produksi">Produksi</option>
                 </Select>
-                <FormErrorMessage>{formik.errors.development_stage}</FormErrorMessage>
+                <FormErrorMessage>
+                  {formik.errors.development_stage}
+                </FormErrorMessage>
               </FormControl>
 
               {/* Score TKT */}
@@ -356,14 +420,17 @@ const TambahInovasi = () => {
                 <Input
                   {...formik.getFieldProps("score_tkt")}
                   placeholder="Masukkan Nilai TKT (1-9)"
-                  type="text  "
+                  type="text"
                 />
                 <FormErrorMessage>{formik.errors.score_tkt}</FormErrorMessage>
               </FormControl>
 
               {/* Collaboration Details */}
               <FormControl
-                isInvalid={formik.touched.collaboration_details && !!formik.errors.collaboration_details}
+                isInvalid={
+                  formik.touched.collaboration_details &&
+                  !!formik.errors.collaboration_details
+                }
                 mb={4}
               >
                 <FormLabel>Kolaborasi Yang Diinginkan</FormLabel>
@@ -371,7 +438,9 @@ const TambahInovasi = () => {
                   {...formik.getFieldProps("collaboration_details")}
                   placeholder="Masukkan jenis kolaborasi yang diinginkan"
                 />
-                <FormErrorMessage>{formik.errors.collaboration_details}</FormErrorMessage>
+                <FormErrorMessage>
+                  {formik.errors.collaboration_details}
+                </FormErrorMessage>
               </FormControl>
             </Box>
 
@@ -382,7 +451,10 @@ const TambahInovasi = () => {
               {formik.values.faq.map((_, index) => (
                 <FormControl
                   key={index}
-                  isInvalid={formik.touched.faq?.[index]?.answer && !!formik.errors.faq?.[index]?.answer}
+                  isInvalid={
+                    formik.touched.faq?.[index]?.answer &&
+                    !!formik.errors.faq?.[index]?.answer
+                  }
                   mb={4}
                 >
                   <Input
@@ -396,14 +468,21 @@ const TambahInovasi = () => {
                     placeholder="Jawaban"
                     mt={2}
                   />
-                  <FormErrorMessage>{(formik.errors.faq?.[index] as any)?.answer}</FormErrorMessage>
+                  <FormErrorMessage>
+                    {(formik.errors.faq?.[index] as any)?.answer}
+                  </FormErrorMessage>
                 </FormControl>
               ))}
 
               <Button
                 mt={4}
                 colorScheme="blue"
-                onClick={() => formik.setFieldValue("faq", [...formik.values.faq, { question: "", answer: "" }])}
+                onClick={() =>
+                  formik.setFieldValue("faq", [
+                    ...formik.values.faq,
+                    { question: "", answer: "" },
+                  ])
+                }
               >
                 Tambah Pertanyaan
               </Button>

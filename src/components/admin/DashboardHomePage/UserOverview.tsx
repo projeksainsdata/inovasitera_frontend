@@ -50,7 +50,6 @@ const UserStatisticsDashboard: React.FC = () => {
         valueKey: string
     ): BaseChartData => {
         if (!dataArray || dataArray.length === 0) {
-            console.warn(`No data available for ${labelKey}`);
             return { labels: [], datasets: [{ label: 'No Data', data: [] }] };
         }
 

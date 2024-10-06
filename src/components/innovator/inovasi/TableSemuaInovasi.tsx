@@ -34,12 +34,13 @@ const columns = [
   },
   {
     key: "status",
-    label: "Status Inovasi"
+    label: "Status Inovasi",
+    type: "status"
   },
 ];
 
 const searchFields = [
-  { key: "name", label: "Nama Inovator" },
+  { key: "q", label: "Nama Inovator" },
   {
     key: 'status', label: 'status Inovasi', type: 'select', options: [
       { value: 'pending', label: 'Pending' },

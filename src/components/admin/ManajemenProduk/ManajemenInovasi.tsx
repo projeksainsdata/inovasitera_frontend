@@ -24,8 +24,8 @@ import useCategories from '@/hooks/useCategories';
 const columns = [
   { key: 'title', label: 'Produk Name Inovasi' },
   { key: 'thumbnail', label: 'Image', type: 'image' },
-  { key: 'createdAt', label: 'Tanggal' },
-  { key: 'status', label: 'Status' },
+  { key: 'createdAt', label: 'Tanggal', type: "date" },
+  { key: 'status', label: 'Status', type: 'status' },
 ];
 
 

@@ -33,7 +33,7 @@ import { post, UploadImage, UploadImageBatch } from "@/hooks/useSubmit";
 import { INNOVATION_PREFIX } from "@/lib/constants/api.contants";
 import { useNavigate } from "react-router-dom";
 import { isAxiosError } from "axios";
-import { useAuth } from "@/hooks/useAuth"; 
+import { useAuth } from "@/hooks/useAuth";
 
 // Validation schema remains the same
 const validationSchema = Yup.object({
@@ -124,14 +124,16 @@ const TambahInovasi = () => {
       try {
         const updatedValues = { ...values };
 
+
         if (values.images instanceof FileList || Array.isArray(values.images)) {
           updatedValues.images = await handleImageUpload(values.images);
         }
 
-        if (values.thumbnail instanceof File) {
-          updatedValues.thumbnail = await handleThumbnailUpload(values.thumbnail);
+        // check if updatedValues.images  is an array get the first image as thumbnail and delete it from images
+        if (Array.isArray(updatedValues.images) && updatedValues.images.length > 0) {
+          updatedValues.thumbnail = updatedValues.images[0];
+          updatedValues.images.shift();
         }
-
         const result = await post({
           url: `${INNOVATION_PREFIX.CREATE}`,
           data: updatedValues,
@@ -168,9 +170,7 @@ const TambahInovasi = () => {
       "images",
       incomingFiles.map((file) => file.file)
     );
-    if (incomingFiles.length > 0 && !formik.values.thumbnail) {
-      formik.setFieldValue("thumbnail", incomingFiles[0].file);
-    }
+
   };
 
   const removeFile = (id: string) => {
@@ -180,12 +180,7 @@ const TambahInovasi = () => {
       "images",
       updatedFiles.map((file) => file.file)
     );
-    if (
-      formik.values.thumbnail &&
-      files.find((f) => f.id === id)?.file === formik.values.thumbnail
-    ) {
-      formik.setFieldValue("thumbnail", updatedFiles[0]?.file || "");
-    }
+
   };
 
   const resetForm = () => {

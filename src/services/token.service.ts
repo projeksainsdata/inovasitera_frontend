@@ -55,8 +55,17 @@ const getToken = async (): Promise<Token | null> => {
 
 const updateToken = async (token: Token): Promise<boolean> => {
   try {
-    Cookie.set(TOKEN.ACCESS_TOKEN, token.access, { path: "/" });
-    Cookie.set(TOKEN.REFRESH_TOKEN, token.refresh, { path: "/" });
+    // get user duration token jwt decode
+    const decodedUser = (await jwtDecode(token.access)) as DecodedToken;
+    const duration = decodedUser.exp * 1000 - Date.now();
+    Cookie.set(TOKEN.ACCESS_TOKEN, token.access, {
+      path: "/",
+      expires: new Date(Date.now() + duration),
+    });
+    Cookie.set(TOKEN.REFRESH_TOKEN, token.refresh, {
+      path: "/",
+      expires: new Date(Date.now() + duration),
+    });
 
     return true;
   } catch (error) {

@@ -123,7 +123,6 @@ const EditProfile = () => {
     },
   })
 
-  console.log(passwordChangeFormik.errors);
   const formik = useFormik({
     initialValues: {
       fullname: profileData?.fullname || "",

@@ -98,7 +98,6 @@ const ForgotPassword: React.FC = () => {
                 const response = await AuthApiService.forgotPassword({
                   email: values.email,
                 });
-                console.log(response);
                 setIsSubmitted(true);
                 toast({
                   title: "Email Terkirim",

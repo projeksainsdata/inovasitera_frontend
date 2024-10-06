@@ -1,5 +1,5 @@
 import React from 'react';
-import { IconDashboard, IconUsers, IconCategory, IconBox,IconPlus } from '@tabler/icons-react';
+import { IconDashboard, IconUsers, IconCategory, IconBox, IconPlus, IconHeartFilled, IconFileText } from '@tabler/icons-react';
 
 export interface NavItem {
   href: string;
@@ -12,7 +12,14 @@ export interface NavItem {
 export const navItems: NavItem[] = [
   {
     href: '/admin',
-    label: 'Dashboard',
+    label: 'Innovation Dashboard',
+    icon: <IconDashboard size={24} />,  // Use Tabler Icon here
+    group: 'Analytics',
+    access: ['*'],
+  },
+  {
+    href: '/admin/user-overview',
+    label: 'User Dashboard',
     icon: <IconDashboard size={24} />,  // Use Tabler Icon here
     group: 'Analytics',
     access: ['*'],
@@ -32,17 +39,34 @@ export const navItems: NavItem[] = [
     access: ['*'],
   },
   {
-    href: '/admin/manajemeninovasi',
+    href: '/admin/manajemen-inovasi',
     label: 'Produk Inovasi',
     icon: <IconBox size={24} />,  // Use Tabler Icon here
     group: 'Manajemen Inovasi',
     access: ['*'],
   },
   {
-    href: '/admin/tambahinovasi',
+    href: '/admin/tambah-inovasi',
     label: 'Tambah Inovasi',
     icon: <IconPlus size={20} />,
     group: 'Manajemen Inovasi',
     access: ['*'],
   },
+
+  {
+    href: '/admin/my-inovasi',
+    label: 'Inovasi Saya',
+    icon: <IconFileText size={20} />,
+    group: 'Manajemen Inovasi',
+    access: ['*'],
+  },
+
+  {
+    href: '/admin/wishlist-inovasi',
+    label: 'WhiteList Inovasi',
+    icon: <IconHeartFilled size={20} />,
+    group: 'Manajemen Inovasi',
+    access: ['*'],
+  },
+
 ];

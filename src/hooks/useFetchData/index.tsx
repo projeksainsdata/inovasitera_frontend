@@ -7,14 +7,14 @@ interface DataFetchResult<T> {
   data: T | null;
   loading: boolean;
   error: Error | null;
-  updateParams: (newParams: Record<string, any>) => void;
+  updateParams: (newParams: Record<string, unknown>) => void;
   refetch: () => void;
-  params?: Record<string, any>;
+  params?: Record<string, unknown>;
 }
 
 function useDataFetch<T>(
   url: string,
-  initialParams: Record<string, any> = {},
+  initialParams: Record<string, unknown> = {},
 ): DataFetchResult<T> {
   const [data, setData] = useState<T>({} as T);
   const [loading, setLoading] = useState<boolean>(true);
@@ -49,7 +49,7 @@ function useDataFetch<T>(
     fetchData();
   }, [url, params, fetchData]);
 
-  const updateParams = useCallback((newParams: Record<string, any>) => {
+  const updateParams = useCallback((newParams: Record<string, unknown>) => {
     // check if params is contains empty string or null delete it
     setParams(() => {
       const newParamsCopy = { ...newParams };

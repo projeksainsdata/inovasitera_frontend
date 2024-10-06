@@ -34,7 +34,7 @@ const columns = [
 
 ];
 
-const searchFields = [{ key: "name", label: "Wishlist" }];
+const searchFields = [{ key: "q", label: "Wishlist" }];
 
 const TableWishlist: React.FC = () => {
   const navigate = useNavigate();

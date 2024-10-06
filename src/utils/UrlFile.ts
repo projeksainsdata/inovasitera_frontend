@@ -16,7 +16,6 @@ export const urlToFile = async (url, filename = "image.jpg") => {
       preview: URL.createObjectURL(file),
     };
   } catch (error) {
-    console.error("Error converting URL to File:", error);
     throw error;
   }
 };
@@ -33,7 +32,6 @@ export const urlsToFiles = async (urls) => {
     );
     return await Promise.all(filePromises);
   } catch (error) {
-    console.error("Error converting URLs to Files:", error);
     throw error;
   }
 };

@@ -29,7 +29,7 @@ import ResetPassword from '@/pages/ResetPassword';
 import UpdateInovasi from '@/pages/innovator/innovations/UpdateInovasi';
 import NotFoundPage from '@/components/NotFound';
 import ROLE, { ROLE_PERMISSION } from '@/lib/constants/role.contants';
-import TambahInovasi from '@/pages/admin/manajemenTambahInovasi';
+import TambahInovasi from '@/pages/admin/manajemenInovasi';
 
 
 const AppRoutes: React.FC = () => {

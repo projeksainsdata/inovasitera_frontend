@@ -11,7 +11,7 @@ import { IconStarFilled } from "@tabler/icons-react";
 interface Column {
   key: string;
   label: string;
-  type?: "image" | "status" | "rating" | "date" | any;
+  type?: "image" | "status" | "rating" | "date" | "link" | any;
 }
 
 interface DataItem {
@@ -73,13 +73,54 @@ const Table: React.FC<TableProps> = ({
     return content;
   };
 
+  // Render based on column type
+  const renderImage = (value: string) => (
+    <img src={value} className="w-48 h-22 object-cover rounded" alt="Image" />
+  );
+
+  const renderStatus = (value: string) => {
+    const status = value === "N/A" ? "active" : value.toLowerCase();
+    const statusClasses =
+      status === "active" || status === "approved"
+        ? "bg-green-300/50 text-green-500"
+        : status === "pending"
+        ? "bg-yellow-300/50 text-yellow-500"
+        : "bg-red-300/50 text-red-500";
+
+    return (
+      <div
+        className={`px-5 py-2 rounded-full text-center uppercase ${statusClasses}`}
+      >
+        {status.toUpperCase()}
+      </div>
+    );
+  };
+
+  const renderRating = (value: string) => (
+    <span className="flex gap-3 items-center">
+      <IconStarFilled className="text-yellow-300" />
+      <h1 className="text-lg">{value}</h1>
+    </span>
+  );
+
+  const renderDate = (value: string) => (
+    <span>{new Date(value).toLocaleDateString()}</span>
+  );
+
+  const renderText = (value: string) => (
+    <span>{truncateContent(value, 4)}</span>
+  );
+
+  const renderLink = (url:string) => (
+    <a href={url} className="underline">{truncateContent(url,10)}</a>
+  )
   return (
     <div
       className="overflow-x-auto rounded bg-white shadow-md"
       style={{
         WebkitOverflowScrolling: "touch",
         display: "block",
-        minHeight: "45vh",
+        // minHeight: "45vh",
         maxHeight: "100vh",
       }}
     >
@@ -125,41 +166,17 @@ const Table: React.FC<TableProps> = ({
                   key={column?.key}
                   className="whitespace-nowrap px-4 py-3 text-base font-normal text-black"
                 >
-                  {column?.type == "image" ? (
-                    <img
-                      src={getNestedValue(row, column?.key).toString()}
-                      className="w-48 h-22 object-cover rounded"
-                    />
-                  ) : column?.type == "status" ? (
-                    <div
-                      className={`px-5 py-2 rounded-full text-center uppercase ${
-                        getNestedValue(row, column?.key).toString() === "active" || getNestedValue(row, column?.key).toString() === "N/A"
-                          ? "bg-green-300/50 text-green-500"
-                          : getNestedValue(row, column?.key).toString() ===
-                            "pending"
-                          ? "bg-yellow-300/50 text-yellow-500"
-                          : "bg-red-300/50 text-red-500"
-                      }`}
-                    >
-                      {getNestedValue(row, column?.key).toString() == "N/A" ? "ACTIVE":getNestedValue(row, column?.key).toString()}
-                    </div>
-                  ) : column?.type == "rating" ? (
-                    <span className="flex gap-3 items-center">
-                      <IconStarFilled className="text-yellow-300" />
-                      <h1 className="text-lg">
-                        {getNestedValue(row, column?.key).toString()}
-                      </h1>
-                    </span>
-                  ) : column?.type == "date" ? (
-                    new Date(
-                      getNestedValue(row, column?.key).toString()
-                    ).toLocaleDateString()
-                  ) : (
-                    truncateContent(
-                      getNestedValue(row, column?.key).toString(),
-                      4
-                    )
-                  )}
+                  {column?.type === "image"
+                    ? renderImage(getNestedValue(row, column?.key).toString())
+                    : column?.type === "status"
+                    ? renderStatus(getNestedValue(row, column?.key).toString())
+                    : column?.type === "rating"
+                    ? renderRating(getNestedValue(row, column?.key).toString())
+                    : column?.type === "date"
+                    ? renderDate(getNestedValue(row, column?.key).toString())
+                    : column?.type === "link"
+                    ? renderLink(getNestedValue(row, column?.key).toString())
+                    : renderText(getNestedValue(row, column?.key).toString())}
                 </td>
               ))}
               {(isDelete || isEdit) && (

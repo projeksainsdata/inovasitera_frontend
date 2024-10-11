@@ -22,9 +22,10 @@ import FormInnovation from '@/components/admin/ManajemenProduk/FormManajemenProd
 import useCategories from '@/hooks/useCategories';
 
 const columns = [
-  { key: 'title', label: 'Produk Name Inovasi' },
-  { key: 'thumbnail', label: 'Image', type: 'image' },
-  { key: 'createdAt', label: 'Tanggal', type: "date" },
+  { key: 'thumbnail', label: 'Gambar', type: 'image' },
+  { key: 'title', label: 'Judul Inovasi' },
+  { key: 'createdAt', label: 'Tanggal Publikasi', type: "date" },
+  { key: 'preview', label: 'Deskripsi', type: 'link' },
   { key: 'status', label: 'Status', type: 'status' },
 ];
 
@@ -42,7 +43,7 @@ const ManajemenInovasi: React.FC = () => {
   const searchFields = [
     { key: 'q', label: 'Nama Inovasi' },
     {
-      key: 'status', label: 'status Inovasi', type: 'select', options: [
+      key: 'status', label: 'Status Inovasi', type: 'select', options: [
         { value: 'pending', label: 'Pending' },
         { value: 'approved', label: 'Approved' },
         { value: 'rejected', label: 'Rejected' },
@@ -124,7 +125,7 @@ const ManajemenInovasi: React.FC = () => {
   return (
     <>
       <div>
-        <h1 className="mb-4 text-2xl font-semibold">Admin Management Inovasi</h1>
+        <h1 className="mb-4 text-2xl font-semibold">Manajemen Inovasi</h1>
         <SearchQuery
           fields={searchFields}
           initialValues={params}
@@ -152,7 +153,7 @@ const ManajemenInovasi: React.FC = () => {
       <Modal
         isOpen={isModalOpen}
         onClose={closeModal}
-        title="Tambah Innovation"
+        title="Edit Inovasi"
       >
         <FormInnovation
           handleSubmit={handleSubmit}

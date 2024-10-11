@@ -18,6 +18,7 @@ import { PublicRoute } from '@/routes/PublicRoute';
 import { PrivateRoute } from '@/routes/PrivateRoute';
 // import InovationAdmin from '@/pages/admin/inovations';
 import UserAdmin from '@/pages/admin/user';
+import UserEditAdmin from '@/pages/admin/user/edit';
 import ManajemenInovasiAdmin from '@/pages/admin/manajemenInovasi';
 // import InovationAdminDetail from '@/pages/admin/manajemenDetailInovasi';
 import InnovatorListInovasi from '@/pages/innovator/innovations/ListInovasi';
@@ -75,6 +76,10 @@ const AppRoutes: React.FC = () => {
                     <Route path="/admin/user" element={
                         <PrivateRoute role={ROLE_PERMISSION[ROLE.ADMIN]}>
                             <UserAdmin />
+                        </PrivateRoute>} />
+                    <Route path="/admin/user/:id" element={
+                        <PrivateRoute role={ROLE_PERMISSION[ROLE.ADMIN]}>
+                            <UserEditAdmin/>
                         </PrivateRoute>} />
                     <Route path="/admin/manajemen-inovasi" element={
                         <PrivateRoute role={ROLE_PERMISSION[ROLE.ADMIN]}>

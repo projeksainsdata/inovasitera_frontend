@@ -83,14 +83,14 @@ const Table: React.FC<TableProps> = ({
         maxHeight: "100vh",
       }}
     >
-      <table className="min-w-full divide-y divide-gray-800 bg-white">
-        <thead className="bg-orange-300/80">
+      <table className="min-w-full divide-y divide-gray-200 bg-white border">
+        <thead className="bg-gray-100">
           <tr>
             {columns.map((column) => (
               <th
                 key={column.key}
                 scope="col"
-                className="text-black-900 cursor-pointer p-4 text-left text-sm font-bold uppercase tracking-wider text-black"
+                className="text-black-900 cursor-pointer p-4 text-left text-sm uppercase tracking-wider text-black"
                 onClick={() => handleSort(column.key)}
               >
                 {column.label}
@@ -105,7 +105,7 @@ const Table: React.FC<TableProps> = ({
             {(isDelete || isEdit) && (
               <th
                 scope="col"
-                className="px-6 py-3 text-left text-sm font-bold uppercase tracking-wider text-black"
+                className="px-6 py-3 text-left text-sm uppercase tracking-wider text-black"
               >
                 Aksi
               </th>
@@ -123,7 +123,7 @@ const Table: React.FC<TableProps> = ({
               {columns.map((column) => (
                 <td
                   key={column?.key}
-                  className="whitespace-nowrap px-4 py-3 text-base text-black font-semibold"
+                  className="whitespace-nowrap px-4 py-3 text-base font-normal text-black"
                 >
                   {column?.type == "image" ? (
                     <img
@@ -132,21 +132,21 @@ const Table: React.FC<TableProps> = ({
                     />
                   ) : column?.type == "status" ? (
                     <div
-                      className={`px-3 py-2 rounded-full text-white text-center font-bold uppercase ${
-                        getNestedValue(row, column?.key).toString() === "active"
-                          ? "bg-green-500"
+                      className={`px-5 py-2 rounded-full text-center uppercase ${
+                        getNestedValue(row, column?.key).toString() === "active" || getNestedValue(row, column?.key).toString() === "N/A"
+                          ? "bg-green-300/50 text-green-500"
                           : getNestedValue(row, column?.key).toString() ===
                             "pending"
-                          ? "bg-yellow-500"
-                          : "bg-red-500"
+                          ? "bg-yellow-300/50 text-yellow-500"
+                          : "bg-red-300/50 text-red-500"
                       }`}
                     >
-                      {getNestedValue(row, column?.key).toString()}
+                      {getNestedValue(row, column?.key).toString() == "N/A" ? "ACTIVE":getNestedValue(row, column?.key).toString()}
                     </div>
                   ) : column?.type == "rating" ? (
                     <span className="flex gap-3 items-center">
                       <IconStarFilled className="text-yellow-300" />
-                      <h1 className="font-bold text-lg">
+                      <h1 className="text-lg">
                         {getNestedValue(row, column?.key).toString()}
                       </h1>
                     </span>

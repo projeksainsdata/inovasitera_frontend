@@ -88,7 +88,7 @@ const DetailInovasi: React.FC = () => {
         }
       });
       toast({
-        title: "Added to whitelist",
+        title: "Added to Wishlist",
         status: "success",
         duration: 3000,
         isClosable: true,
@@ -108,7 +108,7 @@ const DetailInovasi: React.FC = () => {
       }
 
       toast({
-        title: "Error adding to whitelist",
+        title: "Error adding to Wishlist",
         status: "error",
         duration: 3000,
         isClosable: true,

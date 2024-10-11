@@ -64,11 +64,11 @@ const TableWishlist: React.FC = () => {
     } catch (ErrorCatch) {
       if (ErrorCatch instanceof AxiosError) {
         toast.error(
-          ErrorCatch.response?.data.message || "Failed to delete whitelist"
+          ErrorCatch.response?.data.message || "Failed to delete Wishlist"
         );
         return;
       }
-      toast.error("Failed to delete whitelist");
+      toast.error("Failed to delete Wishlist");
     }
   };
 

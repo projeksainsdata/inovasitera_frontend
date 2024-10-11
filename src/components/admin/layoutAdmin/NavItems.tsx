@@ -63,7 +63,7 @@ export const navItems: NavItem[] = [
 
   {
     href: '/admin/wishlist-inovasi',
-    label: 'WhiteList Inovasi',
+    label: 'Wishlist Inovasi',
     icon: <IconHeartFilled size={20} />,
     group: 'Manajemen Inovasi',
     access: ['*'],

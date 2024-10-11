@@ -91,10 +91,22 @@ const FormUser: React.FC<PropsFormUser> = ({
       label: "gender ",
       type: "radio",
       options: [
-        { value: 'Laki-laki', label: 'Laki-laki' },
+        { value: 'Laki-laki', label: 'Laki-Laki' },
         { value: 'Perempuan', label: 'Perempuan' },
       ],
     },
+
+    {
+      name: "inovator.status",
+      label: "Status user",
+      type: "select",
+      options: [
+        { value: "pending", label: "Pending" },
+        { value: "active", label: "Active" },
+        { value: "inactive", label: "inactive" },
+      ],
+    },
+  
     {
       name: 'dateOfBirth',
       label: 'Date of Birth',

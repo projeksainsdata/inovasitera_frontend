@@ -262,7 +262,7 @@ const EditProfile = () => {
             <GridItem>
               <VStack spacing={4} align="stretch">
                 <Box className="w-full">
-                  {(profileData.inovator.status === "pending" || profileData.role !== ROLE.ADMIN) && (
+                  {(profileData.inovator.status === "pending") && (
                     <Box className="rounded p-3 bg-orange-600 text-white font-medium space-y-2">
                       <Badge colorScheme="orange" fontSize={"sm"}>
                         Pending
@@ -270,12 +270,14 @@ const EditProfile = () => {
                       <p className="font-medium">Menunggu Konfirmasi Admin</p>
                     </Box>
                   )}
-                  {profileData.inovator.status === "approved" && (
-                    <Badge colorScheme="green" fontSize={"lg"}>
-                      Status Terverifikasi
-                    </Badge>
+                  {profileData.inovator.status === "active" && (
+                    <Box className="rounded p-3 bg-green-600 text-white font-medium space-y-2">
+                      <Badge colorScheme="" fontSize={"lg"}>
+                        Status Terverifikasi
+                      </Badge>
+                    </Box>
                   )}
-                  {profileData.inovator.status === "rejected" && (
+                  {profileData.inovator.status === "inactive" && (
                     <Box className="rounded p-3 bg-red-600 text-white font-medium space-y-2">
                       <Badge colorScheme="red" fontSize={"sm"}>
                         Ditolak

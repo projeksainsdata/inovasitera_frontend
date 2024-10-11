@@ -69,7 +69,7 @@ const InnovationPage: React.FC = () => {
     const categories = selections['category'] as string[];
     updateParams({
       ...params,
-      'category': categories.join(','),
+      'category': categories?.join(',') || "",
       sort: sortColumn,
       order: sortDirection,
       page: 1,

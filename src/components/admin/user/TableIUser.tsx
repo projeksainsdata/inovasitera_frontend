@@ -22,7 +22,6 @@ const columns = [
   { key: 'fullname', label: 'fullname' },
   { key: 'role', label: 'Role' },
   { key: 'email', label: 'Email' },
-  { key: "provider", label: "Provider user" },
   { key: "inovator.status", label: "Status user", type: "status" },
   { key: "inovator.fakultas", label: "Fakultas" },
   { key: "inovator.prodi", label: "prodi" },

@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useState } from "react";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
 import { USER, UserCreate, UserUpdate } from "@/lib/types/user.type";
 import { post, del, put, UploadImage } from "@/hooks/useSubmit";
 import { AxiosError } from "axios";
@@ -13,15 +13,14 @@ import SearchQuery, { SearchField } from "@/components/Form/GenericSearch";
 import Pagination from "@/components/Pagination";
 import Modal from "@/components/Modal";
 import FormUser from "@/components/admin/user/FormUser";
-import { useToast } from "@chakra-ui/react";
+import { Button, ButtonGroup, useToast } from "@chakra-ui/react";
 import ProgressBar from "@/components/ProgressBar";
 import { transformAndCleanObject } from "@/utils/transformAndCleanObject";
 
 const columns = [
-  { key: "email", label: "email" },
-  { key: "fullname", label: "fullname" },
-  { key: "role", label: "Role" },
   { key: "email", label: "Email" },
+  { key: "fullname", label: "Fullname" },
+  { key: "role", label: "Role" },
   { key: "inovator.fakultas", label: "Fakultas" },
   { key: "inovator.prodi", label: "prodi" },
   { key: "inovator.status", label: "Status", type: "status" },
@@ -53,6 +52,7 @@ const searchFields: SearchField[] = [
 
 const TableUser: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [IDUserdelete, setIDUserdelete] = useState("");
   const [initialValues, setInitialValues] = useState<UserUpdate | null>(null);
   const [uploadProgress, setUploadProgress] = useState(0);
   const { data, loading, updateParams, refetch, params } = useDataFetch<
@@ -152,7 +152,7 @@ const TableUser: React.FC = () => {
     }
   };
 
-  const handleDelete = async (id: string | number) => {
+  const deleteUser = async (id: string | number) => {
     try {
       await del<USER>(`${USER_PREFIX.DELETE}/${id}`);
       refetch();
@@ -185,10 +185,15 @@ const TableUser: React.FC = () => {
     }
   };
 
+  const handleDelete = () => {
+    deleteUser(IDUserdelete);
+    closeModal();
+  };
   const closeModal = () => setIsModalOpen(false);
+
   const navigate = useNavigate();
   const handleEdit = (row: any) => {
-    navigate(`/admin/user/${row._id}`)
+    navigate(`/admin/user/${row._id}`);
     setInitialValues(row);
     // setIsModalOpen(true);
   };
@@ -212,7 +217,10 @@ const TableUser: React.FC = () => {
           data={data?.data}
           onSort={handleSort}
           onEdit={handleEdit}
-          onDelete={handleDelete}
+          onDelete={(id: any) => {
+            setIsModalOpen(true);
+            setIDUserdelete(id);
+          }}
         />
 
         <Pagination
@@ -225,9 +233,21 @@ const TableUser: React.FC = () => {
           onPageChange={handlePageChange}
         />
       </div>
-      <Modal isOpen={isModalOpen} onClose={closeModal} title="Edit User">
-        {/* <ProgressBar progress={uploadProgress} showPercentage={uploadProgress !== 0} /> */}
+      {/* <Modal isOpen={isModalOpen} onClose={closeModal} title="Edit User">
+        <ProgressBar progress={uploadProgress} showPercentage={uploadProgress !== 0} />
         <FormUser handleSubmit={handleSubmit} initialValues={initialValues} />
+      </Modal> */}
+
+      <Modal isOpen={isModalOpen} onClose={closeModal} title="Hapus User">
+        <h1 className="mb-5">Ingin Menghapus Akun?</h1>
+        <ButtonGroup>
+          <Button colorScheme="red" variant="outline" onClick={handleDelete}>
+            Hapus
+          </Button>
+          <Button colorScheme="blue" onClick={() => setIsModalOpen(false)}>
+            Batal
+          </Button>
+        </ButtonGroup>
       </Modal>
     </>
   );

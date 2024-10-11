@@ -28,9 +28,9 @@ const Header: React.FC<HeaderProps> = ({ toggleSidebar }) => {
             />
           </svg>
         </button>
-        <h1 className="text-xl font-semibold text-black">
+        {/* <h1 className="text-xl font-semibold text-black">
           {navItems.find((item) => item.href === location.pathname)?.label || 'Dashboard'}
-        </h1>
+        </h1> */}
         <div className="flex items-center"></div>
       </div>
     </header>

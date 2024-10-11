@@ -45,7 +45,7 @@ const Radio: React.FC<RadioProps> = ({
               onChange={handleChange}
               className="size-4 border-gray-300 text-black focus:ring-black"
             />
-            <span className="ml-2 text-sm text-gray-700">{option.label}</span>
+            <span className="mx-2 text-sm text-gray-700">{option.label}</span>
           </label>
         ))}
       </div>

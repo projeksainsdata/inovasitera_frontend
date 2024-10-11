@@ -1,6 +1,11 @@
 import React, { useState } from "react";
 // import { IconChevronUp, FaSortDown, FaEdit, FaTrash } from "react-icons/fa";
-import { IconTrash, IconEdit, IconChevronDown, IconChevronUp } from "@tabler/icons-react"
+import {
+  IconTrash,
+  IconEdit,
+  IconChevronDown,
+  IconChevronUp,
+} from "@tabler/icons-react";
 import { motion } from "framer-motion";
 import { IconStarFilled } from "@tabler/icons-react";
 interface Column {
@@ -127,21 +132,28 @@ const Table: React.FC<TableProps> = ({
                     />
                   ) : column?.type == "status" ? (
                     <div
-                      className={`px-3 py-2 rounded-full text-white text-center font-bold uppercase ${getNestedValue(row, column?.key).toString() ==
-                        "diterima"
-                        ? "bg-green-500"
-                        : "bg-red-500"
-                        }`}
+                      className={`px-3 py-2 rounded-full text-white text-center font-bold uppercase ${
+                        getNestedValue(row, column?.key).toString() === "active"
+                          ? "bg-green-500"
+                          : getNestedValue(row, column?.key).toString() ===
+                            "pending"
+                          ? "bg-yellow-500"
+                          : "bg-red-500"
+                      }`}
                     >
                       {getNestedValue(row, column?.key).toString()}
                     </div>
                   ) : column?.type == "rating" ? (
                     <span className="flex gap-3 items-center">
                       <IconStarFilled className="text-yellow-300" />
-                      <h1 className="font-bold text-lg">{getNestedValue(row, column?.key).toString()}</h1>
+                      <h1 className="font-bold text-lg">
+                        {getNestedValue(row, column?.key).toString()}
+                      </h1>
                     </span>
                   ) : column?.type == "date" ? (
-                    new Date(getNestedValue(row, column?.key).toString()).toLocaleDateString()
+                    new Date(
+                      getNestedValue(row, column?.key).toString()
+                    ).toLocaleDateString()
                   ) : (
                     truncateContent(
                       getNestedValue(row, column?.key).toString(),
@@ -151,7 +163,6 @@ const Table: React.FC<TableProps> = ({
                 </td>
               ))}
               {(isDelete || isEdit) && (
-
                 <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
                   {isEdit && (
                     <motion.button
@@ -165,7 +176,7 @@ const Table: React.FC<TableProps> = ({
                   {isDelete && (
                     <motion.button
                       whileHover={{ scale: 1.1 }}
-                    onClick={() => onDelete(row._id)}
+                      onClick={() => onDelete(row._id)}
                       className="text-red-600 hover:text-red-900"
                     >
                       <IconTrash />

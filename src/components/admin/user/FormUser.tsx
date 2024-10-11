@@ -76,19 +76,19 @@ const FormUser: React.FC<PropsFormUser> = ({
       type: 'text',
       validation: Yup.string().required('Email is required'),
     },
-    {
-      name: 'address',
-      label: 'Address',
-      type: 'text',
-    },
+    // {
+    //   name: 'address',
+    //   label: 'Address',
+    //   type: 'text',
+    // },
     {
       name: 'phonenumber',
-      label: 'Phonenumber',
+      label: 'Phone Number',
       type: 'text',
     },
     {
       name: "gender",
-      label: "gender ",
+      label: "Gender",
       type: "radio",
       options: [
         { value: 'Laki-laki', label: 'Laki-Laki' },
@@ -98,12 +98,12 @@ const FormUser: React.FC<PropsFormUser> = ({
 
     {
       name: "inovator.status",
-      label: "Status user",
+      label: "Status User",
       type: "select",
       options: [
         { value: "pending", label: "Pending" },
-        { value: "active", label: "Active" },
-        { value: "inactive", label: "inactive" },
+        { value: "active", label: "Accept" },
+        { value: "inactive", label: "Reject" },
       ],
     },
   

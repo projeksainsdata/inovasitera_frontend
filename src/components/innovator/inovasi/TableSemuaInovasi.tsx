@@ -40,9 +40,9 @@ const columns = [
 ];
 
 const searchFields = [
-  { key: "q", label: "Nama Inovator" },
+  { key: "q", label: "Nama Inovasi" },
   {
-    key: 'status', label: 'status Inovasi', type: 'select', options: [
+    key: 'status', label: 'Status Inovasi', type: 'select', options: [
       { value: 'pending', label: 'Pending' },
       { value: 'approved', label: 'Approved' },
       { value: 'rejected', label: 'Rejected' },

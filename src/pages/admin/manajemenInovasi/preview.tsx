@@ -24,19 +24,14 @@ import {
   AccordionPanel,
   AccordionIcon,
   VStack,
-  FormControl,
-  FormLabel,
-  Textarea,
   Flex,
-  Avatar,
-  useToast,
+  Link,
 } from "@chakra-ui/react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Pagination } from "swiper/modules";
 import {
   IconStarFilled,
   IconZoomQuestion,
-  IconMessageCircle,
   IconInfoCircle,
 } from "@tabler/icons-react";
 import "swiper/css";
@@ -79,9 +74,21 @@ const ManajemenInovasiAdmin = () => {
 
   return (
     <LayoutAdmin>
-      <Box as="main" margin="auto" padding={6}>
-        <Flex direction={{ base: "column", lg: "row" }} gap={6}>
-          <Box className="h-auto w-full lg:w-[15rem]">
+      <Box as="main" margin="auto">
+        <Box className="mb-5 space-y-3">
+          <Flex className="w-full justify-between">
+            <Link href="/admin/manajemen-inovasi">
+              <Button colorScheme="orange">Kembali</Button>
+            </Link>
+          </Flex>
+          <h1 className="text-xl font-bold">Preview Inovasi</h1>
+        </Box>
+        <Flex
+          direction={{ base: "column", lg: "row" }}
+          gap={6}
+          className="items-center justify-center"
+        >
+          <Box className="h-auto w-[30em]">
             <Swiper
               modules={[Pagination]}
               spaceBetween={4}
@@ -121,28 +128,28 @@ const ManajemenInovasiAdmin = () => {
             <Text fontSize="2xl" fontWeight="bold">
               {data?.title}
             </Text>
-
-            <Flex alignItems="center" gap={4}>
-              <h1>Kategori</h1>
-              <Box
-                bg="green.500"
-                color="white"
-                px={4}
-                py={1}
-                borderRadius="full"
-              >
-                <Text fontSize="sm" fontWeight="semibold">
-                  {data?.category?.name}
+            <Flex gap={4}>
+              <Flex alignItems="center" gap={4}>
+                <Box
+                  bg="green.500"
+                  color="white"
+                  px={4}
+                  py={1}
+                  borderRadius="full"
+                >
+                  <Text fontSize="sm" fontWeight="semibold">
+                    {data?.category?.name}
+                  </Text>
+                </Box>
+              </Flex>
+              <Flex alignItems="center">
+                <StarRating rating={avgRating} />
+                <Text ml={2} color="gray.600">
+                  ({avgRating})
                 </Text>
-              </Box>
+              </Flex>
             </Flex>
-            <Flex alignItems="center">
-              <StarRating rating={avgRating} />
-              <Text ml={2} color="gray.600">
-                ({data?.rating?.length} Ulasan)
-              </Text>
-            </Flex>
-            <Box bg="gray.100" p={4} borderRadius="md">
+            <Box bg="gray.100" p={3} borderRadius="md">
               <Text fontWeight="semibold" mb={2}>
                 Daftar Innovator
               </Text>
@@ -161,11 +168,15 @@ const ManajemenInovasiAdmin = () => {
           <TabList>
             <Tab>
               <IconInfoCircle size={16} />
-              <Text ml={2}>Deskripsi</Text>
+              <Text ml={2} className="font-semibold">
+                Deskripsi
+              </Text>
             </Tab>
             <Tab>
               <IconZoomQuestion size={16} />
-              <Text ml={2}>Pertanyaan</Text>
+              <Text ml={2} className="font-semibold">
+                Pertanyaan
+              </Text>
             </Tab>
           </TabList>
 
@@ -211,12 +222,12 @@ const ManajemenInovasiAdmin = () => {
               <Accordion allowToggle>
                 {data?.faq?.map((item: any, index: number) => (
                   <AccordionItem key={index}>
-                      <AccordionButton>
-                        <Box flex="1" textAlign="left" p={2}>
-                          {item?.question}
-                        </Box>
-                        <AccordionIcon />
-                      </AccordionButton>
+                    <AccordionButton>
+                      <Box flex="1" textAlign="left" p={2}>
+                        {item?.question}
+                      </Box>
+                      <AccordionIcon />
+                    </AccordionButton>
                     <AccordionPanel p={2}>{item?.answer}</AccordionPanel>
                   </AccordionItem>
                 ))}

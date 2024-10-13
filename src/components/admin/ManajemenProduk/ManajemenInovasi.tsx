@@ -26,6 +26,7 @@ const columns = [
   { key: "thumbnail", label: "Gambar", type: "image" },
   { key: "title", label: "Judul Inovasi" },
   { key: "createdAt", label: "Tanggal Publikasi", type: "date" },
+  { key: "average_rating", label: "Rating", type: "rating" },
   { key: "preview", label: "Preview", type: "link" },
   { key: "status", label: "Status", type: "status" },
 ];

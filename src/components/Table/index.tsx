@@ -1,10 +1,10 @@
 import React, { useState } from "react";
-// import { IconChevronUp, FaSortDown, FaEdit, FaTrash } from "react-icons/fa";
 import {
   IconTrash,
   IconEdit,
   IconChevronDown,
   IconChevronUp,
+  IconExternalLink,
 } from "@tabler/icons-react";
 import { motion } from "framer-motion";
 import { IconStarFilled } from "@tabler/icons-react";
@@ -111,9 +111,26 @@ const Table: React.FC<TableProps> = ({
     <span>{truncateContent(value, 4)}</span>
   );
 
-  const renderLink = (url:string) => (
-    <a href={url} className="underline">{truncateContent(url,10)}</a>
-  )
+  const renderLink = (data: any) => {
+    console.log(data);
+    return data.status === "approved" ? (
+      <a
+        href={`/inovasi/${data._id}`}
+        target="_blank"
+        className="flex gap-2 items-center"
+      >
+        Lihat Inovasi <IconExternalLink size={16} />
+      </a>
+    ) : (
+      <a
+        href={`/admin/manajemen-inovasi/preview/${data._id}`}
+        target="_blank"
+        className="flex gap-2 items-center"
+      >
+        Lihat Preview <IconExternalLink size={16} />
+      </a>
+    );
+  };
   return (
     <div
       className="overflow-x-auto rounded bg-white shadow-md"
@@ -175,7 +192,7 @@ const Table: React.FC<TableProps> = ({
                     : column?.type === "date"
                     ? renderDate(getNestedValue(row, column?.key).toString())
                     : column?.type === "link"
-                    ? renderLink(getNestedValue(row, column?.key).toString())
+                    ? renderLink(row)
                     : renderText(getNestedValue(row, column?.key).toString())}
                 </td>
               ))}

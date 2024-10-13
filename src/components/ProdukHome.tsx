@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 import 'swiper/css';
 import 'swiper/css/pagination';
 import React, { useState } from 'react';
-
+import {IconSearch} from "@tabler/icons-react";
 import InnovationCard from "../components/InovationCard";
 import useDataFetch from "@/hooks/useFetchData";
 import { INNOVATION_PREFIX } from "@/lib/constants/api.contants";
@@ -34,15 +34,13 @@ const ProdukHome: React.FC = () => {
   }
 
   return (
-    <div className="py-6 px-4 sm:py-10 sm:px-6 md:mt-0 mt-20">
+    <div className="mx-4 sm:my-10 sm:px-6 md:mt-0 my-20">
       <VStack spacing={4} align="stretch">
         <h1 className='text-center font-bold text-xl sm:text-3xl'>Jelajahi Riset & Inovasi ITERA</h1>
         <h2 className='text-center text-base mb-6'>Lihat Semua Inovasi yang ada di ITERA</h2>
-
-        {/* Search Input */}
         <InputGroup maxW="600px" mx="auto" mb={6}>
           <Input
-            placeholder="Cari inovasi..."
+            placeholder="Cari Inovasi..."
             value={searchQuery}
             onChange={(e) => handleSearch(e.target.value)}
             size="md"
@@ -52,9 +50,9 @@ const ProdukHome: React.FC = () => {
           />
           <InputRightElement>
             <button
-              onClick={() => handleSearch('')}
-              className="text-gray-600 hover:text-gray-800 focus:outline-none">
-              ✕
+              onClick={() => navigate(`/inovasi?q=${searchQuery}`)}
+              className="bg-red-500 text-white p-2 w-full rounded-full">
+            <IconSearch/>
             </button>
           </InputRightElement>
         </InputGroup>
@@ -65,7 +63,7 @@ const ProdukHome: React.FC = () => {
             <Spinner size="xl" />
           </Box>
         ) : error ? (
-          <Box textAlign="center" color="red.500">Error: {error.message}</Box>
+          <Box textAlign="center" color="red.500">Terjadi Kesalahan: {error.message}</Box>
         ) : (
           <>
             {/* Swiper Container */}

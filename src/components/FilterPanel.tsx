@@ -88,7 +88,7 @@ const FilterPanel: React.FC<FilterPanelProps> = ({
                 </div>
             ))}
 
-            <Button colorScheme="blue" size="sm" w="full" mt={4} onClick={handleApply}>
+            <Button colorScheme="orange" size="sm" w="full" mt={4} onClick={handleApply}>
                 Apply
             </Button>
         </Box>

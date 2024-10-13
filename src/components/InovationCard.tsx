@@ -22,7 +22,7 @@ const InnovationCard: React.FC<InnovationCardProps> = ({ inovasi }) => {
             </span>
           </span>
         </div>
-        <p className="text-base font-bold">{inovasi?.title}</p>
+        <h2 className="text-base font-bold">{inovasi?.title}</h2>
       </div>
     </Link>
   );

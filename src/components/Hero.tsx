@@ -1,6 +1,6 @@
-import { Button, Stack } from '@chakra-ui/react';
-import { Link } from 'react-router-dom';
-import hero from '../assets/Hero.png';
+import { Button, Stack } from "@chakra-ui/react";
+import { Link } from "react-router-dom";
+import hero from "../assets/Hero.png";
 
 const Hero = () => {
   return (
@@ -11,9 +11,9 @@ const Hero = () => {
           className="hidden md:block absolute top-0 left-0 w-full h-full"
           style={{
             backgroundImage: `url(${hero})`,
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
-            backgroundAttachment: 'fixed', // Parallax effect
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+            backgroundAttachment: "fixed", // Parallax effect
           }}
         ></div>
 
@@ -22,9 +22,9 @@ const Hero = () => {
           className="block md:hidden absolute top-0 left-0 w-full h-full"
           style={{
             backgroundImage: `url(${hero})`,
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
-            backgroundAttachment: 'fixed', // Parallax effect
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+            backgroundAttachment: "fixed", // Parallax effect
           }}
         ></div>
 
@@ -39,24 +39,24 @@ const Hero = () => {
             </h1>
             <Stack
               spacing={4}
-              direction={{ base: 'column', md: 'row' }}
-              align={{ base: 'center', md: 'flex-start' }}
+              direction={{ base: "column", md: "row" }}
+              align={{ base: "center", md: "flex-start" }}
             >
-              <Button colorScheme="red" size="lg" className="w-full">
-                <Link to="/inovasi" className="text-white font-bold">
+              <Link to="/inovasi" className="text-white font-bold">
+                <Button colorScheme="red" size="lg" className="w-full">
                   Lihat Semua Inovasi →
-                </Link>
-              </Button>
-              <Button
-                colorScheme="red"
-                variant="outline"
-                size="lg"
-                className="w-full"
-              >
-                <Link to="/tentang" className="font-bold">
+                </Button>
+              </Link>
+              <Link to="/tentang" className="font-bold">
+                <Button
+                  colorScheme="red"
+                  variant="outline"
+                  size="lg"
+                  className="w-full"
+                >
                   Tentang Kami
-                </Link>
-              </Button>
+                </Button>
+              </Link>
             </Stack>
           </div>
         </div>

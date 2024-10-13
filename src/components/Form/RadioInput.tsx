@@ -31,7 +31,7 @@ const Radio: React.FC<RadioProps> = ({
 
   return (
     <div className="mb-4">
-      <label className="mb-2 block text-sm font-medium text-black">
+      <label className="mb-2 block text-lg font-medium text-black">
         {label}
       </label>
       <div className="space-y-2">

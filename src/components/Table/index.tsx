@@ -1,17 +1,17 @@
 import React, { useState } from "react";
-// import { IconChevronUp, FaSortDown, FaEdit, FaTrash } from "react-icons/fa";
 import {
   IconTrash,
   IconEdit,
   IconChevronDown,
   IconChevronUp,
+  IconExternalLink,
 } from "@tabler/icons-react";
 import { motion } from "framer-motion";
 import { IconStarFilled } from "@tabler/icons-react";
 interface Column {
   key: string;
   label: string;
-  type?: "image" | "status" | "rating" | "date" | any;
+  type?: "image" | "status" | "rating" | "date" | "link" | any;
 }
 
 interface DataItem {
@@ -73,24 +73,82 @@ const Table: React.FC<TableProps> = ({
     return content;
   };
 
+  // Render based on column type
+  const renderImage = (value: string) => (
+    <img src={value} className="w-48 h-22 object-cover rounded" alt="Image" />
+  );
+
+  const renderStatus = (value: string) => {
+    const status = value === "N/A" ? "active" : value.toLowerCase();
+    const statusClasses =
+      status === "active" || status === "approved"
+        ? "bg-green-300/50 text-green-500"
+        : status === "pending"
+        ? "bg-yellow-300/50 text-yellow-500"
+        : "bg-red-300/50 text-red-500";
+
+    return (
+      <div
+        className={`px-5 py-2 rounded-full text-center uppercase ${statusClasses}`}
+      >
+        {status.toUpperCase()}
+      </div>
+    );
+  };
+
+  const renderRating = (value: string) => (
+    <span className="flex gap-3 items-center">
+      <IconStarFilled className="text-yellow-300" />
+      <h1 className="text-lg">{value}</h1>
+    </span>
+  );
+
+  const renderDate = (value: string) => (
+    <span>{new Date(value).toLocaleDateString()}</span>
+  );
+
+  const renderText = (value: string) => (
+    <span>{truncateContent(value, 4)}</span>
+  );
+
+  const renderLink = (data: any) => {
+    console.log(data);
+    return data.status === "approved" ? (
+      <a
+        href={`/inovasi/${data._id}`}
+        target="_blank"
+        className="flex gap-2 items-center"
+      >
+        Lihat Inovasi <IconExternalLink size={16} />
+      </a>
+    ) : (
+      <a
+        href={`/admin/manajemen-inovasi/preview/${data._id}`}
+        target="_blank"
+        className="flex gap-2 items-center"
+      >
+        Lihat Preview <IconExternalLink size={16} />
+      </a>
+    );
+  };
   return (
     <div
       className="overflow-x-auto rounded bg-white shadow-md"
       style={{
         WebkitOverflowScrolling: "touch",
         display: "block",
-        minHeight: "45vh",
+        // minHeight: "45vh",
         maxHeight: "100vh",
       }}
     >
-      <table className="min-w-full divide-y divide-gray-800 bg-white">
-        <thead className="bg-orange-300/80">
+      <table className="min-w-full divide-y divide-gray-200 bg-white border">
+        <thead className="bg-gray-100">
           <tr>
             {columns.map((column) => (
               <th
                 key={column.key}
                 scope="col"
-                className="text-black-900 cursor-pointer p-4 text-left text-sm font-bold uppercase tracking-wider text-black"
+                className="text-black-900 cursor-pointer p-4 text-left text-sm uppercase tracking-wider text-black"
                 onClick={() => handleSort(column.key)}
               >
                 {column.label}
@@ -105,7 +163,7 @@ const Table: React.FC<TableProps> = ({
             {(isDelete || isEdit) && (
               <th
                 scope="col"
-                className="px-6 py-3 text-left text-sm font-bold uppercase tracking-wider text-black"
+                className="px-6 py-3 text-left text-sm uppercase tracking-wider text-black"
               >
                 Aksi
               </th>
@@ -123,43 +181,19 @@ const Table: React.FC<TableProps> = ({
               {columns.map((column) => (
                 <td
                   key={column?.key}
-                  className="whitespace-nowrap px-4 py-3 text-base text-black font-semibold"
+                  className="whitespace-nowrap px-4 py-3 text-base font-normal text-black"
                 >
-                  {column?.type == "image" ? (
-                    <img
-                      src={getNestedValue(row, column?.key).toString()}
-                      className="w-48 h-22 object-cover rounded"
-                    />
-                  ) : column?.type == "status" ? (
-                    <div
-                      className={`px-3 py-2 rounded-full text-white text-center font-bold uppercase ${
-                        getNestedValue(row, column?.key).toString() === "active"
-                          ? "bg-green-500"
-                          : getNestedValue(row, column?.key).toString() ===
-                            "pending"
-                          ? "bg-yellow-500"
-                          : "bg-red-500"
-                      }`}
-                    >
-                      {getNestedValue(row, column?.key).toString()}
-                    </div>
-                  ) : column?.type == "rating" ? (
-                    <span className="flex gap-3 items-center">
-                      <IconStarFilled className="text-yellow-300" />
-                      <h1 className="font-bold text-lg">
-                        {getNestedValue(row, column?.key).toString()}
-                      </h1>
-                    </span>
-                  ) : column?.type == "date" ? (
-                    new Date(
-                      getNestedValue(row, column?.key).toString()
-                    ).toLocaleDateString()
-                  ) : (
-                    truncateContent(
-                      getNestedValue(row, column?.key).toString(),
-                      4
-                    )
-                  )}
+                  {column?.type === "image"
+                    ? renderImage(getNestedValue(row, column?.key).toString())
+                    : column?.type === "status"
+                    ? renderStatus(getNestedValue(row, column?.key).toString())
+                    : column?.type === "rating"
+                    ? renderRating(getNestedValue(row, column?.key).toString())
+                    : column?.type === "date"
+                    ? renderDate(getNestedValue(row, column?.key).toString())
+                    : column?.type === "link"
+                    ? renderLink(row)
+                    : renderText(getNestedValue(row, column?.key).toString())}
                 </td>
               ))}
               {(isDelete || isEdit) && (

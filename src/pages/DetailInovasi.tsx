@@ -31,7 +31,7 @@ import {
 } from "@chakra-ui/react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Pagination } from "swiper/modules";
-import { IconStarFilled, IconZoomQuestion, IconMessageCircle, IconInfoCircle } from "@tabler/icons-react";
+import { IconStarFilled, IconZoomQuestion, IconMessageCircle, IconInfoCircle,IconMicroscope } from "@tabler/icons-react";
 import "swiper/css";
 import "swiper/css/pagination";
 
@@ -172,8 +172,8 @@ const DetailInovasi: React.FC = () => {
       <Navbar />
       <img src={banner} className="h-24 w-full object-cover" alt="Hero Banner" />
       <Box as="main" maxWidth="6xl" margin="auto" padding={6}>
-        <Flex direction={{ base: "column", lg: "row" }} gap={6}>
-          <Box className="h-auto w-full lg:w-[40rem]">
+        <Flex direction={{ base: "column", lg: "row" }} gap={6} className="items-center">
+          <Box className="h-auto w-full lg:w-6/12 border rounded">
             <Swiper
               modules={[Pagination]}
               spaceBetween={4}
@@ -198,7 +198,7 @@ const DetailInovasi: React.FC = () => {
             </Swiper>
           </Box>
 
-          <Box flex={1} className="space-y-6">
+          <Box flex={1} className="space-y-4">
             <Text fontSize="sm" fontWeight="semibold" color="gray.600">
               Produk Inovasi ITERA
             </Text>
@@ -221,12 +221,12 @@ const DetailInovasi: React.FC = () => {
             </Flex>
 
             <Box bg="gray.100" p={4} borderRadius="md">
-              <Text fontWeight="semibold" mb={2}>
-                Innovator
+              <Text fontWeight="semibold" mb={2} className="flex items-center gap-3">
+              <IconMicroscope/>Innovator
               </Text>
               <VStack align="stretch" spacing={1}>
                 {data?.collaboration?.map((innovator: string, index: number) => (
-                  <Text key={index}>{innovator}</Text>
+                  <Text key={index}>{index+1}. {innovator}</Text>
                 ))}
               </VStack>
             </Box>
@@ -248,22 +248,22 @@ const DetailInovasi: React.FC = () => {
           <TabList>
             <Tab>
               <IconInfoCircle size={16} />
-              <Text ml={2}>Deskripsi</Text>
+              <Text ml={2} className="font-bold">Deskripsi</Text>
             </Tab>
             <Tab>
               <IconMessageCircle size={16} />
-              <Text ml={2}>Ulasan</Text>
+              <Text ml={2} className="font-bold">Ulasan</Text>
             </Tab>
             <Tab>
               <IconZoomQuestion size={16} />
-              <Text ml={2}>Pertanyaan</Text>
+              <Text ml={2} className="font-bold">Pertanyaan</Text>
             </Tab>
           </TabList>
 
           <TabPanels>
             <TabPanel>
               <VStack align="stretch" spacing={6}>
-                <Text>{data?.description}</Text>
+                <Text className="leading-8">{data?.description}</Text>
                 <TableContainer>
                   <Table variant="simple">
                     <Tbody>
@@ -298,7 +298,8 @@ const DetailInovasi: React.FC = () => {
                 {auth.user ? (
                   <Box flex={1}>
                     <form onSubmit={formik.handleSubmit}>
-                      <VStack spacing={4} align="stretch">
+                      <VStack spacing={4} align="stretch" className="border p-4 rounded-lg shadow">
+                        <h1 className="text-lg font-bold">Berikan Rating & Ulasan Anda</h1>
                         <FormControl isInvalid={formik.touched.rating && !!formik.errors.rating}>
                           <FormLabel>Rating</FormLabel>
                           <Rating

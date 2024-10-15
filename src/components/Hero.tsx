@@ -31,6 +31,7 @@ const Hero = () => {
         {/* Content */}
         <div className="px-5 md:px-20 md:mt-0 mt-[-100px] z-20">
           <div className="text-left">
+            <p className="text-lg text-gray-900">Selamat Datang di</p>
             <h1 className="text-2xl md:text-3xl font-bold text-black mb-2 md:mb-4">
               Pusat Implementasi Inovasi
             </h1>
@@ -40,7 +41,7 @@ const Hero = () => {
             <Stack
               spacing={4}
               direction={{ base: "column", md: "row" }}
-              align={{ base: "center", md: "flex-start" }}
+              align={{ base: "", md: "flex-start" }}
             >
               <Link to="/inovasi" className="text-white font-bold">
                 <Button colorScheme="red" size="lg" className="w-full">

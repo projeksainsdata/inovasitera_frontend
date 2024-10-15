@@ -11,6 +11,7 @@ import useDataFetch from "@/hooks/useFetchData";
 import { INNOVATION_PREFIX } from "@/lib/constants/api.contants";
 import { InovationResponse } from "@/lib/types/inovation.type";
 import useCategories from "@/hooks/useCategories";
+import {IconAdjustmentsSearch} from "@tabler/icons-react";
 
 const SearchFields: SearchField[] = [
   {
@@ -105,7 +106,7 @@ const InnovationPage: React.FC = () => {
           />
 
           <main className="w-full md:w-3/4">
-            <div className="flex justify-between mb-4">
+            <div className="flex justify-between my-4 items-center">
               <h2 className="text-base font-bold">
                 {!!params.q
                   ? `Hasil Untuk ${params?.q || ""} (${
@@ -115,9 +116,9 @@ const InnovationPage: React.FC = () => {
               </h2>
               <button
                 onClick={() => setFilterMobile(!filterMobile)}
-                className="block md:hidden text-base"
+                className="md:hidden text-base flex gap-2 bg-orange-600 px-3 py-1 rounded text-white items-center"
               >
-                Filter
+                Atur <IconAdjustmentsSearch size={16}/>
               </button>
             </div>
             {loading ? (
@@ -165,10 +166,10 @@ const InnovationPage: React.FC = () => {
       <Footer />
 
       {filterMobile && (
-        <Box className="fixed bottom-0 w-full rounded-t-lg shadow-lg z-50 bg-white p-4 overflow-y-auto md:hidden">
+        <Box className="fixed bottom-0 w-full rounded-t-lg border z-50 bg-white p-4 overflow-y-auto md:hidden">
           <div className="flex justify-between items-center mb-4">
-            <h2 className="font-bold text-lg">Filters</h2>
-            <button onClick={() => setFilterMobile(false)}>Close</button>
+            <h2 className="font-bold text-lg">Atur Pencarian</h2>
+            <button onClick={() => setFilterMobile(false)}>Tutup</button>
           </div>
           <FilterPanel
             filterGroups={filterGroups}

@@ -72,7 +72,7 @@ const Pagination: React.FC<PaginationProps> = ({
       <button
         onClick={handlePrevPage}
         className={`rounded-l-md px-6 py-2 ${currentPage === 1
-          ? 'cursor-not-allowed bg-gray-300 text-gray-500'
+          ? 'cursor-not-allowed bg-gray-100 text-gray-500'
           : 'bg-gray-200 text-gray-700 hover:bg-primary-100'
           }`}
         disabled={currentPage === 1}
@@ -103,7 +103,7 @@ const Pagination: React.FC<PaginationProps> = ({
       <button
         onClick={handleNextPage}
         className={`rounded-r-md px-4 py-2 ${currentPage == totalPages
-          ? 'cursor-not-allowed bg-gray-300 text-gray-500'
+          ? 'cursor-not-allowed bg-gray-100 text-gray-500'
           : 'bg-red-500 text-white hover:bg-red-400'
           }`}
         disabled={currentPage === totalPages}

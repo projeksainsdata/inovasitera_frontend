@@ -57,8 +57,8 @@ const FilterPanel: React.FC<FilterPanelProps> = ({
     return (
         <Box className={`bg-white border rounded-lg shadow-md p-4 ${className}`}>
             {filterGroups.map(group => (
-                <div key={group.id}>
-                    <h2 className="font-bold text-lg my-4">{group.label}</h2>
+                <div key={group.id} className='mb-3'>
+                    <h2 className="font-bold text-lg">{group.label}</h2>
                     <Stack spacing={2}>
                         {group.options.map(option => (
                             group.type === 'checkbox' ? (
@@ -66,7 +66,7 @@ const FilterPanel: React.FC<FilterPanelProps> = ({
                                     key={option.id}
                                     isChecked={(selections[group.id] as string[] || []).includes(option.id)}
                                     onChange={() => handleSelectionChange(group.id, option.id)}
-                                    size="sm"
+                                    size="md"
                                     colorScheme="blue"
                                 >
                                     {option.label} {option.count !== undefined && `(${option.count})`}
@@ -76,7 +76,7 @@ const FilterPanel: React.FC<FilterPanelProps> = ({
                                     key={option.id}
                                     isChecked={selections[group.id] === option.id}
                                     onChange={() => handleSelectionChange(group.id, option.id)}
-                                    size="sm"
+                                    size="md"
                                     colorScheme="blue"
                                     value={option.id}
                                 >
@@ -88,7 +88,7 @@ const FilterPanel: React.FC<FilterPanelProps> = ({
                 </div>
             ))}
 
-            <Button colorScheme="orange" size="sm" w="full" mt={4} onClick={handleApply}>
+            <Button colorScheme="orange" size="md" w="full" mt={4} onClick={handleApply}>
                 Apply
             </Button>
         </Box>

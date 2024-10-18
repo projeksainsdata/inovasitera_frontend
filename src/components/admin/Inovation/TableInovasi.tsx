@@ -1,50 +1,66 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { useState } from 'react';
-
-import type {
-  InovationSchema,
-  InovationCreateSchema,
-  InovationUpdateSchema
-} from '@/types/inovation.type';
-
-import { post, del, put, UploadImage } from '@/hooks/useSubmit';
-import toast from 'react-hot-toast';
-import { AxiosError } from 'axios';
+import React from "react"
+import type { Inovator } from "@/types/inovator.type";
+import { del } from "@/hooks/useSubmit";
+import toast from "react-hot-toast";
+import { AxiosError } from "axios";
 import useDataFetch from '@/hooks/useFetchData';
 import { ResponseApi } from '@/lib/types/api.type';
-import { INNOVATION_PREFIX } from '@/lib/constants/api.contants';
-import OverlaySpinner from '@/components/Loading/OverlayLoading';
-import Table from '@/components/Table';
-import SearchQuery from '@/components/Form/SearchQuery';
-import Pagination from '@/components/Pagination';
-import Modal from '@/components/Modal';
-import FormInovation from '@/components/admin/Inovation/FormInovation';
+import { INNOVATION_PREFIX } from "@/lib/constants/api.contants";
+import OverlaySpinner from "@/components/Loading/OverlayLoading";
+import Table from "@/components/Table";
+import SearchQuery from "@/components/Form/GenericSearch";
+import Pagination from "@/components/Pagination";
+import { useNavigate } from "react-router-dom";
 
 const columns = [
-  { key: 'title', label: 'Nama Produk Inovasi' },
-  { key: 'image', label: 'Image' },
-  { key: 'status', label: 'Status' },
-  { key: 'description', label: 'Deskripsi' },
-  { key: 'average_rating', label: 'Rating' },
+  {
+    key: "thumbnail",
+    label: "Gambar",
+    type: "image"
+  },
+  {
+    key: "title",
+    label: "Judul Inovasi"
+  },
+  {
+    key: "createdAt",
+    label: "Tanggal Pembuatan",
+    type: "date"
+  },
+  {
+    key: "average_rating",
+    label: "Rating Inovasi",
+    type: "rating"
+  },
+  {
+    key: "status",
+    label: "Status Inovasi",
+    type: "status"
+  },
 ];
 
-const searchFields = [{ key: 'name', label: 'Nama Inovasi' }];
+const searchFields = [
+  { key: "q", label: "Nama Inovasi" },
+  {
+    key: 'status', label: 'Status Inovasi', type: 'select', options: [
+      { value: 'pending', label: 'Pending' },
+      { value: 'approved', label: 'Approved' },
+      { value: 'rejected', label: 'Rejected' },
+    ]
+  },];
 
-const TableInovasi: React.FC = () => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [initialValues, setInitialValues] = useState<InovationCreateSchema | null>(
-    null,
-  );
+const TableSemuaInovasi: React.FC = () => {
+  const { data, loading, updateParams, refetch, params } = useDataFetch<
+    ResponseApi<Inovator>
+  >(`${INNOVATION_PREFIX.USER}`, { page: 1, perPage: 10 });
+  const navigate = useNavigate();
 
-  const { data, loading, error, updateParams, refetch, params } = useDataFetch<
-    ResponseApi<InovationSchema>
-  >(`${INNOVATION_PREFIX.INDEX}`, { page: 1, perPage: 10 });
 
   const handleSearch = (criteria: Record<string, string>) => {
     updateParams({ ...criteria, page: 1 });
   };
 
-  const handleSort = (column: string, direction: 'asc' | 'desc') => {
+  const handleSort = (column: string, direction: "asc" | "desc") => {
     updateParams({ ...params, sort: column, order: direction });
   };
 
@@ -52,92 +68,33 @@ const TableInovasi: React.FC = () => {
     updateParams({ ...params, page });
   };
 
-  const handleSubmit = async (values: InovationCreateSchema | InovationUpdateSchema) => {
-    try {
 
-      if (values.Image && values.Image instanceof File) {
-        try {
-          const responseImage = await UploadImage(values.Image);
-          values.Image = responseImage.data.fileUrl
-        } catch (error) {
-          toast.error('Error saat mengupload image');
-          return;
-        }
-      }
-      if (initialValues) {
-        // delete email
-        const result = await put<InovationSchema, InovationUpdateSchema>({
-          url: `${INNOVATION_PREFIX.EDIT}/${initialValues._id}`,
-          data: values as InovationUpdateSchema,
-        });
-        refetch();
-        toast.success(`InovationSchema ${result?.data.title} updated successfully`);
-        setIsModalOpen(false);
-      } else {
-        const result = await post<InovationSchema, InovationCreateSchema>({
-          url: `${INNOVATION_PREFIX.CREATE}`,
-          data: values as InovationCreateSchema,
-        });
-
-        refetch();
-        toast.success(`InovationSchema ${result?.data.title} created successfully`);
-        setIsModalOpen(false);
-      }
-    } catch (ErrorCatch) {
-      if (ErrorCatch instanceof AxiosError) {
-        toast.error(
-          ErrorCatch.response?.data.message || 'Failed to create InovationSchema',
-        );
-        return;
-      }
-      toast.error('Failed to create InovationSchema');
-      setIsModalOpen(false);
-    }
-  };
 
   const handleDelete = async (id: string | number) => {
     try {
-      await del<InovationSchema>(`${INNOVATION_PREFIX.DELETE}/${id}`);
+      await del<Inovator>(`${INNOVATION_PREFIX.DELETE}/${id}`);
       refetch();
-      toast.success(`InovationSchema ${id} deleted successfully`);
+      toast.success(`Inovator ${id} deleted successfully`);
     } catch (ErrorCatch) {
       if (ErrorCatch instanceof AxiosError) {
         toast.error(
-          ErrorCatch.response?.data.message || 'Failed to delete InovationSchema',
+          ErrorCatch.response?.data.message || "Failed to delete Inovator"
         );
         return;
       }
-      toast.error('Failed to delete InovationSchema');
+      toast.error("Failed to delete Inovator");
     }
   };
 
-  const closeModal = () => setIsModalOpen(false);
-
   const handleEdit = (row: any) => {
-    setInitialValues(row);
-    setIsModalOpen(true);
-  };
-
-  const handleAdd = () => {
-    setInitialValues(null);
-    setIsModalOpen(true);
+    navigate(`/admin/detail-inovasi/${row._id}`);
   };
 
   if (loading) return <OverlaySpinner show={loading} />;
-  if (error) toast.error(error.message);
 
   return (
     <>
       <div>
-        <h1 className="mb-4 text-2xl font-semibold">Inovasi Management</h1>
-        <div className="mb-4">
-          <button
-            onClick={handleAdd}
-            className="w-52 shrink rounded bg-blue-500 px-4 py-2 font-bold text-white hover:bg-blue-700"
-          >
-            Tambah Inovasi
-          </button>
-        </div>
         <SearchQuery
           fields={searchFields}
           initialValues={params}
@@ -156,24 +113,14 @@ const TableInovasi: React.FC = () => {
         <Pagination
           currentPage={data?.pagination?.page || 1}
           totalPages={
-            Math.ceil((data?.pagination?.total ?? 0) / (data?.pagination?.perPage ?? 1)) ||
+            Math.ceil(data?.pagination?.total! / data?.pagination?.perPage!) ||
             1
           }
           onPageChange={handlePageChange}
         />
       </div>
-      <Modal
-        isOpen={isModalOpen}
-        onClose={closeModal}
-        title="Tambah InovationSchema"
-      >
-        <FormInovation
-          handleSubmit={handleSubmit}
-          initialValues={initialValues}
-        />
-      </Modal>
     </>
   );
 };
 
-export default TableInovasi;
+export default TableSemuaInovasi;

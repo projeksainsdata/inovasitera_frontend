@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { Menu, X } from 'lucide-react';
+import { Menu, X, Heart } from 'lucide-react'; // Import Heart icon
 import Logo from "../assets/Logo2.png";
-import { Button } from '@chakra-ui/react';
+import { Button, IconButton } from '@chakra-ui/react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 
@@ -20,7 +20,7 @@ const Navbar: React.FC = () => {
       default:
         return "/admin";
     }
-  }
+  };
 
   return (
     <>
@@ -38,13 +38,25 @@ const Navbar: React.FC = () => {
             <Link to={"/tentang"}><a className="text-black hover:text-gray-600 transition duration-200">Tentang</a></Link>
           </div>
           {/* Conditionally render login/profile button */}
-          <div className="hidden lg:flex items-center">
+          <div className="hidden lg:flex items-center space-x-4">
             {auth.isAuthenticated ? (
-              <Link to={`${getProfilePath(auth.user?.role)}`}>
-                <Button colorScheme='red' borderRadius='full'>
-                  Profile
-                </Button>
-              </Link>
+              <>
+                {/* Wishlist Icon */}
+                <Link to={'/admin/wishlist-inovasi'}>
+                  <IconButton
+                    aria-label="Wishlist"
+                    icon={<Heart size={20} />}
+                    colorScheme="red"
+                    variant="ghost"
+                  />
+                </Link>
+                {/* Profile Button */}
+                <Link to={`${getProfilePath(auth.user?.role)}`}>
+                  <Button colorScheme='red' borderRadius='full'>
+                    Profile
+                  </Button>
+                </Link>
+              </>
             ) : (
               <Link to={'/login'}>
                 <Button colorScheme='red' borderRadius='full'>Masuk →</Button>
@@ -66,9 +78,17 @@ const Navbar: React.FC = () => {
             <Link to={'/inovasi'}><a className="text-black hover:text-gray-600 transition duration-200">Semua Inovasi</a></Link>
             <Link to={'/tentang'}><a className="text-black hover:text-gray-600 transition duration-200">Tentang</a></Link>
             {auth.isAuthenticated ? (
-              <Link to={`${getProfilePath(auth.user?.role)}`} className='text-sm'>
-                <Button colorScheme='red' size="sm">Profile</Button>
-              </Link>
+              <>
+                {/* Wishlist for mobile */}
+                <Link to={'/admin/wishlist-inovasi'} className='text-sm'>
+                  <Button colorScheme='red' size="sm" leftIcon={<Heart size={16} />}>
+                    Wishlist
+                  </Button>
+                </Link>
+                <Link to={`${getProfilePath(auth.user?.role)}`} className='text-sm'>
+                  <Button colorScheme='red' size="sm">Profile</Button>
+                </Link>
+              </>
             ) : (
               <Link to={'/login'} className='text-sm'>
                 <Button colorScheme='red' size="sm">Masuk →</Button>

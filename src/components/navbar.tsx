@@ -81,9 +81,12 @@ const Navbar: React.FC = () => {
               <>
                 {/* Wishlist for mobile */}
                 <Link to={'/admin/wishlist-inovasi'} className='text-sm'>
-                  <Button colorScheme='red' size="sm" leftIcon={<Heart size={16} />}>
-                    Wishlist
-                  </Button>
+                <IconButton
+                    aria-label="Wishlist"
+                    icon={<Heart size={20} />}
+                    colorScheme="red"
+                    variant="ghost"
+                  />
                 </Link>
                 <Link to={`${getProfilePath(auth.user?.role)}`} className='text-sm'>
                   <Button colorScheme='red' size="sm">Profile</Button>

@@ -2,7 +2,7 @@ import React from 'react';
 
 
 import Layout from '@/components/admin/layoutAdmin/LayoutAdmin';
-import TableWishlist from '@/components/innovator/inovasi/TableWishlist';
+import TableWishlist from '@/components/admin/Inovation/TableWishlist';
 
 const AdminWhitelistInovasi = () => {
     return (

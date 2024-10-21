@@ -12,30 +12,30 @@ export interface NavItem {
 export const navItems: NavItem[] = [
   {
     href: '/admin',
-    label: 'Innovation Dashboard',
+    label: 'Dashboard Inovasi',
     icon: <IconDashboard size={24} />,  // Use Tabler Icon here
     group: 'Analytics',
     access: ['*'],
   },
   {
     href: '/admin/user-overview',
-    label: 'User Dashboard',
+    label: 'Dashboard Pengguna',
     icon: <IconDashboard size={24} />,  // Use Tabler Icon here
     group: 'Analytics',
     access: ['*'],
   },
   {
     href: '/admin/user',
-    label: 'Users',
+    label: 'Daftar Pengguna',
     icon: <IconUsers size={24} />,  // Use Tabler Icon here
-    group: 'Users',
+    group: 'Pengguna',
     access: ['*'],
   },
   {
     href: '/admin/kategori',
-    label: 'Categories',
+    label: 'Daftar Kategori',
     icon: <IconCategory size={24} />,  // Use Tabler Icon here
-    group: 'Kategori',
+    group: 'Kategori Postingan',
     access: ['*'],
   },
   {

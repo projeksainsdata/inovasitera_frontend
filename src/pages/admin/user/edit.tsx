@@ -22,6 +22,7 @@ import {
   ModalFooter,
   ModalBody,
   ModalCloseButton,
+  Link
 } from "@chakra-ui/react";
 import { useFormik } from "formik";
 import { IconPhotoPlus } from "@tabler/icons-react";
@@ -121,6 +122,7 @@ const EditProfile = () => {
           status: "success",
           duration: 3000,
           isClosable: true,
+          position:"top-right"
         });
         setIsPasswordChangeModalOpen(false);
         resetForm();
@@ -131,6 +133,7 @@ const EditProfile = () => {
           status: "error",
           duration: 3000,
           isClosable: true,
+          position:"top-right"
         });
       } finally {
         setSubmitting(false);
@@ -148,8 +151,10 @@ const EditProfile = () => {
       inovator: {
         fakultas: profileData?.inovator?.fakultas || "",
         prodi: profileData?.inovator?.prodi || "",
+        status: profileData?.inovator?.status || ""
       },
       profile: profileData?.profile || "",
+      role: profileData?.role || ""
     },
     validationSchema,
     enableReinitialize: true,
@@ -180,7 +185,7 @@ const EditProfile = () => {
 
         setProfilePic(responseUser?.data?.user.profile);
         setProfileData(responseUser?.data?.user);
-        auth.login(responseUser?.data?.tokens.access);
+        // auth.login(responseUser?.data?.tokens.access);
 
         toast({
           title: "Profil diperbarui.",
@@ -233,6 +238,7 @@ const EditProfile = () => {
 
   return (
     <Layout>
+      <Link href="/admin/user"><Button>Kembali</Button></Link>
       {profileData && (
         <form onSubmit={formik.handleSubmit}>
           <Grid templateColumns={{ base: "1fr", md: "1fr 2fr" }} gap={6}>
@@ -269,6 +275,7 @@ const EditProfile = () => {
 
                   <Button
                     colorScheme="orange"
+                    variant={"outline"}
                     onClick={() => setIsPasswordChangeModalOpen(true)}
                   >
                     Ubah Password
@@ -296,8 +303,30 @@ const EditProfile = () => {
 
                 {/* Daftar Sebagai */}
                 <FormControl>
+                  <FormLabel>Status Pendaftaran</FormLabel>
+                  <Select
+                    name="inovator.status"
+                    value={formik.values.inovator.status}  // bind formik values to the select
+                    onChange={formik.handleChange} // formik handles the change automatically
+                  >
+                    <option value="pending">Menunggu</option>
+                    <option value="active">Setuju</option>
+                    <option value="inactive">Tolak</option>
+                  </Select>
+                </FormControl>
+
+                {/* Daftar Sebagai */}
+                <FormControl>
                   <FormLabel>Terdaftar Sebagai</FormLabel>
-                  <Input value={profileData.role.toUpperCase()} />
+                  <Select
+                    name="role"
+                    value={formik.values.role}  // bind formik values to the select
+                    onChange={formik.handleChange} // formik handles the change automatically
+                  >
+                    <option value="admin">Admin</option>
+                    <option value="member">Member</option>
+                    <option value="innovator">Innovator</option>
+                  </Select>
                 </FormControl>
 
                 {/* Email */}

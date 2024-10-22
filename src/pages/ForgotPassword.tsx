@@ -105,6 +105,7 @@ const ForgotPassword: React.FC = () => {
                   status: "success",
                   duration: 5000,
                   isClosable: true,
+                  position:"top-right"
                 });
               } catch (error) {
                 if (isAxiosError(error)) {
@@ -114,6 +115,7 @@ const ForgotPassword: React.FC = () => {
                     status: "error",
                     duration: 5000,
                     isClosable: true,
+                    position:"top-right"
                   });
                   return
                 }
@@ -124,6 +126,7 @@ const ForgotPassword: React.FC = () => {
                   status: "error",
                   duration: 5000,
                   isClosable: true,
+                  position:"top-right"
                 });
               } finally {
                 setSubmitting(false);

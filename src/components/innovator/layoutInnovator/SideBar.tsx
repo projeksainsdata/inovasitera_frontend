@@ -7,7 +7,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@chakra-ui/react';
 import AuthApiService from '@/services/apiServices/auth.api.service';
 import { isAxiosError } from 'axios';
-
+import { Button } from '@chakra-ui/react';
 interface SidebarProps {
   isOpen: boolean;
   toggleSidebar: () => void;
@@ -44,7 +44,8 @@ const Sidebar: React.FC<SidebarProps> = ({
         description: 'Logout successfully',
         status: 'success',
         duration: 5000,
-        isClosable: true
+        isClosable: true,
+        position:"top-right"
       });
       navigate('/');
     } catch (error) {
@@ -54,7 +55,8 @@ const Sidebar: React.FC<SidebarProps> = ({
           description: error.response?.data.message || 'Failed to logout',
           status: 'error',
           duration: 5000,
-          isClosable: true
+          isClosable: true,
+          position:"top-right"
         });
         return
       }
@@ -63,7 +65,8 @@ const Sidebar: React.FC<SidebarProps> = ({
         description: 'Failed to logout',
         status: 'error',
         duration: 5000,
-        isClosable: true
+        isClosable: true,
+        position:"top-right"
       });
 
     }
@@ -187,7 +190,8 @@ const Sidebar: React.FC<SidebarProps> = ({
             </ul>
           </nav>
 
-          <button onClick={handleLogout} className='bg-red-600 px-3 py-2 rounded m-5 text-white'>Keluar Sistem</button>
+          <Button onClick={() => navigate("/")} colorScheme="orange" variant="solid" px={4} py={2} mx={4}>Home</Button>
+          <Button onClick={handleLogout} colorScheme="red" variant="outline" px={4} py={2} mx={4} my={3}>Keluar Sistem</Button>
       
         </div>
       </motion.aside>

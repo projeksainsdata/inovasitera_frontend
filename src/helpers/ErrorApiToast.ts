@@ -21,5 +21,6 @@ export const ErrorApiToast: React.FC<ErrorApiToastProps> = ({ error }) => {
     status: "error",
     duration: 9000,
     isClosable: true,
+    position:"top-right"
   });
 };

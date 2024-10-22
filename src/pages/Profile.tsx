@@ -106,6 +106,7 @@ const EditProfile = () => {
           status: "success",
           duration: 3000,
           isClosable: true,
+          position:"top-right"
         });
         setIsPasswordChangeModalOpen(false);
         resetForm();
@@ -116,6 +117,7 @@ const EditProfile = () => {
           status: "error",
           duration: 3000,
           isClosable: true,
+          position:"top-right"
         });
       } finally {
         setSubmitting(false);
@@ -155,6 +157,7 @@ const EditProfile = () => {
               status: 'error',
               duration: 5000,
               isClosable: true,
+              position:"top-right"
             });
             return;
           }
@@ -185,6 +188,7 @@ const EditProfile = () => {
           status: "error",
           duration: 3000,
           isClosable: true,
+          position:"top-right"
         });
       } finally {
         setSubmitting(false);

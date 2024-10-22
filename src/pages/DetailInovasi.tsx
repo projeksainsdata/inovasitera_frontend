@@ -92,6 +92,7 @@ const DetailInovasi: React.FC = () => {
         status: "success",
         duration: 3000,
         isClosable: true,
+        position:"top-right"
       });
     } catch (error) {
       if (isAxiosError(error)) {
@@ -102,6 +103,7 @@ const DetailInovasi: React.FC = () => {
             status: "error",
             duration: 3000,
             isClosable: true,
+            position:"top-right"
           });
           return;
         }
@@ -112,6 +114,7 @@ const DetailInovasi: React.FC = () => {
         status: "error",
         duration: 3000,
         isClosable: true,
+        position:"top-right"
       });
     }
   }
@@ -139,6 +142,7 @@ const DetailInovasi: React.FC = () => {
           status: "success",
           duration: 3000,
           isClosable: true,
+          position:"top-right"
         });
         resetForm();
         // Refresh data after submitting
@@ -153,6 +157,7 @@ const DetailInovasi: React.FC = () => {
               status: "error",
               duration: 3000,
               isClosable: true,
+              position:"top-right"
             });
             return;
           }
@@ -162,6 +167,7 @@ const DetailInovasi: React.FC = () => {
           status: "error",
           duration: 3000,
           isClosable: true,
+          position:"top-right"
         });
       }
     },

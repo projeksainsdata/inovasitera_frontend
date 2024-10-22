@@ -69,6 +69,7 @@ const TableCategories: React.FC = () => {
             status: 'error',
             duration: 5000,
             isClosable: true,
+            position:"top-right"
           });
           return;
         }
@@ -88,6 +89,7 @@ const TableCategories: React.FC = () => {
           status: 'success',
           duration: 5000,
           isClosable: true,
+          position:"top-right"
         });
 
         setIsModalOpen(false);
@@ -102,6 +104,7 @@ const TableCategories: React.FC = () => {
           status: 'success',
           duration: 5000,
           isClosable: true,
+          position:"top-right"
         });
 
         refetch();
@@ -115,6 +118,7 @@ const TableCategories: React.FC = () => {
           status: 'error',
           duration: 5000,
           isClosable: true,
+          position:"top-right"
         });
 
         return;
@@ -125,6 +129,7 @@ const TableCategories: React.FC = () => {
         status: 'error',
         duration: 5000,
         isClosable: true,
+        position:"top-right"
       });
 
       setIsModalOpen(false);
@@ -142,6 +147,7 @@ const TableCategories: React.FC = () => {
         status: 'success',
         duration: 5000,
         isClosable: true,
+        position:"top-right"
       });
       refetch();
     } catch (ErrorCatch) {
@@ -152,6 +158,7 @@ const TableCategories: React.FC = () => {
           status: 'error',
           duration: 5000,
           isClosable: true,
+          position:"top-right"
         });
         return;
       }
@@ -161,6 +168,7 @@ const TableCategories: React.FC = () => {
         status: 'error',
         duration: 5000,
         isClosable: true,
+        position:"top-right"
       });
     }
   };

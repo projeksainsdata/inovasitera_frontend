@@ -145,6 +145,7 @@ const TambahInovasi = () => {
           status: "success",
           duration: 5000,
           isClosable: true,
+          position:"top-right"
         });
 
         navigate(`/inovasi/${result?.data._id}`);
@@ -159,6 +160,7 @@ const TambahInovasi = () => {
           status: "error",
           duration: 5000,
           isClosable: true,
+          position:"top-right"
         });
       }
     },
@@ -192,16 +194,16 @@ const TambahInovasi = () => {
     return <OverlaySpinner show />;
   }
 
-  if (user?.status === "pending") {
+  if (user?.status != "active") {
     return (
       <Layout>
-        <Modal isOpen={isOpen} onClose={() => navigate("/")}>
+        <Modal isOpen={true} onClose={() => navigate("/")}>
           <ModalOverlay />
           <ModalContent>
-            <ModalHeader>Akun Pending</ModalHeader>
+            <ModalHeader>Akun {user?.status}</ModalHeader>
             <ModalCloseButton />
             <ModalBody>
-              Akun Anda masih dalam status pending. Anda tidak dapat mengunggah inovasi saat ini.
+              Akun Anda dalam status {user?.status}. Anda tidak dapat mengunggah inovasi saat ini.
             </ModalBody>
             <ModalFooter>
               <Button colorScheme="blue" mr={3} onClick={() => navigate("/")}>

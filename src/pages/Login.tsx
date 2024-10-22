@@ -87,6 +87,7 @@ const LoginPage: React.FC = () => {
                   status: 'success',
                   duration: 5000,
                   isClosable: true,
+                  position:"top-right"
                 });
 
                 // Redirect to dashboard
@@ -99,6 +100,7 @@ const LoginPage: React.FC = () => {
                     status: 'error',
                     duration: 5000,
                     isClosable: true,
+                    position:"top-right"
                   });
                   return;
                 }
@@ -108,6 +110,7 @@ const LoginPage: React.FC = () => {
                   status: 'error',
                   duration: 5000,
                   isClosable: true,
+                  position:"top-right"
                 });
               }
 

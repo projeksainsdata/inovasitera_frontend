@@ -81,14 +81,15 @@ const DragDropFileInput: React.FC<DragDropFileInputProps> = ({
       >
         {props.name}
       </label>
+      <section className='flex justify-center'>
       <div
-        className="cursor-pointer rounded-lg border-2 border-dashed border-black bg-white p-4 text-center transition duration-200 ease-in-out hover:bg-gray-50"
+        className="w-fit cursor-pointer rounded-lg border-2 border-dashed border-black bg-white p-4 text-center transition duration-200 ease-in-out hover:bg-gray-50"
         onDrop={handleDrop}
         onDragOver={(e) => e.preventDefault()}
         onClick={handleClick}
       >
         {preview ? (
-          <div className="relative w-full pt-[100%]">
+          <div className="relative w-52 h-52">
             <img
               src={preview}
               alt="Preview"
@@ -131,6 +132,7 @@ const DragDropFileInput: React.FC<DragDropFileInputProps> = ({
           <div className="mt-1 text-sm text-red-500">{meta.error}</div>
         ) : null}
       </div>
+      </section>
     </>
   );
 };

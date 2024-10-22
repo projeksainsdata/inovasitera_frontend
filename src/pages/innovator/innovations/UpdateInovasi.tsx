@@ -31,6 +31,8 @@ const validationSchema = Yup.object({
   title: Yup.string().required(),
   description: Yup.string().required(),
   category: Yup.string().required(),
+  inovator_name: Yup.string().required("Nama Inovator wajib diisi"),
+  inovator_email: Yup.string().required("Email Inovator wajib diisi"),
   collaboration: Yup.array().optional(),
   adventage: Yup.string().optional(),
   images: Yup.array().optional(),
@@ -60,6 +62,8 @@ const initialFormValues = {
   status_paten: "",
   score_tkt: "",
   collaboration_details: "",
+  inovator_name: "",
+  inovator_email: "",
   faq: [
     { question: "Apa produk inovasi yang sedang dikembangkan?", answer: "" },
     { question: "Mengapa produk inovasi ini diperlukan?", answer: "" },
@@ -208,6 +212,20 @@ const UpdateInovasi = () => {
     return <OverlaySpinner show />;
   }
 
+    // Function to remove FAQ
+    const removeFaq = (index: number) => {
+      const updatedFaq = [...formik.values.faq];
+      updatedFaq.splice(index, 1);
+      formik.setFieldValue("faq", updatedFaq);
+  };
+
+  // Function to add FAQ
+  const addFaq = () => {
+    formik.setFieldValue("faq", [
+        ...formik.values.faq,
+        { question: "", answer: "" },
+    ]);
+};
 
   return (
     <Layout>
@@ -407,41 +425,89 @@ const UpdateInovasi = () => {
                 />
                 <FormErrorMessage>{formik.errors.collaboration_details}</FormErrorMessage>
               </FormControl>
+                {/* Contact Form Section */}
+                <h1 className="text-xl font-black mb-3">Contact</h1>
+                    {/* Contact Name */}    
+                      <FormControl
+                      isInvalid={formik.touched.inovator_name && !!formik.errors.inovator_name}
+                      mb={4}>
+                        <FormLabel>Nama</FormLabel>
+                        <Input
+                        {...formik.getFieldProps("inovator_name")}
+                        placeholder="Masukkan nama inovator"/>
+                        <FormErrorMessage>{formik.errors.inovator_name}</FormErrorMessage>
+                    </FormControl>
+                    {/* Contact Email */}
+                        <FormControl
+                          isInvalid={formik.touched.inovator_email && !!formik.errors.inovator_email}
+                          mb={4}>
+                        <FormLabel>Email</FormLabel>
+                        <Input
+                            {...formik.getFieldProps("inovator_email")}
+                            placeholder="Masukkan email inovator"
+                            type="email"/>
+                        <FormErrorMessage>{formik.errors.inovator_email}</FormErrorMessage>
+                  </FormControl>
             </Box>
 
             {/* FAQ */}
             <Box className="w-full md:w-6/12 p-4 border rounded">
-              <h1 className="text-xl font-black mb-3">Pertanyaan Terkait Inovasi</h1>
+                            <h1 className="text-xl font-black mb-3">Pertanyaan Terkait Inovasi</h1>
 
-              {formik.values.faq.map((_, index) => (
-                <FormControl
-                  key={index}
-                  isInvalid={formik.touched.faq?.[index]?.answer && !!formik.errors.faq?.[index]?.answer}
-                  mb={4}
-                >
-                  <Input
-                    {...formik.getFieldProps(`faq[${index}].question`)}
-                    placeholder="Pertanyaan"
-                    isReadOnly={index < 6} // Make the first 6 questions read-only
-                  />
+                            {formik.values.faq.map((faqItem, index) => (
+                                <FormControl
+                                    key={index}
+                                    isInvalid={
+                                        formik.touched.faq?.[index]?.answer &&
+                                        !!formik.errors.faq?.[index]?.answer
+                                    }
+                                    mb={4}
+                                >
+                                    <HStack align="start">
+                                        <Box flex="1">
+                                            <Input
+                                                {...formik.getFieldProps(`faq[${index}].question`)}
+                                                placeholder="Pertanyaan"
+                                                isReadOnly={index < 6} 
+                                            />
+                                            <FormErrorMessage>
+                                                {formik.errors.faq?.[index]?.question}
+                                            </FormErrorMessage>
 
-                  <Textarea
-                    {...formik.getFieldProps(`faq[${index}].answer`)}
-                    placeholder="Jawaban"
-                    mt={2}
-                  />
-                  <FormErrorMessage>{(formik.errors.faq?.[index] as any)?.answer}</FormErrorMessage>
-                </FormControl>
-              ))}
+                                            <Textarea
+                                                {...formik.getFieldProps(`faq[${index}].answer`)}
+                                                placeholder="Jawaban"
+                                                mt={2}
+                                            />
+                                            <FormErrorMessage>
+                                                {formik.errors.faq?.[index]?.answer}
+                                            </FormErrorMessage>
+                                        </Box>
 
-              <Button
-                mt={4}
-                colorScheme="blue"
-                onClick={() => formik.setFieldValue("faq", [...formik.values.faq, { question: "", answer: "" }])}
-              >
-                Tambah Pertanyaan
-              </Button>
-            </Box>
+                                        {/* Remove Button for dynamically added FAQ */}
+                                        {index >= 6 && (
+                                            <IconButton
+                                                size="sm"
+                                                colorScheme="red"
+                                                icon={<IconMinus />}
+                                                onClick={() => removeFaq(index)}
+                                                aria-label="Remove FAQ"
+                                                mt={2}
+                                            />
+                                        )}
+                                    </HStack>
+                                </FormControl>
+                            ))}
+
+                            <Button
+                                mt={4}
+                                colorScheme="blue"
+                                onClick={addFaq}
+                                disabled={formik.values.faq.length >= 20} 
+                            >
+                                Tambah Pertanyaan
+                            </Button>
+                        </Box>
           </Flex>
         </Box>
       </form>

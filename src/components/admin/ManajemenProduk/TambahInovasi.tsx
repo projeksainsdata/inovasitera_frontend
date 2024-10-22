@@ -419,7 +419,7 @@ const TambahInovasi = () => {
                             >
                                 <FormLabel>Nama</FormLabel>
                                 <Input
-                                    {...formik.getFieldProps("contact.name")}
+                                    {...formik.getFieldProps("inovator_name")}
                                     placeholder="Masukkan nama inovator"
                                 />
                                 <FormErrorMessage>{formik.errors.inovator_name}</FormErrorMessage>

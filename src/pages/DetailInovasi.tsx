@@ -299,7 +299,11 @@ const DetailInovasi: React.FC = () => {
               >
                 Tambah ke Favorit
               </Button>
-              <Button colorScheme="blue" flex={1}>
+              <Button 
+                as="a" 
+                href={`mailto:${data?.inovator_email}`} 
+                colorScheme="blue" 
+                flex={1}>
                 Hubungi Inovator
               </Button>
             </Flex>

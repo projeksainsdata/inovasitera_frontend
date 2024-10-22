@@ -40,6 +40,8 @@ const validationSchema = Yup.object({
   title: Yup.string().required("Nama Inovasi wajib diisi"),
   description: Yup.string().required("Deskripsi wajib diisi"),
   category: Yup.string().required("Kategori wajib dipilih"),
+  inovator_name: Yup.string().required("Nama Inovator wajib diisi"),
+  inovator_email: Yup.string().required("Email Inovator wajib diisi"),
   collaboration: Yup.array().optional(),
   adventage: Yup.string().optional(),
   images: Yup.array().optional(),
@@ -89,6 +91,8 @@ const TambahInovasi = () => {
       status_paten: "",
       score_tkt: "",
       collaboration_details: "",
+      inovator_name: "",
+      inovator_email: "",
       faq: [
         {
           question: "Apa produk inovasi yang sedang dikembangkan?",
@@ -470,6 +474,36 @@ const TambahInovasi = () => {
                 <FormErrorMessage>
                   {formik.errors.collaboration_details}
                 </FormErrorMessage>
+              </FormControl>
+
+              {/* Contact Form Section */}
+              <h1 className="text-xl font-black mb-3">Contact</h1>
+
+              {/* Contact Name */}    
+              <FormControl
+                  isInvalid={formik.touched.inovator_name && !!formik.errors.inovator_name}
+                  mb={4}
+              >
+                  <FormLabel>Nama</FormLabel>
+                  <Input
+                      {...formik.getFieldProps("inovator_name")}
+                      placeholder="Masukkan nama inovator"
+                  />
+                  <FormErrorMessage>{formik.errors.inovator_name}</FormErrorMessage>
+              </FormControl>
+
+              {/* Contact Email */}
+              <FormControl
+                  isInvalid={formik.touched.inovator_email && !!formik.errors.inovator_email}
+                  mb={4}
+              >
+                  <FormLabel>Email</FormLabel>
+                  <Input
+                      {...formik.getFieldProps("inovator_email")}
+                      placeholder="Masukkan email inovator"
+                      type="email"
+                  />
+                  <FormErrorMessage>{formik.errors.inovator_email}</FormErrorMessage>
               </FormControl>
             </Box>
 

@@ -22,7 +22,6 @@ import FormInnovation from "@/components/admin/ManajemenProduk/FormManajemenProd
 import useCategories from "@/hooks/useCategories";
 
 const columns = [
-  { key: "fullname", label: "Nama", type: "text" },
   { key: "thumbnail", label: "Gambar", type: "image" },
   { key: "title", label: "Judul Inovasi" },
   { key: "createdAt", label: "Tanggal Publikasi", type: "date" },

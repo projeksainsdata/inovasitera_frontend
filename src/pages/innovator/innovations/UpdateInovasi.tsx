@@ -140,14 +140,14 @@ const UpdateInovasi = () => {
 
         toast({
           title: 'Success',
-          description: `Innovation ${result?.data.name} has been ${id ? 'updated' : 'created'} successfully`,
+          description: `Innovation has been ${id ? 'updated' : 'created'} successfully`,
           status: 'success',
           duration: 5000,
           isClosable: true,
           position:"top-right"
         });
 
-        navigate(`/inovasi/${result?.data._id}`);
+        // navigate(`/inovasi/${result?.data._id}`);
       } catch (error) {
         toast({
           title: 'Error',

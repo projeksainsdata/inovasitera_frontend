@@ -82,7 +82,7 @@ const InnovationDashboard: React.FC = () => {
   };
 
   return (
-    <Box p={6}>
+    <Box>
       <Heading mb={6}>Innovation Dashboard</Heading>
       <Grid templateColumns="repeat(4, 1fr)" gap={6} mb={6}>
         {statCards.map((card, index) => (

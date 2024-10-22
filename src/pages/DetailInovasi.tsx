@@ -83,7 +83,6 @@ const DetailInovasi: React.FC = () => {
     async function fetchData() {
       try {
         const res = await get(`${INNOVATION_PREFIX.INDEX}/${params.id}`);
-        console.log(res);
         if (res?.data.status != "approved") {
           navigate("/404");
         } else {
@@ -243,7 +242,7 @@ const DetailInovasi: React.FC = () => {
             </Swiper>
           </Box>
 
-          <Box flex={1} className="space-y-4">
+          <Box flex={1} className="space-y-4 w-full">
             <Text fontSize="sm" fontWeight="semibold" color="gray.600">
               Produk Inovasi ITERA
             </Text>

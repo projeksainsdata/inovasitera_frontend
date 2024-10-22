@@ -120,7 +120,7 @@ const TambahInovasi = () => {
                     position:"top-right"
                 });
 
-                navigate(`/inovasi/${result?.data._id}`);
+                // navigate(`/inovasi/${result?.data._id}`);
             } catch (error: any) {
                 const errorMessage = isAxiosError(error)
                     ? error.response?.data.message || "Failed to upload image"

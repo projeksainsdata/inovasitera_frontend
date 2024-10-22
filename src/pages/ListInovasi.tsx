@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Navbar from "../components/navbar";
 import HeroPage from "../components/HeroPage";
 import Footer from "../components/Footer";
@@ -12,7 +12,6 @@ import { INNOVATION_PREFIX } from "@/lib/constants/api.contants";
 import { InovationResponse } from "@/lib/types/inovation.type";
 import useCategories from "@/hooks/useCategories";
 import {IconAdjustmentsSearch} from "@tabler/icons-react";
-
 const SearchFields: SearchField[] = [
   {
     label: "Innovations...",
@@ -24,6 +23,8 @@ const InnovationPage: React.FC = () => {
   const [filterMobile, setFilterMobile] = useState(false);
   // use query params to fetch data
   const query = new URLSearchParams(window.location.search);
+
+  const kategoriValue = query.get("kategori");
   const { data, loading, error, updateParams, params } =
     useDataFetch<InovationResponse>(`${INNOVATION_PREFIX.INDEX}`, {
       page: 1,
@@ -31,6 +32,7 @@ const InnovationPage: React.FC = () => {
       sort: "createdAt",
       order: "desc",
       q: query.get("q") || "",
+      category:kategoriValue || ""
     });
 
   const { data: categories } = useCategories();
@@ -64,8 +66,10 @@ const InnovationPage: React.FC = () => {
   };
 
   const handleFilter = (selections: Record<string, string | string[]>) => {
+    console.log(selections)
     const [sortColumn, sortDirection] = (selections.sort as string).split("_");
     const categories = selections["category"] as string[];
+
     updateParams({
       ...params,
       category: categories?.join(",") || "",

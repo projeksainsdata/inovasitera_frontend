@@ -44,8 +44,8 @@ const searchFields: SearchField[] = [
     type: "select",
     options: [
       { value: "pending", label: "Pending" },
-      { value: "approved", label: "Approved" },
-      { value: "rejected", label: "Rejected" },
+      { value: "active", label: "Approved" },
+      { value: "inactive", label: "Rejected" },
     ],
   },
 ];
@@ -203,7 +203,7 @@ const TableUser: React.FC = () => {
   return (
     <>
       <div>
-        <h1 className="mb-4 text-2xl font-semibold">User Management</h1>
+        <h1 className="mb-4 text-2xl font-semibold">Manajemen Pengguna</h1>
 
         <SearchQuery
           fields={searchFields}

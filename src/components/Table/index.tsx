@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   IconTrash,
   IconEdit,
@@ -40,6 +40,13 @@ const Table: React.FC<TableProps> = ({
   isDelete = true,
   isEdit = true,
 }) => {
+  //inject role agar tablenya beda
+  const [role, setRole] = useState("");
+
+  useEffect(() => {
+    setRole(data?.role || "");
+  }, []);
+
   const [sortColumn, setSortColumn] = useState<string | null>(
     params.sort || null
   );
@@ -112,24 +119,25 @@ const Table: React.FC<TableProps> = ({
   );
 
   const renderLink = (data: any) => {
-    return data.status === "approved" ? (
-      <a
-        href={`/inovasi/${data._id}`}
-        target="_blank"
-        className="flex gap-2 items-center"
-      >
-        Lihat Inovasi <IconExternalLink size={16} />
-      </a>
-    ) : (
-      <a
-        href={`/admin/manajemen-inovasi/preview/${data._id}`}
-        target="_blank"
-        className="flex gap-2 items-center"
-      >
-        Lihat Preview <IconExternalLink size={16} />
+    let href = "";
+    let linkText = "Lihat Inovasi";
+    
+    if (data.status === "approved") {
+      href = `/inovasi/${data._id}`;
+    } else if (role === "admin") {
+      href = `/admin/manajemen-inovasi/preview/${data._id}`;
+      linkText = "Lihat Preview";
+    } else {
+      href = `/inovasi/${data._id}`;
+    }
+  
+    return (
+      <a href={href} target="_blank" className="flex gap-2 items-center">
+        {linkText} <IconExternalLink size={16} />
       </a>
     );
   };
+  
   return (
     <div
       className="overflow-x-auto rounded bg-white shadow-md"

@@ -242,7 +242,7 @@ const DetailInovasi: React.FC = () => {
             </Swiper>
           </Box>
 
-          <Box flex={1} className="space-y-4">
+          <Box flex={1} className="space-y-4 w-full">
             <Text fontSize="sm" fontWeight="semibold" color="gray.600">
               Produk Inovasi ITERA
             </Text>

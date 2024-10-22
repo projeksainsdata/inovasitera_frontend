@@ -273,14 +273,6 @@ const EditProfile = () => {
                   >
                     Update Foto Profil
                   </Button>
-
-                  <Button
-                    colorScheme="orange"
-                    variant={"outline"}
-                    onClick={() => setIsPasswordChangeModalOpen(true)}
-                  >
-                    Ubah Password
-                  </Button>
                 </VStack>
               </FormControl>
             </GridItem>

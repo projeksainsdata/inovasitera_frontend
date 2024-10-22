@@ -31,6 +31,7 @@ const columns = [
     label: "Rating",
     type: "rating"
   },
+  { key: "preview", label: "Preview", type: "link" },
 
 ];
 

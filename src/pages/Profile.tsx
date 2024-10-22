@@ -22,7 +22,12 @@ import {
   ModalFooter,
   ModalBody,
   ModalCloseButton,
+  Link,
+  InputGroup,
+  InputRightElement,
+  IconButton
 } from "@chakra-ui/react";
+import { IconEye, IconEyeOff } from "@tabler/icons-react";
 import { useFormik } from "formik";
 import { IconPhotoPlus } from "@tabler/icons-react";
 import * as Yup from "yup";
@@ -43,52 +48,57 @@ const validationSchema = Yup.object({
     .matches(/^[0-9]+$/, "Hanya angka yang diperbolehkan")
     .min(10, "Nomor telepon minimal 10 digit")
     .max(15, "Nomor telepon maksimal 15 digit"),
-  dateOfBirth: Yup.date()
-    .max(new Date(), "Tanggal Lahir tidak boleh di masa depan"),
+  dateOfBirth: Yup.date().max(
+    new Date(),
+    "Tanggal Lahir tidak boleh di masa depan"
+  ),
   gender: Yup.string(),
   fakultas: Yup.string(),
   prodi: Yup.string(),
 });
 
-
 const passwordChangeSchema = Yup.object({
   currentPassword: Yup.string().required("Current password is required"),
   newPassword: Yup.string()
     .min(8, "Password minimal 8 karakter")
-    .matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d@$!%*?&]{8,}$/,
-      "Password harus mengandung huruf besar, huruf kecil, angka")
+    .matches(
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d@$!%*?&]{8,}$/,
+      "Password harus mengandung huruf besar, huruf kecil, angka"
+    )
     .required("Password diperlukan"),
-  confirmNewPassword: Yup.string().oneOf([Yup.ref("newPassword"), undefined], "Password tidak cocok")
-    .required('Confirm new password is required'),
+  confirmNewPassword: Yup.string()
+    .oneOf([Yup.ref("newPassword"), undefined], "Password tidak cocok")
+    .required("Confirm new password is required"),
 });
 
-
 const EditProfile = () => {
+  const [showCurrentPassword, setShowCurrentPassword] = useState(false);
+  const [showNewPassword, setShowNewPassword] = useState(false);
+  const [showConfirmNewPassword, setShowConfirmNewPassword] = useState(false);
   const [profileData, setProfileData] = useState<USER | null>(null);
   const [profilePic, setProfilePic] = useState("");
-  const [isPasswordChangeModalOpen, setIsPasswordChangeModalOpen] = useState(false);
+  const [isPasswordChangeModalOpen, setIsPasswordChangeModalOpen] =
+    useState(false);
   const toast = useToast();
-  const auth = useAuth()
+  const auth = useAuth();
 
   const getProfile = async () => {
     try {
       const response = await AuthApiService.me();
       setProfileData(response.data.data);
       setProfilePic(response.data.data.profile);
-
     } catch (error: any) {
       ErrorApiToast({ error });
-
-    };
-  }
+    }
+  };
   useEffect(() => {
     getProfile();
   }, []);
   const passwordChangeFormik = useFormik({
     initialValues: {
-      currentPassword: '',
-      newPassword: '',
-      confirmNewPassword: '',
+      currentPassword: "",
+      newPassword: "",
+      confirmNewPassword: "",
     },
     validationSchema: passwordChangeSchema,
     onSubmit: async (values, { setSubmitting, resetForm }) => {
@@ -106,7 +116,7 @@ const EditProfile = () => {
           status: "success",
           duration: 3000,
           isClosable: true,
-          position:"top-right"
+          position: "top-right",
         });
         setIsPasswordChangeModalOpen(false);
         resetForm();
@@ -117,13 +127,13 @@ const EditProfile = () => {
           status: "error",
           duration: 3000,
           isClosable: true,
-          position:"top-right"
+          position: "top-right",
         });
       } finally {
         setSubmitting(false);
       }
     },
-  })
+  });
 
   const formik = useFormik({
     initialValues: {
@@ -135,34 +145,32 @@ const EditProfile = () => {
       inovator: {
         fakultas: profileData?.inovator?.fakultas || "",
         prodi: profileData?.inovator?.prodi || "",
+        status: profileData?.inovator?.status || "",
       },
       profile: profileData?.profile || "",
-
     },
     validationSchema,
     enableReinitialize: true,
     onSubmit: async (values, { setSubmitting }) => {
       try {
-
         if (values.profile && values.profile instanceof File) {
           const uploadResult = await UploadImage({
             file: values.profile,
-
           });
 
           if (!uploadResult.success) {
             toast({
-              title: 'Error during image upload',
+              title: "Error during image upload",
               description: uploadResult.message,
-              status: 'error',
+              status: "error",
               duration: 5000,
               isClosable: true,
-              position:"top-right"
+              position: "top-right",
             });
             return;
           }
 
-          values.profile = uploadResult.url || '';
+          values.profile = uploadResult.url || "";
         }
         const responseUser = await put<ResponseUpdateUser>({
           url: `${USER_PREFIX.INDEX}/${profileData?._id}`,
@@ -188,15 +196,19 @@ const EditProfile = () => {
           status: "error",
           duration: 3000,
           isClosable: true,
-          position:"top-right"
+          position: "top-right",
         });
       } finally {
         setSubmitting(false);
       }
     },
   });
-  const fakultasOptions = useMemo(() =>
-    Object.entries(FAKULTAS).map(([, value]) => ({ value: value, label: value })),
+  const fakultasOptions = useMemo(
+    () =>
+      Object.entries(FAKULTAS).map(([, value]) => ({
+        value: value,
+        label: value,
+      })),
     []
   );
 
@@ -204,7 +216,10 @@ const EditProfile = () => {
     const selectedFakultas = formik.values.inovator.fakultas;
     if (!selectedFakultas) return [];
     return selectedFakultas && PRODI[selectedFakultas]
-      ? Object.entries(PRODI[selectedFakultas]).map(([, value]) => ({ value: value, label: value }))
+      ? Object.entries(PRODI[selectedFakultas]).map(([, value]) => ({
+          value: value,
+          label: value,
+        }))
       : [];
   }, [formik.values.inovator.fakultas]);
 
@@ -266,7 +281,7 @@ const EditProfile = () => {
             <GridItem>
               <VStack spacing={4} align="stretch">
                 <Box className="w-full">
-                  {(profileData.inovator.status === "pending") && (
+                  {profileData.inovator.status === "pending" && (
                     <Box className="rounded p-3 bg-orange-600 text-white font-medium space-y-2">
                       <Badge colorScheme="orange" fontSize={"sm"}>
                         Pending
@@ -294,7 +309,9 @@ const EditProfile = () => {
                 </Box>
                 {/* Nama */}
                 <FormControl
-                  isInvalid={formik.touched?.fullname && formik.errors?.fullname}
+                  isInvalid={
+                    formik.touched?.fullname && formik.errors?.fullname
+                  }
                 >
                   <FormLabel>Nama Lengkap</FormLabel>
                   <Input
@@ -316,10 +333,7 @@ const EditProfile = () => {
                 {/* Email */}
                 <FormControl>
                   <FormLabel>Email</FormLabel>
-                  <Input
-                    {...formik.getFieldProps("email")}
-                    type="email"
-                  />
+                  <Input {...formik.getFieldProps("email")} type="email" />
                 </FormControl>
 
                 {/* No Telepon */}
@@ -402,7 +416,6 @@ const EditProfile = () => {
                       ))}
                     </Select>
                   </FormControl>
-
                 )}
 
                 <Button
@@ -419,9 +432,11 @@ const EditProfile = () => {
             </GridItem>
           </Grid>
         </form>
-
       )}
-      <Modal isOpen={isPasswordChangeModalOpen} onClose={() => setIsPasswordChangeModalOpen(false)}>
+      <Modal
+        isOpen={isPasswordChangeModalOpen}
+        onClose={() => setIsPasswordChangeModalOpen(false)}
+      >
         <ModalOverlay />
         <ModalContent>
           <form onSubmit={passwordChangeFormik.handleSubmit}>
@@ -429,38 +444,121 @@ const EditProfile = () => {
             <ModalCloseButton />
             <ModalBody>
               <VStack spacing={4}>
-                <FormControl isInvalid={passwordChangeFormik.touched.currentPassword && passwordChangeFormik.errors.currentPassword}>
+                {/* Current Password */}
+                <FormControl
+                  isInvalid={
+                    passwordChangeFormik.touched.currentPassword &&
+                    passwordChangeFormik.errors.currentPassword
+                  }
+                >
                   <FormLabel>Current Password</FormLabel>
-                  <Input
-                    type="password"
-                    {...passwordChangeFormik.getFieldProps('currentPassword')}
-                  />
-                  <FormErrorMessage>{passwordChangeFormik.errors.currentPassword}</FormErrorMessage>
+                  <InputGroup>
+                    <Input
+                      type={showCurrentPassword ? "text" : "password"}
+                      {...passwordChangeFormik.getFieldProps("currentPassword")}
+                    />
+                    <InputRightElement>
+                      <IconButton
+                        variant="ghost"
+                        onClick={() =>
+                          setShowCurrentPassword(!showCurrentPassword)
+                        }
+                        icon={
+                          showCurrentPassword ? <IconEye /> : <IconEyeOff />
+                        }
+                        aria-label="Toggle Current Password Visibility"
+                      />
+                    </InputRightElement>
+                  </InputGroup>
+                  <FormErrorMessage>
+                    {passwordChangeFormik.errors.currentPassword}
+                  </FormErrorMessage>
                 </FormControl>
-                <FormControl isInvalid={passwordChangeFormik.touched.newPassword && passwordChangeFormik.errors.newPassword}>
-                  <FormLabel>New Password</FormLabel>
-                  <Input
-                    type="password"
-                    {...passwordChangeFormik.getFieldProps('newPassword')}
-                  />
-                  <FormErrorMessage>{passwordChangeFormik.errors.newPassword}</FormErrorMessage>
-                </FormControl>
-                <FormControl isInvalid={passwordChangeFormik.touched.confirmNewPassword && passwordChangeFormik.errors.confirmNewPassword}>
-                  <FormLabel>Confirm New Password</FormLabel>
-                  <Input
-                    type="password"
-                    {...passwordChangeFormik.getFieldProps('confirmNewPassword')}
 
-                  />
-                  <FormErrorMessage>{passwordChangeFormik.errors.confirmNewPassword}</FormErrorMessage>
+                {/* New Password */}
+                <FormControl
+                  isInvalid={
+                    passwordChangeFormik.touched.newPassword &&
+                    passwordChangeFormik.errors.newPassword
+                  }
+                >
+                  <FormLabel>New Password</FormLabel>
+                  <InputGroup>
+                    <Input
+                      type={showNewPassword ? "text" : "password"}
+                      {...passwordChangeFormik.getFieldProps("newPassword")}
+                    />
+                    <InputRightElement>
+                      <IconButton
+                        variant="ghost"
+                        onClick={() => setShowNewPassword(!showNewPassword)}
+                        icon={showNewPassword ? <IconEye /> : <IconEyeOff />}
+                        aria-label="Toggle New Password Visibility"
+                      />
+                    </InputRightElement>
+                  </InputGroup>
+                  <FormErrorMessage>
+                    {passwordChangeFormik.errors.newPassword}
+                  </FormErrorMessage>
                 </FormControl>
+
+                {/* Confirm New Password */}
+                <FormControl
+                  isInvalid={
+                    passwordChangeFormik.touched.confirmNewPassword &&
+                    passwordChangeFormik.errors.confirmNewPassword
+                  }
+                >
+                  <FormLabel>Confirm New Password</FormLabel>
+                  <InputGroup>
+                    <Input
+                      type={showConfirmNewPassword ? "text" : "password"}
+                      {...passwordChangeFormik.getFieldProps(
+                        "confirmNewPassword"
+                      )}
+                    />
+                    <InputRightElement>
+                      <IconButton
+                        variant="ghost"
+                        onClick={() =>
+                          setShowConfirmNewPassword(!showConfirmNewPassword)
+                        }
+                        icon={
+                          showConfirmNewPassword ? (
+                            <IconEye />
+                          ) : (
+                            <IconEyeOff />
+                          )
+                        }
+                        aria-label="Toggle Confirm Password Visibility"
+                      />
+                    </InputRightElement>
+                  </InputGroup>
+                  <FormErrorMessage>
+                    {passwordChangeFormik.errors.confirmNewPassword}
+                  </FormErrorMessage>
+                </FormControl>
+
+                <Box className="w-full">
+                  <Link href="/forgot-password" className="text-orange-400">Lupa password?</Link>
+                </Box>
               </VStack>
             </ModalBody>
             <ModalFooter>
-              <Button colorScheme="blue" mr={3} type="submit" isLoading={passwordChangeFormik.isSubmitting}>
+              <Button
+                colorScheme="blue"
+                mr={3}
+                type="submit"
+                isLoading={passwordChangeFormik.isSubmitting}
+              >
                 Change Password
               </Button>
-              <Button variant="ghost" onClick={() => setIsPasswordChangeModalOpen(false)}>Cancel</Button>
+              <Button
+                variant="ghost"
+                onClick={() => setIsPasswordChangeModalOpen(false)}
+              >
+                Cancel
+              </Button>
             </ModalFooter>
           </form>
         </ModalContent>

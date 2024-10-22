@@ -75,7 +75,7 @@ const ManajemenInovasiAdmin = () => {
   return (
     <LayoutAdmin>
       <Box as="main" margin="auto">
-        <Box className="mb-5 space-y-3">
+        <Box className="space-y-3">
           <Flex className="w-full justify-between">
             <Link href="/admin/manajemen-inovasi">
               <Button colorScheme="orange">Kembali</Button>

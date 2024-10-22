@@ -19,18 +19,19 @@ import { useNavigate } from "react-router-dom";
 const columns = [
   {
     key: "thumbnail",
-    label: "thumbnail inovasi",
+    label: "Thumbnail",
     type: "image"
   },
   {
     key: "title",
-    label: "Judul Inovasi"
+    label: "Judul"
   },
   {
     key: "rating",
-    label: "Rating Inovasi",
+    label: "Rating",
     type: "rating"
   },
+  { key: "preview", label: "Preview", type: "link" },
 
 ];
 
@@ -95,6 +96,7 @@ const TableWishlist: React.FC = () => {
           data={data?.data}
           onSort={handleSort}
           onEdit={handleEdit}
+          isEdit={false}
           onDelete={handleDelete}
         />
 

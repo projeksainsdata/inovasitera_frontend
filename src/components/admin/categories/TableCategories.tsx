@@ -18,9 +18,9 @@ import { useToast } from '@chakra-ui/react';
 import ProgressBar from '@/components/ProgressBar';
 
 const columns = [
-  { key: 'name', label: 'Nama Categories' },
-  { key: 'image', label: 'image Categories', type: 'image' },
-  { key: 'description', label: 'Deskripsi Categories' },
+  { key: 'name', label: 'Nama' },
+  { key: 'image', label: 'Icon', type: 'image' },
+  { key: 'description', label: 'Deskripsi' },
 ];
 
 const searchFields = [{ key: 'name', label: 'Nama Categories' }];
@@ -190,11 +190,11 @@ const TableCategories: React.FC = () => {
   return (
     <>
       <div>
-        <h1 className="mb-4 text-2xl font-semibold">Kategori Management</h1>
+        <h1 className="mb-4 text-2xl font-semibold">Manajemen Kategori</h1>
         <div className="mb-4">
           <button
             onClick={handleAdd}
-            className="w-52 shrink rounded bg-blue-500 px-4 py-2 font-bold text-white hover:bg-blue-700"
+            className="w-fit shrink rounded bg-blue-500 p-2 px-4 font-bold text-white hover:bg-blue-700"
           >
             Tambah Kategori
           </button>
@@ -226,7 +226,7 @@ const TableCategories: React.FC = () => {
       <Modal
         isOpen={isModalOpen}
         onClose={closeModal}
-        title="Tambah Inovation"
+        title="Kategori"
       >
         <FormCategories
           handleSubmit={handleSubmit}

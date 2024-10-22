@@ -75,7 +75,7 @@ const Table: React.FC<TableProps> = ({
 
   // Render based on column type
   const renderImage = (value: string) => (
-    <img src={value} className="w-48 h-22 object-cover rounded" alt="Image" />
+    <img src={value} className="w-32 h-22 object-cover rounded" alt="Image" />
   );
 
   const renderStatus = (value: string) => {

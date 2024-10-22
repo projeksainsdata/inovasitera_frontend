@@ -46,7 +46,7 @@ const FormPortofolio: React.FC<PropsFormMerchantdis> = ({
 
 
   return (
-    <div className="mx-auto mt-8 max-w-md">
+    <div>
       <GenericForm
         fields={fields}
         onSubmit={handleSubmit}

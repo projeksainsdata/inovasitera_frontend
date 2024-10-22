@@ -20,21 +20,22 @@ const columns = [
   },
   {
     key: "title",
-    label: "Judul Inovasi"
+    label: "Judul"
   },
   {
     key: "createdAt",
-    label: "Tanggal Pembuatan",
+    label: "Tanggal",
     type: "date"
   },
   {
     key: "average_rating",
-    label: "Rating Inovasi",
+    label: "Rating",
     type: "rating"
   },
+  { key: "preview", label: "Preview", type: "link" },
   {
     key: "status",
-    label: "Status Inovasi",
+    label: "Status",
     type: "status"
   },
 ];

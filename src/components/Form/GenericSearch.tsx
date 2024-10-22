@@ -71,7 +71,7 @@ const SearchQuery: React.FC<SearchProps> = ({
                             onChange={(e) => handleInputChange(field.key, e.target.value)}
                             className="w-full rounded-md border border-gray-300 bg-white py-2 pl-10 pr-3 leading-5 placeholder:text-gray-500 focus:border-colorBlue focus:outline-none focus:ring-1 focus:ring-colorBlue sm:text-sm"
                         >
-                            <option value="">Select {field.label}</option>
+                            <option value="">Semua {field.label}</option>
                             {field.options?.map((option) => (
                                 <option key={option.value} value={option.value}>
                                     {option.label}

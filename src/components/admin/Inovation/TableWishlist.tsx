@@ -43,7 +43,6 @@ const TableWishlist: React.FC = () => {
     ResponseApi<WhiteList>
   >(`${WHITELIST_PREFIX.INDEX}`, { page: 1, perPage: 10 });
 
-    console.log(data)
   const handleSearch = (criteria: Record<string, string>) => {
     updateParams({ ...criteria, page: 1 });
   };

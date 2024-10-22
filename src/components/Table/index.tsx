@@ -112,7 +112,6 @@ const Table: React.FC<TableProps> = ({
   );
 
   const renderLink = (data: any) => {
-    console.log(data);
     return data.status === "approved" ? (
       <a
         href={`/inovasi/${data._id}`}

@@ -13,42 +13,34 @@
     {
       name: "Pangan",
       icon: Pangan, // Assuming the Pangan icon is imported or available
-      url: "/pangan",
     },
     {
       name: "Kesehatan",
       icon: Kesehatan, // Assuming the Kesehatan icon is imported or available
-      url: "/kesehatan",
     },
     {
       name: "Energi",
       icon: Energi, // Assuming the Energi icon is imported or available
-      url: "/energi",
     },
     {
       name: "TIK",
       icon: TIK, // Assuming the TIK icon is imported or available
-      url: "/tik",
     },
     {
       name: "Sosial Humaniora",
       icon: SosialHumaniora, // Assuming the SosialHumaniora icon is imported or available
-      url: "/sosial-humaniora",
     },
     {
       name: "Pendidikan",
       icon: Pendidikan, // Assuming the Pendidikan icon is imported or available
-      url: "/pendidikan",
     },
     {
       name: "Seni Budaya",
       icon: SeniBudaya, // Assuming the SeniBudaya icon is imported or available
-      url: "/seni-budaya",
     },
     {
       name: "Rekayasa Keteknikan",
       icon: RekayasaKeteknikan, // Assuming the RekayasaKeteknikan icon is imported or available
-      url: "/rekayasa-keteknikan",
     },
   ];
 
@@ -64,7 +56,7 @@
             </div>
           <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-4 mx-4 md:mx-[200px]">
             {categories.map((category) => (
-              <Link to={`/inovasi?kategori=${category.name.toLowerCase()}`} className="bg-white py-6 md:px-10 rounded-xl flex flex-col items-center justify-center z-10">
+              <Link to={`/inovasi?kategori=${category.name}`} className="bg-white py-6 md:px-10 rounded-xl flex flex-col items-center justify-center z-10">
                 <div className="rounded-full p-2">
                   <img
                     src={category.icon}

@@ -42,6 +42,11 @@ const ManajemenInovasi: React.FC = () => {
     ResponseApi<InovationSchema>
   >(`${INNOVATION_PREFIX.ADMIN}`, { page: 1, perPage: 10 });
   const { data: categories } = useCategories();
+
+  //inject role into it
+  if(data.data){
+    data.data.role="admin"
+  }
   const searchFields = [
     { key: "q", label: "Nama Inovasi" },
     {

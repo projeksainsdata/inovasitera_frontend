@@ -319,7 +319,6 @@ const EditProfile = () => {
                   <Input
                     {...formik.getFieldProps("email")}
                     type="email"
-                    disabled
                   />
                 </FormControl>
 

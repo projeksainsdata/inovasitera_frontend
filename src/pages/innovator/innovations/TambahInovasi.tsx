@@ -1,4 +1,5 @@
-import { useState, useEffect } from "react";
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { useState } from "react";
 import { useFormik } from "formik";
 import {
   Flex,
@@ -14,7 +15,6 @@ import {
   FormErrorMessage,
   ButtonGroup,
   useToast,
-  useDisclosure,
   Modal,
   ModalOverlay,
   ModalContent,
@@ -25,25 +25,25 @@ import {
 } from "@chakra-ui/react";
 import { IconMinus } from "@tabler/icons-react";
 import { Dropzone, FileMosaic } from "@files-ui/react";
-import Layout from "@/components/innovator/layoutInnovator/LayoutInnovator";
 import * as Yup from "yup";
 import useCategories from "@/hooks/useCategories";
 import OverlaySpinner from "@/components/Loading/OverlayLoading";
-import { post, UploadImage, UploadImageBatch } from "@/hooks/useSubmit";
+import { post, UploadImageBatch } from "@/hooks/useSubmit";
 import { INNOVATION_PREFIX } from "@/lib/constants/api.contants";
 import { useNavigate } from "react-router-dom";
 import { isAxiosError } from "axios";
+import Layout from "@/components/innovator/layoutInnovator/LayoutInnovator";
 import { useAuth } from "@/hooks/useAuth";
 
 // Validation schema remains the same
 const validationSchema = Yup.object({
-  title: Yup.string().required(),
-  description: Yup.string().required(),
-  category: Yup.string().required(),
+  title: Yup.string().required("Nama Inovasi wajib diisi"),
+  description: Yup.string().required("Deskripsi wajib diisi"),
+  category: Yup.string().required("Kategori wajib dipilih"),
   collaboration: Yup.array().optional(),
   adventage: Yup.string().optional(),
   images: Yup.array().optional(),
-  thumbnail: Yup.string().required(),
+  thumbnail: Yup.string(),
   development_stage: Yup.string().optional(),
   status_paten: Yup.string().optional(),
   score_tkt: Yup.string().optional(),
@@ -51,8 +51,8 @@ const validationSchema = Yup.object({
   faq: Yup.array()
     .of(
       Yup.object().shape({
-        question: Yup.string().required(),
-        answer: Yup.string(),
+        question: Yup.string().required("Pertanyaan wajib diisi"),
+        answer: Yup.string().required("Jawaban wajib diisi"),
       })
     )
     .optional(),
@@ -60,17 +60,10 @@ const validationSchema = Yup.object({
 
 const TambahInovasi = () => {
   const { user } = useAuth();
-  const { isOpen, onOpen, onClose } = useDisclosure();
   const [files, setFiles] = useState<any[]>([]);
   const { data, loading } = useCategories();
   const navigate = useNavigate();
   const toast = useToast();
-
-  useEffect(() => {
-    if (user?.status === "pending") {
-      onOpen();
-    }
-  }, [user, onOpen]);
 
   const handleImageUpload = async (images: File[] | FileList) => {
     try {
@@ -78,17 +71,6 @@ const TambahInovasi = () => {
         files: images,
       });
       return response.map((res) => res.url || "");
-    } catch (error) {
-      throw error;
-    }
-  };
-
-  const handleThumbnailUpload = async (thumbnail: File) => {
-    try {
-      const response = await UploadImage({
-        file: thumbnail,
-      });
-      return response.url || "";
     } catch (error) {
       throw error;
     }
@@ -108,15 +90,22 @@ const TambahInovasi = () => {
       score_tkt: "",
       collaboration_details: "",
       faq: [
-        { question: "Apa produk inovasi yang sedang dikembangkan?", answer: "" },
+        {
+          question: "Apa produk inovasi yang sedang dikembangkan?",
+          answer: "",
+        },
         { question: "Mengapa produk inovasi ini diperlukan?", answer: "" },
         {
-          question: "Kapan inovasi ini mulai dikembangkan dan kapan akan diluncurkan?",
+          question:
+            "Kapan inovasi ini mulai dikembangkan dan kapan akan diluncurkan?",
           answer: "",
         },
         { question: "Di mana inovasi ini akan digunakan?", answer: "" },
         { question: "Siapa target pasar atau pengguna?", answer: "" },
-        { question: "Bagaimana produk ini diakses atau digunakan?", answer: "" },
+        {
+          question: "Bagaimana produk ini diakses atau digunakan?",
+          answer: "",
+        },
       ],
     },
     validationSchema: validationSchema,
@@ -124,16 +113,19 @@ const TambahInovasi = () => {
       try {
         const updatedValues = { ...values };
 
-
         if (values.images instanceof FileList || Array.isArray(values.images)) {
           updatedValues.images = await handleImageUpload(values.images);
         }
 
-        // check if updatedValues.images  is an array get the first image as thumbnail and delete it from images
-        if (Array.isArray(updatedValues.images) && updatedValues.images.length > 0) {
+        // Set the first image as thumbnail and remove it from images array
+        if (
+          Array.isArray(updatedValues.images) &&
+          updatedValues.images.length > 0
+        ) {
           updatedValues.thumbnail = updatedValues.images[0];
           updatedValues.images.shift();
         }
+
         const result = await post({
           url: `${INNOVATION_PREFIX.CREATE}`,
           data: updatedValues,
@@ -141,11 +133,11 @@ const TambahInovasi = () => {
 
         toast({
           title: "Success",
-          description: `Data ${result?.data.name} berhasil ditambahkan`,
+          description: `Data "${result?.data?.title}" berhasil ditambahkan`,
           status: "success",
           duration: 5000,
           isClosable: true,
-          position:"top-right"
+          position: "top-right",
         });
 
         // navigate(`/inovasi/${result?.data._id}`);
@@ -160,7 +152,7 @@ const TambahInovasi = () => {
           status: "error",
           duration: 5000,
           isClosable: true,
-          position:"top-right"
+          position: "top-right",
         });
       }
     },
@@ -172,7 +164,6 @@ const TambahInovasi = () => {
       "images",
       incomingFiles.map((file) => file.file)
     );
-
   };
 
   const removeFile = (id: string) => {
@@ -182,7 +173,6 @@ const TambahInovasi = () => {
       "images",
       updatedFiles.map((file) => file.file)
     );
-
   };
 
   const resetForm = () => {
@@ -193,6 +183,21 @@ const TambahInovasi = () => {
   if (loading) {
     return <OverlaySpinner show />;
   }
+
+  // Function to remove FAQ
+  const removeFaq = (index: number) => {
+    const updatedFaq = [...formik.values.faq];
+    updatedFaq.splice(index, 1);
+    formik.setFieldValue("faq", updatedFaq);
+  };
+
+  // Function to add FAQ
+  const addFaq = () => {
+    formik.setFieldValue("faq", [
+      ...formik.values.faq,
+      { question: "", answer: "" },
+    ]);
+  };
 
   if (user?.status != "active") {
     return (
@@ -215,19 +220,25 @@ const TambahInovasi = () => {
       </Layout>
     );
   }
-
   return (
     <Layout>
-            <Box className="flex flex-col md:flex-row md:items-center justify-between mb-4">
-        <h1>Sistem Inovasi ITERA</h1>
+      <Box className="flex flex-col md:flex-row md:items-center justify-between mb-4">
         <ButtonGroup className="z-40">
-          <Button colorScheme="red" variant="outline" size="md" onClick={resetForm}>
+          <Button
+            colorScheme="red"
+            variant="outline"
+            size="md"
+            onClick={resetForm}
+          >
             Reset Formulir
           </Button>
           <Button
             colorScheme="blue"
             size="md"
-            onClick={formik.handleSubmit}
+            onClick={() => {
+              // Check if form is valid before submitting
+              formik.handleSubmit();
+            }}
             isLoading={formik.isSubmitting}
           >
             Kirim Inovasi
@@ -237,9 +248,17 @@ const TambahInovasi = () => {
       <form onSubmit={formik.handleSubmit}>
         <Box className="space-y-6">
           <Flex gap={6} direction={{ base: "column", md: "row" }}>
-            <Box className="w-full md:w-6/12 space-y-6" order={{ base: 1, md: 2 }}>
+            <Box
+              className="w-full md:w-6/12 space-y-6"
+              order={{ base: 1, md: 2 }}
+            >
               <h1 className="text-xl font-black mb-3">Upload Gambar Inovasi</h1>
-              <Dropzone onChange={updateFiles} value={files} maxFiles={10} accept="image/*">
+              <Dropzone
+                onChange={updateFiles}
+                value={files}
+                maxFiles={10}
+                accept="image/*"
+              >
                 {files.map((file) => (
                   <FileMosaic
                     key={(file as any).id}
@@ -256,6 +275,7 @@ const TambahInovasi = () => {
               order={{ base: 2, md: 1 }}
             >
               <h1 className="text-xl font-black mb-3">Deskripsi Inovasi</h1>
+
               {/* Title Field */}
               <FormControl
                 isInvalid={formik.touched.title && !!formik.errors.title}
@@ -268,6 +288,7 @@ const TambahInovasi = () => {
                 />
                 <FormErrorMessage>{formik.errors.title}</FormErrorMessage>
               </FormControl>
+
               {/* Category Field */}
               <FormControl
                 isInvalid={formik.touched.category && !!formik.errors.category}
@@ -286,9 +307,12 @@ const TambahInovasi = () => {
                 </Select>
                 <FormErrorMessage>{formik.errors.category}</FormErrorMessage>
               </FormControl>
+
               {/* Description Field */}
               <FormControl
-                isInvalid={formik.touched.description && !!formik.errors.description}
+                isInvalid={
+                  formik.touched.description && !!formik.errors.description
+                }
                 mb={4}
               >
                 <FormLabel>Deskripsi</FormLabel>
@@ -298,9 +322,12 @@ const TambahInovasi = () => {
                 />
                 <FormErrorMessage>{formik.errors.description}</FormErrorMessage>
               </FormControl>
+
               {/* Adventage Field */}
               <FormControl
-                isInvalid={formik.touched.adventage && !!formik.errors.adventage}
+                isInvalid={
+                  formik.touched.adventage && !!formik.errors.adventage
+                }
                 mb={4}
               >
                 <FormLabel>Kelebihan Inovasi</FormLabel>
@@ -310,9 +337,10 @@ const TambahInovasi = () => {
                 />
                 <FormErrorMessage>{formik.errors.adventage}</FormErrorMessage>
               </FormControl>
+
               {/* Innovators (Dynamic Input Fields) */}
               <Box mb={4}>
-                <HStack justify="between">
+                <HStack justify="space-between">
                   <FormLabel>Daftar Innovator</FormLabel>
                   <Button
                     colorScheme="blue"
@@ -348,7 +376,9 @@ const TambahInovasi = () => {
                       colorScheme="red"
                       icon={<IconMinus />}
                       onClick={() => {
-                        const newCollaboration = [...formik.values.collaboration];
+                        const newCollaboration = [
+                          ...formik.values.collaboration,
+                        ];
                         newCollaboration.splice(index, 1);
                         formik.setFieldValue("collaboration", newCollaboration);
                       }}
@@ -360,13 +390,17 @@ const TambahInovasi = () => {
               </Box>
             </Box>
           </Flex>
+
           {/* Additional Sections */}
           <Flex gap={6} direction={{ base: "column", md: "row" }}>
             <Box className="w-full h-fit md:w-6/12 p-4 border rounded">
               <h1 className="text-xl font-black mb-3">Informasi Penting</h1>
+
               {/* Status Paten */}
               <FormControl
-                isInvalid={formik.touched.status_paten && !!formik.errors.status_paten}
+                isInvalid={
+                  formik.touched.status_paten && !!formik.errors.status_paten
+                }
                 mb={4}
               >
                 <FormLabel>Status Paten</FormLabel>
@@ -377,12 +411,16 @@ const TambahInovasi = () => {
                   <option value="terdaftar">Terdaftar</option>
                   <option value="tidakTerdaftar">Tidak Terdaftar</option>
                 </Select>
-                <FormErrorMessage>{formik.errors.status_paten}</FormErrorMessage>
+                <FormErrorMessage>
+                  {formik.errors.status_paten}
+                </FormErrorMessage>
               </FormControl>
+
               {/* Development Stage */}
               <FormControl
                 isInvalid={
-                  formik.touched.development_stage && !!formik.errors.development_stage
+                  formik.touched.development_stage &&
+                  !!formik.errors.development_stage
                 }
                 mb={4}
               >
@@ -399,9 +437,12 @@ const TambahInovasi = () => {
                   {formik.errors.development_stage}
                 </FormErrorMessage>
               </FormControl>
+
               {/* Score TKT */}
               <FormControl
-                isInvalid={formik.touched.score_tkt && !!formik.errors.score_tkt}
+                isInvalid={
+                  formik.touched.score_tkt && !!formik.errors.score_tkt
+                }
                 mb={4}
               >
                 <FormLabel>Nilai TKT</FormLabel>
@@ -412,6 +453,7 @@ const TambahInovasi = () => {
                 />
                 <FormErrorMessage>{formik.errors.score_tkt}</FormErrorMessage>
               </FormControl>
+
               {/* Collaboration Details */}
               <FormControl
                 isInvalid={
@@ -430,64 +472,63 @@ const TambahInovasi = () => {
                 </FormErrorMessage>
               </FormControl>
             </Box>
+
             {/* FAQ */}
             <Box className="w-full md:w-6/12 p-4 border rounded">
-              <h1 className="text-xl font-black mb-3">Pertanyaan Terkait Inovasi</h1>
-              {formik.values.faq.map((_, index) => (
-                <HStack key={index} mb={4} alignItems="start">
-                  <FormControl
-                    isInvalid={
-                      formik.touched.faq?.[index]?.answer &&
-                      !!formik.errors.faq?.[index]?.answer
-                    }
-                    mb={2}
-                    flex="1"
-                  >
-                    {/* Question Input */}
-                    <Input
-                      {...formik.getFieldProps(`faq[${index}].question`)}
-                      placeholder="Pertanyaan"
-                      isReadOnly={index < 6} // First six questions are read-only
-                    />
-                    {/* Answer Input */}
-                    <Textarea
-                      {...formik.getFieldProps(`faq[${index}].answer`)}
-                      placeholder="Jawaban"
-                      mt={2}
-                    />
-                    <FormErrorMessage>
-                      {(formik.errors.faq?.[index] as any)?.answer}
-                    </FormErrorMessage>
-                  </FormControl>
-                  
-                  {/* Remove Button (only for questions added by the user) */}
-                  {index >= 6 && (
-                    <IconButton
-                      size="sm"
-                      colorScheme="red"
-                      icon={<IconMinus />}
-                      onClick={() => {
-                        const updatedFAQ = [...formik.values.faq];
-                        updatedFAQ.splice(index, 1); // Remove question at the current index
-                        formik.setFieldValue("faq", updatedFAQ);
-                      }}
-                      aria-label="Remove FAQ"
-                      mt={2}
-                    />
-                  )}
-                </HStack>
+              <h1 className="text-xl font-black mb-3">
+                Pertanyaan Terkait Inovasi
+              </h1>
+
+              {formik.values.faq.map((faqItem, index) => (
+                <FormControl
+                  key={index}
+                  isInvalid={
+                    formik.touched.faq?.[index]?.answer &&
+                    !!formik.errors.faq?.[index]?.answer
+                  }
+                  mb={4}
+                >
+                  <HStack align="start">
+                    <Box flex="1">
+                      <Input
+                        {...formik.getFieldProps(`faq[${index}].question`)}
+                        placeholder="Pertanyaan"
+                        isReadOnly={index < 6}
+                      />
+                      <FormErrorMessage>
+                        {formik.errors.faq?.[index]?.question}
+                      </FormErrorMessage>
+
+                      <Textarea
+                        {...formik.getFieldProps(`faq[${index}].answer`)}
+                        placeholder="Jawaban"
+                        mt={2}
+                      />
+                      <FormErrorMessage>
+                        {formik.errors.faq?.[index]?.answer}
+                      </FormErrorMessage>
+                    </Box>
+
+                    {/* Remove Button for dynamically added FAQ */}
+                    {index >= 6 && (
+                      <IconButton
+                        size="sm"
+                        colorScheme="red"
+                        icon={<IconMinus />}
+                        onClick={() => removeFaq(index)}
+                        aria-label="Remove FAQ"
+                        mt={2}
+                      />
+                    )}
+                  </HStack>
+                </FormControl>
               ))}
-              
-              {/* Add New FAQ Button */}
+
               <Button
                 mt={4}
                 colorScheme="blue"
-                onClick={() =>
-                  formik.setFieldValue("faq", [
-                    ...formik.values.faq,
-                    { question: "", answer: "" },
-                  ])
-                }
+                onClick={addFaq}
+                disabled={formik.values.faq.length >= 20}
               >
                 Tambah Pertanyaan
               </Button>

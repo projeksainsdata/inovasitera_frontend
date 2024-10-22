@@ -145,6 +145,7 @@ const TambahInovasi = () => {
           status: "success",
           duration: 5000,
           isClosable: true,
+          position:"top-right"
         });
 
         navigate(`/inovasi/${result?.data._id}`);
@@ -159,6 +160,7 @@ const TambahInovasi = () => {
           status: "error",
           duration: 5000,
           isClosable: true,
+          position:"top-right"
         });
       }
     },

@@ -87,6 +87,7 @@ const TableUser: React.FC = () => {
             status: 'error',
             duration: 5000,
             isClosable: true,
+            position:"top-right"
           });
           return;
         }
@@ -109,6 +110,7 @@ const TableUser: React.FC = () => {
           status: 'success',
           duration: 5000,
           isClosable: true,
+          position:"top-right"
         });
         setIsModalOpen(false);
       } else {
@@ -124,6 +126,7 @@ const TableUser: React.FC = () => {
           status: 'success',
           duration: 5000,
           isClosable: true,
+          position:"top-right"
         });
         setIsModalOpen(false);
       }
@@ -135,6 +138,7 @@ const TableUser: React.FC = () => {
           status: 'error',
           duration: 5000,
           isClosable: true,
+          position:"top-right"
         });
         return;
       }
@@ -144,6 +148,7 @@ const TableUser: React.FC = () => {
         status: 'error',
         duration: 5000,
         isClosable: true,
+        position:"top-right"
       });
       setIsModalOpen(false);
     }
@@ -159,6 +164,7 @@ const TableUser: React.FC = () => {
         status: 'success',
         duration: 5000,
         isClosable: true,
+        position:"top-right"
       });
     } catch (ErrorCatch) {
       if (ErrorCatch instanceof AxiosError) {
@@ -168,6 +174,7 @@ const TableUser: React.FC = () => {
           status: 'error',
           duration: 5000,
           isClosable: true,
+          position:"top-right"
         });
         return;
       }
@@ -177,6 +184,7 @@ const TableUser: React.FC = () => {
         status: 'error',
         duration: 5000,
         isClosable: true,
+        position:"top-right"
       });
     }
   };

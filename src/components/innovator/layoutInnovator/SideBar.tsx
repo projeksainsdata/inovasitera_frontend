@@ -44,7 +44,8 @@ const Sidebar: React.FC<SidebarProps> = ({
         description: 'Logout successfully',
         status: 'success',
         duration: 5000,
-        isClosable: true
+        isClosable: true,
+        position:"top-right"
       });
       navigate('/');
     } catch (error) {
@@ -54,7 +55,8 @@ const Sidebar: React.FC<SidebarProps> = ({
           description: error.response?.data.message || 'Failed to logout',
           status: 'error',
           duration: 5000,
-          isClosable: true
+          isClosable: true,
+          position:"top-right"
         });
         return
       }
@@ -63,7 +65,8 @@ const Sidebar: React.FC<SidebarProps> = ({
         description: 'Failed to logout',
         status: 'error',
         duration: 5000,
-        isClosable: true
+        isClosable: true,
+        position:"top-right"
       });
 
     }

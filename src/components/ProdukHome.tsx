@@ -78,7 +78,7 @@ const ProdukHome: React.FC = () => {
                 }}
                 className="mySwiper py-2"
               >
-                {data?.data.map((item) => (
+                {data?.data.filter((item) => item.status == "approved").map((item) => (
                   <SwiperSlide key={item._id}>
                     <InnovationCard inovasi={item} />
                   </SwiperSlide>

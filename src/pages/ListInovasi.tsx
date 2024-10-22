@@ -136,12 +136,12 @@ const InnovationPage: React.FC = () => {
               </Box>
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                {data?.data?.length > 0 ? (
-                  data.data.map((innovation) => (
+                {data?.data?.filter((item) => item.status == "approved").length > 0 ? (
+                  data.data.filter((item) => item.status == "approved").map((innovation) => (
                     <InnovationCard key={innovation._id} inovasi={innovation} />
                   ))
                 ) : (
-                  <h1>DATA TIDAK DITEMUKAN</h1>
+                  <h1 className="text-2xl">Inovasi Tidak Ditemukan</h1>
                 )}
               </div>
             )}

@@ -15,6 +15,13 @@ import {
   FormErrorMessage,
   ButtonGroup,
   useToast,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
+  ModalCloseButton,
 } from "@chakra-ui/react";
 import { IconMinus } from "@tabler/icons-react";
 import { Dropzone, FileMosaic } from "@files-ui/react";
@@ -26,6 +33,7 @@ import { INNOVATION_PREFIX } from "@/lib/constants/api.contants";
 import { useNavigate } from "react-router-dom";
 import { isAxiosError } from "axios";
 import Layout from "@/components/innovator/layoutInnovator/LayoutInnovator";
+import { useAuth } from "@/hooks/useAuth";
 
 // Validation schema remains the same
 const validationSchema = Yup.object({
@@ -51,6 +59,7 @@ const validationSchema = Yup.object({
 });
 
 const TambahInovasi = () => {
+  const { user } = useAuth();
   const [files, setFiles] = useState<any[]>([]);
   const { data, loading } = useCategories();
   const navigate = useNavigate();
@@ -190,6 +199,27 @@ const TambahInovasi = () => {
     ]);
   };
 
+  if (user?.status != "active") {
+    return (
+      <Layout>
+        <Modal isOpen={true} onClose={() => navigate("/")}>
+          <ModalOverlay />
+          <ModalContent>
+            <ModalHeader>Akun {user?.status}</ModalHeader>
+            <ModalCloseButton />
+            <ModalBody>
+              Akun Anda dalam status {user?.status}. Anda tidak dapat mengunggah inovasi saat ini.
+            </ModalBody>
+            <ModalFooter>
+              <Button colorScheme="blue" mr={3} onClick={() => navigate("/")}>
+                Kembali ke Beranda
+              </Button>
+            </ModalFooter>
+          </ModalContent>
+        </Modal>
+      </Layout>
+    );
+  }
   return (
     <Layout>
       <Box className="flex flex-col md:flex-row md:items-center justify-between mb-4">

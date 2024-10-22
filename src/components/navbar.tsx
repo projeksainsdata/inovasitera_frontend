@@ -22,6 +22,17 @@ const Navbar: React.FC = () => {
     }
   };
 
+  const getWishlistPath = (role) => {
+    switch (role) {
+      case "innovator":
+        return "/innovator/wishlist-inovasi";
+      case "member":
+        return "/member/wishlist-inovasi";
+      default:
+        return "/admin/wishlist-inovasi";
+    }
+  };
+
   return (
     <>
       <nav className="navbar md:px-[150px] px-6 flex justify-center transition-all duration-300 fixed top-0 left-0 right-0 z-9999 py-3">
@@ -42,7 +53,7 @@ const Navbar: React.FC = () => {
             {auth.isAuthenticated ? (
               <>
                 {/* Wishlist Icon */}
-                <Link to={'/admin/wishlist-inovasi'}>
+                <Link to={getWishlistPath(auth.user?.role)}>
                   <IconButton
                     aria-label="Wishlist"
                     icon={<Heart size={20} />}
@@ -80,7 +91,7 @@ const Navbar: React.FC = () => {
             {auth.isAuthenticated ? (
               <>
                 {/* Wishlist for mobile */}
-                <Link to={'/admin/wishlist-inovasi'} className='text-sm'>
+                <Link to={getWishlistPath(auth.user?.role)} className='text-sm'>
                 <IconButton
                     aria-label="Wishlist"
                     icon={<Heart size={20} />}

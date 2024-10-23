@@ -191,9 +191,11 @@ const UpdateInovasi = () => {
   };
 
   const updateFiles = (incomingFiles: any[]) => {
-    const newFiles = [...files, ...incomingFiles];
-    setFiles(newFiles);
-    formik.setFieldValue("images", newFiles.map(file => file.file || file.url));
+    // const newFiles = [...files, ...incomingFiles];
+    console.log("===")
+    setFiles(incomingFiles);
+    console.log(incomingFiles)
+    formik.setFieldValue("images", incomingFiles.map(file => file.file || file.url));
     if (!formik.values.thumbnail) {
       formik.setFieldValue("thumbnail", incomingFiles[0]?.file || incomingFiles[0]?.url || "");
     }

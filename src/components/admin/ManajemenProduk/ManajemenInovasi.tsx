@@ -24,9 +24,10 @@ import useCategories from "@/hooks/useCategories";
 const columns = [
   { key: "thumbnail", label: "Gambar", type: "image" },
   { key: "title", label: "Judul" },
+  { key: "category.name", label: "Kategori", type: "text" },
   { key: "createdAt", label: "Tanggal", type: "date" },
   { key: "average_rating", label: "Rating", type: "rating" },
-  { key: "preview", label: "Preview", type: "link" },
+  { key: "preview", label: "Detail", type: "link" },
   { key: "status", label: "Status", type: "status" },
 ];
 

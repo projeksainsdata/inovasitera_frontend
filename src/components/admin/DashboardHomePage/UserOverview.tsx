@@ -22,23 +22,16 @@ const UserStatisticsDashboard: React.FC = () => {
 
     const statCards: StatCardType[] = [
         {
-            title: 'Total Users',
+            title: 'Total Pengguna',
             value: totalUsers.toString(),
             icon: FiUsers,
             trend: 'neutral',
             change: 0,
         },
         {
-            title: 'Innovators',
+            title: 'Innovator',
             value: (data.data.userRoleDistribution.find(role => role._id === 'innovator')?.count || 0).toString(),
             icon: FiUserCheck,
-            trend: 'neutral',
-            change: 0,
-        },
-        {
-            title: 'Local Auth Users',
-            value: (data.data.authMethodStats.find(method => method._id === 'local')?.count || 0).toString(),
-            icon: FiLock,
             trend: 'neutral',
             change: 0,
         },
@@ -79,7 +72,7 @@ const UserStatisticsDashboard: React.FC = () => {
     const innovatorStats = data.data.innovatorStats[0] || {};
     const statusDistributionData = createChartData(innovatorStats.statusDistribution?.map(status => ({ status })), 'status', 'status');
     const fakultasDistributionData = createChartData(innovatorStats.fakultasDistribution?.map(fakultas => ({ fakultas })), 'fakultas', 'fakultas');
-    const unitDistributionData = createChartData(innovatorStats.unitDistribution?.map(unit => ({ unit })), 'unit', 'unit');
+    const unitDistributionData = createChartData(innovatorStats.unitDistribution?.map(total => ({ total })), 'total', 'total');
 
     const renderChart = (chartData: BaseChartData, title: string, type: ChartType) => {
         if (chartData.labels.length === 0) {
@@ -97,17 +90,17 @@ const UserStatisticsDashboard: React.FC = () => {
 
     return (
         <Box>
-            <Heading mb={6}>User Statistics Dashboard</Heading>
+            <Heading mb={6}>Dashboard Statistik Pengguna</Heading>
             <Grid templateColumns="repeat(3, 1fr)" gap={6} mb={6}>
                 {statCards.map((card, index) => (
                     <StatCard key={index} {...card} />
                 ))}
             </Grid>
             <SimpleGrid columns={2} spacing={6} mb={6}>
-                {renderChart(roleDistributionData, "User Role Distribution", ChartType.Pie)}
-                {renderChart(statusDistributionData, "Innovator Status Distribution", ChartType.Doughnut)}
-                {renderChart(fakultasDistributionData, "Fakultas Distribution", ChartType.Bar)}
-                {renderChart(unitDistributionData, "Prodi Distribution", ChartType.Bar)}
+                {renderChart(roleDistributionData, "Role Pengguna", ChartType.Pie)}
+                {renderChart(statusDistributionData, "Status Inovator", ChartType.Doughnut)}
+                {renderChart(fakultasDistributionData, "Fakultas", ChartType.Bar)}
+                {renderChart(unitDistributionData, "Program Studi", ChartType.Bar)}
             </SimpleGrid>
             {data.data.newUserTrend.length === 0 && (
                 <Text mt={4} color="gray.500">No new user trend data available.</Text>

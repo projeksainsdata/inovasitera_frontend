@@ -413,7 +413,7 @@ const RegisterPage: React.FC = () => {
             Daftar Akun Sistem PII ITERA
           </Text>
           <Text color="gray.500" mb={6}>
-            Untuk menggunakan sistem harap membuat akun terlebih dahulu
+            Untuk menggunakan sistem PII ITERA, harap membuat akun terlebih dahulu
           </Text>
 
           <form onSubmit={formik.handleSubmit}>

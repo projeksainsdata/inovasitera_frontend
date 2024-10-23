@@ -13,30 +13,13 @@ import Pagination from "@/components/Pagination";
 import { useNavigate } from "react-router-dom";
 
 const columns = [
-  {
-    key: "thumbnail",
-    label: "Gambar",
-    type: "image"
-  },
-  {
-    key: "title",
-    label: "Judul"
-  },
-  {
-    key: "createdAt",
-    label: "Tanggal",
-    type: "date"
-  },
-  {
-    key: "average_rating",
-    label: "Rating",
-    type: "rating"
-  },
-  {
-    key: "status",
-    label: "Status",
-    type: "status"
-  },
+  { key: "thumbnail", label: "Gambar", type: "image" },
+  { key: "title", label: "Judul" },
+  { key: "category.name", label: "Kategori", type: "text" },
+  { key: "createdAt", label: "Tanggal", type: "date" },
+  { key: "average_rating", label: "Rating", type: "rating" },
+  { key: "preview", label: "Detail", type: "link" },
+  { key: "status", label: "Status", type: "status" },
 ];
 
 const searchFields = [

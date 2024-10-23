@@ -19,9 +19,9 @@ const FormUser: React.FC<PropsFormUser> = ({ handleSubmit, initialValues }) => {
       label: "Ubah Status Inovasi",
       type: "radio",
       options: [
+        { value: "approved", label: "Setuju" },
         { value: "pending", label: "Pending" },
-        { value: "approved", label: "Approved" },
-        { value: "rejected", label: "Rejected" },
+        { value: "rejected", label: "Tolak" },
       ],
 
       validation: Yup.string().required("Status is required"),

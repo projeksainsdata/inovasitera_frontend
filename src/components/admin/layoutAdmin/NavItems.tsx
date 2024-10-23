@@ -19,7 +19,7 @@ export const navItems: NavItem[] = [
   },
   {
     href: '/admin/user-overview',
-    label: 'Dashboard Pengguna',
+    label: 'Statistik Pengguna',
     icon: <IconDashboard size={24} />,  // Use Tabler Icon here
     group: 'Analytics',
     access: ['*'],
@@ -35,12 +35,12 @@ export const navItems: NavItem[] = [
     href: '/admin/kategori',
     label: 'Daftar Kategori',
     icon: <IconCategory size={24} />,  // Use Tabler Icon here
-    group: 'Kategori Postingan',
+    group: 'Manajemen Kategori',
     access: ['*'],
   },
   {
     href: '/admin/manajemen-inovasi',
-    label: 'Produk Inovasi',
+    label: 'Semua Produk Inovasi',
     icon: <IconBox size={24} />,  // Use Tabler Icon here
     group: 'Manajemen Inovasi',
     access: ['*'],
@@ -63,7 +63,7 @@ export const navItems: NavItem[] = [
 
   {
     href: '/admin/wishlist-inovasi',
-    label: 'Wishlist Inovasi',
+    label: 'Inovasi Favorit',
     icon: <IconHeartFilled size={20} />,
     group: 'Manajemen Inovasi',
     access: ['*'],

@@ -28,14 +28,17 @@ import {
   Link,
 } from "@chakra-ui/react";
 import { Swiper, SwiperSlide } from "swiper/react";
-import { Pagination } from "swiper/modules";
+import { Pagination,Navigation } from "swiper/modules";
 import {
   IconStarFilled,
   IconZoomQuestion,
   IconInfoCircle,
+  IconMicroscope,
 } from "@tabler/icons-react";
 import "swiper/css";
 import "swiper/css/pagination";
+import 'swiper/css/navigation';
+
 import { get, post } from "@/hooks/useSubmit";
 
 const StarRating: React.FC<{ rating: number; size?: number }> = ({
@@ -75,45 +78,55 @@ const ManajemenInovasiAdmin = () => {
   return (
     <LayoutAdmin>
       <Box as="main" margin="auto">
-        <Box className="space-y-3">
+        <Box className="space-y-3 my-5">
           <Flex className="w-full justify-between">
             <Link href="/admin/manajemen-inovasi">
-              <Button colorScheme="orange">Kembali</Button>
+              <Button colorScheme="orange" variant={"outline"}>Kembali</Button>
             </Link>
           </Flex>
-          <h1 className="text-xl font-bold">Preview Inovasi</h1>
+          <div className="p-5 bg-yellow-100 border border-orange-400 rounded font-medium flex items-center gap-4">
+            <IconInfoCircle size="32px" className="text-orange-700"/>
+            <div>
+              <h1>Ini adalah halaman preview produk inovasi</h1>
+            </div>
+          </div>
+          <Button colorScheme="green">Setujui Inovasi</Button>
         </Box>
         <Flex
           direction={{ base: "column", lg: "row" }}
           gap={6}
           className="items-center justify-center"
         >
-          <Box className="h-auto w-[30em]">
+          <Box className="h-auto w-full lg:w-6/12 border rounded">
             <Swiper
-              modules={[Pagination]}
+              modules={[Pagination,Navigation]}
+              navigation={true}
               spaceBetween={4}
               slidesPerView={1}
               pagination={{ clickable: true }}
               className="rounded-lg overflow-hidden"
             >
+              {/* Thumbnail Image */}
               {data?.thumbnail && (
                 <SwiperSlide>
-                  <Box>
+                  <Box height="300px">
                     <img
                       src={data.thumbnail}
                       alt="Product Thumbnail"
-                      className="w-fit h-full object-contain"
+                      className="w-full h-full object-contain"
                     />
                   </Box>
                 </SwiperSlide>
               )}
+
+              {/* Other Images */}
               {data?.images?.map((imageUrl: string, index: number) => (
                 <SwiperSlide key={index}>
-                  <Box>
+                  <Box height="300px">
                     <img
                       src={imageUrl}
                       alt={`Product Image ${index + 1}`}
-                      className="w-fit h-full object-contain"
+                      className="w-full h-full object-contain"
                     />
                   </Box>
                 </SwiperSlide>
@@ -149,17 +162,31 @@ const ManajemenInovasiAdmin = () => {
                 </Text>
               </Flex>
             </Flex>
-            <Box bg="gray.100" p={3} borderRadius="md">
-              <Text fontWeight="semibold" mb={2}>
-                Daftar Innovator
+            <Box bg="gray.100" className="border border-gray-300" p={4} borderRadius="md">
+              <Text
+                fontWeight="semibold"
+                mb={2}
+                className="flex items-center gap-3"
+              >
+                <IconMicroscope />
+                Innovator
               </Text>
               <VStack align="stretch" spacing={1}>
                 {data?.collaboration?.map(
                   (innovator: string, index: number) => (
-                    <Text key={index}>{innovator}</Text>
+                    <Text key={index}>
+                      {index + 1}. {innovator}
+                    </Text>
                   )
                 )}
               </VStack>
+              <Text
+                fontWeight="semibold"
+                className="flex items-center gap-3 mt-5"
+              >
+                Alamat Email Inovator
+              </Text>
+              <Text>{data?.inovator_email}</Text>
             </Box>
           </Box>
         </Flex>
@@ -183,17 +210,17 @@ const ManajemenInovasiAdmin = () => {
           <TabPanels className="border">
             <TabPanel>
               <VStack align="stretch" spacing={6}>
-                <Text>{data?.description}</Text>
+                <Text className="leading-7">{data?.description}</Text>
                 <TableContainer>
                   <Table variant="simple">
                     <Tbody>
                       <Tr>
                         <Td fontWeight="semibold">Status Paten</Td>
-                        <Td>{data?.status_paten}</Td>
+                        <Td><span className="px-3 py-1 bg-green-200 rounded-full font-medium">{data?.status_paten}</span></Td>
                       </Tr>
                       <Tr>
                         <Td fontWeight="semibold">Tahap Pengembangan</Td>
-                        <Td>{data?.development_stage}</Td>
+                        <Td><span className="px-3 py-1 bg-green-200 rounded-full font-medium">{data?.development_stage}</span></Td>
                       </Tr>
                       <Tr>
                         <Td fontWeight="semibold">Nilai TKT</Td>
@@ -201,13 +228,13 @@ const ManajemenInovasiAdmin = () => {
                       </Tr>
                       <Tr>
                         <Td fontWeight="semibold">Kelebihan Teknologi</Td>
-                        <Td>{data?.adventage}</Td>
+                        <Td className="text-wrap">{data?.adventage}</Td>
                       </Tr>
                       <Tr>
                         <Td fontWeight="semibold">
                           Kolaborasi Yang Diinginkan
                         </Td>
-                        <Td>{data?.collaboration_details}</Td>
+                        <Td className="text-wrap">{data?.collaboration_details}</Td>
                       </Tr>
                     </Tbody>
                   </Table>
@@ -223,12 +250,12 @@ const ManajemenInovasiAdmin = () => {
                 {data?.faq?.map((item: any, index: number) => (
                   <AccordionItem key={index}>
                     <AccordionButton>
-                      <Box flex="1" textAlign="left" p={2}>
+                      <Box flex="1" textAlign="left" className="font-medium text-base" p={2}>
                         {item?.question}
                       </Box>
                       <AccordionIcon />
                     </AccordionButton>
-                    <AccordionPanel p={2}>{item?.answer}</AccordionPanel>
+                    <AccordionPanel className="mx-2">{item?.answer}</AccordionPanel>
                   </AccordionItem>
                 ))}
               </Accordion>

@@ -114,9 +114,9 @@ const Table: React.FC<TableProps> = ({
     <span>{new Date(value).toLocaleDateString()}</span>
   );
 
-  const renderText = (value: string) => (
-    <span>{truncateContent(value, 4)}</span>
-  );
+  const renderText = (value: string) => {
+    return (<span className="text-wrap">{truncateContent(value, 10)}</span>)
+  }
 
   const renderLink = (data: any) => {
     let href = "";
@@ -126,7 +126,7 @@ const Table: React.FC<TableProps> = ({
       href = `/inovasi/${data._id}`;
     } else if (role === "admin") {
       href = `/admin/manajemen-inovasi/preview/${data._id}`;
-      linkText = "Lihat Preview";
+      linkText = "Preview";
     } else {
       href = `/inovasi/${data._id}`;
     }
@@ -200,7 +200,7 @@ const Table: React.FC<TableProps> = ({
                     ? renderDate(getNestedValue(row, column?.key).toString())
                     : column?.type === "link"
                     ? renderLink(row)
-                    : renderText(getNestedValue(row, column?.key).toString())}
+                    : renderText(getNestedValue(row, column?.key).toString(),getNestedValue(row, column?.key))}
                 </td>
               ))}
               {(isDelete || isEdit) && (

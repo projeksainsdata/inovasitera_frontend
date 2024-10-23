@@ -114,7 +114,7 @@ const EditProfile = () => {
         toast({
           title: "Password changed successfully",
           status: "success",
-          duration: 3000,
+          duration: 200,
           isClosable: true,
           position: "top-right",
         });
@@ -125,7 +125,7 @@ const EditProfile = () => {
           title: "Error changing password",
           description: "Please try again",
           status: "error",
-          duration: 3000,
+          duration: 200,
           isClosable: true,
           position: "top-right",
         });
@@ -185,7 +185,7 @@ const EditProfile = () => {
           title: "Profil diperbarui.",
           description: "Informasi profil Anda telah diperbarui.",
           status: "success",
-          duration: 3000,
+          duration: 200,
           isClosable: true,
           position: "top-right",
         });
@@ -194,7 +194,7 @@ const EditProfile = () => {
           title: "Error",
           description: "Gagal memperbarui profil.",
           status: "error",
-          duration: 3000,
+          duration: 200,
           isClosable: true,
           position: "top-right",
         });

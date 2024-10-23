@@ -64,10 +64,10 @@ const LoginPage: React.FC = () => {
           </Box>
 
           <Text fontSize="2xl" fontWeight="bold" color="gray.700" mb={2}>
-            Masuk Kedalam Sistem
+            Masuk Kedalam Sistem PII ITERA
           </Text>
           <Text color="gray.500" mb={6}>
-            Untuk menggunakan sistem
+            Masukkan Email dan Password Anda yang sudah terdaftar
           </Text>
 
           {/* Formik form */}

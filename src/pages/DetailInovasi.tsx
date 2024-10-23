@@ -30,7 +30,7 @@ import {
   useToast,
 } from "@chakra-ui/react";
 import { Swiper, SwiperSlide } from "swiper/react";
-import { Pagination } from "swiper/modules";
+import { Pagination, Navigation } from "swiper/modules";
 import {
   IconStarFilled,
   IconZoomQuestion,
@@ -40,6 +40,7 @@ import {
 } from "@tabler/icons-react";
 import "swiper/css";
 import "swiper/css/pagination";
+import "swiper/css/navigation";
 
 import Navbar from "@/components/navbar";
 import Footer from "@/components/Footer";
@@ -102,6 +103,14 @@ const DetailInovasi: React.FC = () => {
   );
 
   const addWhitelist = async () => {
+    console.log(auth.user?.role)
+    const wishlistPage =
+    auth?.user?.role === "admin"
+      ? "/admin/wishlist-inovasi"
+      : auth?.role === "innovator"
+      ? "/innovator/wishlist"
+      : "/wishlist";
+
     try {
       await post({
         url: WHITELIST_PREFIX.CREATE,
@@ -112,7 +121,17 @@ const DetailInovasi: React.FC = () => {
       toast({
         title: "Added to Wishlist",
         status: "success",
-        duration: 3000,
+        description: (
+          <Button
+            colorScheme="blue"
+            onClick={() => navigate(wishlistPage)}
+            size="sm"
+            mt={2}
+          >
+            Go to Wishlist
+          </Button>
+        ),
+        duration: 2000,
         isClosable: true,
         position: "top-right",
       });
@@ -123,7 +142,17 @@ const DetailInovasi: React.FC = () => {
           toast({
             title: response.data.message,
             status: "error",
-            duration: 3000,
+            duration: 2000,
+            description: (
+              <Button
+                colorScheme="orange"
+                onClick={() => navigate(wishlistPage)}
+                size="sm"
+                mt={2}
+              >
+                Go to Wishlist
+              </Button>
+            ),
             isClosable: true,
             position: "top-right",
           });
@@ -134,7 +163,7 @@ const DetailInovasi: React.FC = () => {
       toast({
         title: "Error adding to Wishlist",
         status: "error",
-        duration: 3000,
+        duration: 2000,
         isClosable: true,
         position: "top-right",
       });
@@ -162,7 +191,7 @@ const DetailInovasi: React.FC = () => {
         toast({
           title: "Rating submitted",
           status: "success",
-          duration: 3000,
+          duration: 2000,
           isClosable: true,
           position: "top-right",
         });
@@ -177,17 +206,18 @@ const DetailInovasi: React.FC = () => {
             toast({
               title: response.data.message,
               status: "error",
-              duration: 3000,
+              duration: 2000,
               isClosable: true,
               position: "top-right",
             });
+            resetForm();
             return;
           }
         }
         toast({
           title: "Error submitting rating",
           status: "error",
-          duration: 3000,
+          duration: 2000,
           isClosable: true,
           position: "top-right",
         });
@@ -211,7 +241,8 @@ const DetailInovasi: React.FC = () => {
         >
           <Box className="h-auto w-full lg:w-6/12 border rounded">
             <Swiper
-              modules={[Pagination]}
+              modules={[Pagination, Navigation]}
+              navigation={true}
               spaceBetween={4}
               slidesPerView={1}
               pagination={{ clickable: true }}
@@ -288,6 +319,13 @@ const DetailInovasi: React.FC = () => {
                   )
                 )}
               </VStack>
+              <Text
+                fontWeight="semibold"
+                className="flex items-center gap-3 mt-5"
+              >
+                Alamat Email Inovator
+              </Text>
+              <Text>{data?.inovator_email}</Text>
             </Box>
 
             <Flex gap={4}>
@@ -299,11 +337,12 @@ const DetailInovasi: React.FC = () => {
               >
                 Tambah ke Favorit
               </Button>
-              <Button 
-                as="a" 
-                href={`mailto:${data?.inovator_email}`} 
-                colorScheme="blue" 
-                flex={1}>
+              <Button
+                as="a"
+                href={`mailto:${data?.inovator_email}`}
+                colorScheme="blue"
+                flex={1}
+              >
                 Hubungi Inovator
               </Button>
             </Flex>
@@ -353,13 +392,15 @@ const DetailInovasi: React.FC = () => {
                       </Tr>
                       <Tr>
                         <Td fontWeight="semibold">Kelebihan Teknologi</Td>
-                        <Td>{data?.adventage}</Td>
+                        <Td className="text-wrap">{data?.adventage}</Td>
                       </Tr>
                       <Tr>
                         <Td fontWeight="semibold">
                           Kolaborasi Yang Diinginkan
                         </Td>
-                        <Td>{data?.collaboration_details}</Td>
+                        <Td className="text-wrap">
+                          {data?.collaboration_details}
+                        </Td>
                       </Tr>
                     </Tbody>
                   </Table>
@@ -466,7 +507,11 @@ const DetailInovasi: React.FC = () => {
                   <AccordionItem key={index}>
                     <h2>
                       <AccordionButton>
-                        <Box flex="1" textAlign="left">
+                        <Box
+                          flex="1"
+                          textAlign="left"
+                          className="font-semibold"
+                        >
                           {item?.question}
                         </Box>
                         <AccordionIcon />

@@ -16,28 +16,35 @@ const InnovationDashboard: React.FC = () => {
 
   const statCards: StatCardType[] = [
     {
-      title: 'Total Innovations',
+      title: 'Total Inovasi',
       value: data?.data?.totalInnovations.toString(),
       icon: FiPackage,
       trend: 'neutral',
       change: 0,
     },
     {
-      title: 'Approved Innovations',
+      title: 'Sudah Setujui',
       value: (data?.data?.statusDistribution.find(item => item._id === 'approved')?.count || 0).toString(),
       icon: FiCheckCircle,
       trend: 'neutral',
       change: 0,
     },
     {
-      title: 'Pending Innovations',
+      title: 'Belum Disetujui',
       value: (data?.data?.statusDistribution.find(item => item._id === 'pending')?.count || 0).toString(),
       icon: FiCheckCircle,
       trend: 'neutral',
       change: 0,
     },
     {
-      title: "This Month's Submissions",
+      title: 'Ditolak',
+      value: (data?.data?.statusDistribution.find(item => item._id === 'rejected')?.count || 0).toString(),
+      icon: FiCheckCircle,
+      trend: 'neutral',
+      change: 0,
+    },
+    {
+      title: "Inovasi Bulan Ini",
       value: (data?.data?.monthlySubmissions[0]?.count || 0).toString(),
       icon: FiCalendar,
       trend: 'neutral',
@@ -56,7 +63,7 @@ const InnovationDashboard: React.FC = () => {
     labels: data?.data?.categoryDistribution.map(item => item._id),
     datasets: [
       {
-        label: 'Category Distribution',
+        label: 'Total Kategori',
         data: data?.data?.categoryDistribution.map(item => item.count),
         backgroundColor: [
           'rgba(255, 99, 132, 0.6)',
@@ -83,7 +90,7 @@ const InnovationDashboard: React.FC = () => {
 
   return (
     <Box>
-      <Heading mb={6}>Innovation Dashboard</Heading>
+      <Heading mb={6}>Dashboard Inovasi</Heading>
       <Grid templateColumns="repeat(4, 1fr)" gap={6} mb={6}>
         {statCards.map((card, index) => (
           <StatCard key={index} {...card} />
@@ -99,7 +106,7 @@ const InnovationDashboard: React.FC = () => {
         <DynamicChart
           type={ChartType.Line}
           data={ratingChartData}
-          title="Average Ratings by Category"
+          title="Rata-rata Rating per Kategori"
           height={400}
         />
       </VStack>

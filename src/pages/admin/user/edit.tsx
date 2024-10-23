@@ -22,10 +22,10 @@ import {
   ModalFooter,
   ModalBody,
   ModalCloseButton,
-  Link
+  Link,
 } from "@chakra-ui/react";
 import { useFormik } from "formik";
-import { IconPhotoPlus } from "@tabler/icons-react";
+import { IconPhotoPlus,IconInfoCircle } from "@tabler/icons-react";
 import * as Yup from "yup";
 import AuthApiService from "@/services/apiServices/auth.api.service";
 import Layout from "@/components/admin/layoutAdmin/LayoutAdmin";
@@ -94,9 +94,9 @@ const EditProfile = () => {
         status: "error",
         duration: 9000,
         isClosable: true,
-        position:"top-right"
+        position: "top-right",
       });
-    //   ErrorApiToast({error})
+      //   ErrorApiToast({error})
     }
   }, [data, error]);
 
@@ -120,9 +120,9 @@ const EditProfile = () => {
         toast({
           title: "Password changed successfully",
           status: "success",
-          duration: 3000,
+          duration: 2000,
           isClosable: true,
-          position:"top-right"
+          position: "top-right",
         });
         setIsPasswordChangeModalOpen(false);
         resetForm();
@@ -131,9 +131,9 @@ const EditProfile = () => {
           title: "Error changing password",
           description: "Please try again",
           status: "error",
-          duration: 3000,
+          duration: 2000,
           isClosable: true,
-          position:"top-right"
+          position: "top-right",
         });
       } finally {
         setSubmitting(false);
@@ -151,10 +151,10 @@ const EditProfile = () => {
       inovator: {
         fakultas: profileData?.inovator?.fakultas || "",
         prodi: profileData?.inovator?.prodi || "",
-        status: profileData?.inovator?.status || ""
+        status: profileData?.inovator?.status || "",
       },
       profile: profileData?.profile || "",
-      role: profileData?.role || ""
+      role: profileData?.role || "",
     },
     validationSchema,
     enableReinitialize: true,
@@ -191,7 +191,7 @@ const EditProfile = () => {
           title: "Profil diperbarui.",
           description: "Informasi profil Anda telah diperbarui.",
           status: "success",
-          duration: 3000,
+          duration: 2000,
           isClosable: true,
           position: "top-right",
         });
@@ -200,9 +200,9 @@ const EditProfile = () => {
           title: "Error",
           description: "Gagal memperbarui profil.",
           status: "error",
-          duration: 3000,
+          duration: 2000,
           isClosable: true,
-          position:"top-right"
+          position: "top-right",
         });
       } finally {
         setSubmitting(false);
@@ -239,7 +239,9 @@ const EditProfile = () => {
 
   return (
     <Layout>
-      <Link href="/admin/user"><Button>Kembali</Button></Link>
+      <Link href="/admin/user">
+        <Button colorScheme="orange" variant={"outline"}>Kembali</Button>
+      </Link>
       {profileData && (
         <form onSubmit={formik.handleSubmit}>
           <Grid templateColumns={{ base: "1fr", md: "1fr 2fr" }} gap={6}>
@@ -247,7 +249,7 @@ const EditProfile = () => {
             <GridItem>
               <FormControl>
                 <VStack spacing={4}>
-                  <div className="w-[200px] h-[200px] flex justify-center items-center overflow-hidden rounded-full border">
+                  <div className="w-[300px] h-[300px] flex justify-center items-center overflow-hidden rounded-full border">
                     <img
                       src={profilePic}
                       className="max-w-full max-h-full"
@@ -279,6 +281,12 @@ const EditProfile = () => {
 
             {/* Column 2: Form Fields */}
             <GridItem>
+              <div className="p-3 bg-yellow-100 border border-orange-400 rounded font-medium flex items-center gap-4 mb-4">
+                <IconInfoCircle size="32px" className="text-orange-700" />
+                <div>
+                  <h1>Anda berada pada halaman edit profile pengguna</h1>
+                </div>
+              </div>
               <VStack spacing={4} align="stretch">
                 {/* Nama */}
                 <FormControl
@@ -299,7 +307,7 @@ const EditProfile = () => {
                   <FormLabel>Status Pendaftaran</FormLabel>
                   <Select
                     name="inovator.status"
-                    value={formik.values.inovator.status}  // bind formik values to the select
+                    value={formik.values.inovator.status} // bind formik values to the select
                     onChange={formik.handleChange} // formik handles the change automatically
                   >
                     <option value="pending">Menunggu</option>
@@ -313,7 +321,7 @@ const EditProfile = () => {
                   <FormLabel>Terdaftar Sebagai</FormLabel>
                   <Select
                     name="role"
-                    value={formik.values.role}  // bind formik values to the select
+                    value={formik.values.role} // bind formik values to the select
                     onChange={formik.handleChange} // formik handles the change automatically
                   >
                     <option value="admin">Admin</option>

@@ -17,7 +17,7 @@ const NotFoundPage = () => {
       backgroundSize="cover"
       color="black"
     >
-      <Heading>404 Error!</Heading>
+      <Heading>Halaman Tidak Ditemukan!</Heading>
       <Text>Halaman yang Anda cari tidak ditemukan.</Text>
       <Button colorScheme="yellow" as={Link} to="/">
         Kembali ke Halaman Awal

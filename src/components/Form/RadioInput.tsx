@@ -43,9 +43,9 @@ const Radio: React.FC<RadioProps> = ({
               value={option.value}
               checked={field.value === option.value}
               onChange={handleChange}
-              className="size-4 border-gray-300 text-black focus:ring-black"
+              className="size-5 border-gray-300 text-black focus:ring-black"
             />
-            <span className="mx-2 text-sm text-gray-700">{option.label}</span>
+            <span className="mx-2 text-lg text-gray-700 mr-5">{option.label}</span>
           </label>
         ))}
       </div>

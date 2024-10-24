@@ -38,9 +38,9 @@ import {
 import "swiper/css";
 import "swiper/css/pagination";
 import 'swiper/css/navigation';
-
-import { get, post } from "@/hooks/useSubmit";
-
+import { get, post, put } from "@/hooks/useSubmit";
+import toast from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
 const StarRating: React.FC<{ rating: number; size?: number }> = ({
   rating,
   size = 24,
@@ -61,14 +61,24 @@ const StarRating: React.FC<{ rating: number; size?: number }> = ({
 const ManajemenInovasiAdmin = () => {
   const [data, setData] = useState({});
   const params = useParams();
+  const navigate = useNavigate();
+
   useEffect(() => {
     async function fetchData() {
       const res = await get(`${INNOVATION_PREFIX.INDEX}/${params.id}`);
       setData(res?.data);
     }
-
     fetchData();
   }, [params.id]);
+
+  const handleSubmit = async () => {
+    const result = await put({
+      url: `${INNOVATION_PREFIX.EDIT}/${params.id}`,
+      data: {"status":"approved"},
+    });
+    window.location.reload();
+    toast.success(`Innovation updated successfully`);
+  };
 
   const avgRating = Math.floor(
     data?.rating?.reduce((acc: number, rating: any) => acc + rating.rating, 0) /
@@ -80,9 +90,7 @@ const ManajemenInovasiAdmin = () => {
       <Box as="main" margin="auto">
         <Box className="space-y-3 my-5">
           <Flex className="w-full justify-between">
-            <Link href="/admin/manajemen-inovasi">
-              <Button colorScheme="orange" variant={"outline"}>Kembali</Button>
-            </Link>
+              <Button colorScheme="orange" variant={"outline"} onClick={()=>navigate("/admin/manajemen-inovasi")}>Kembali</Button>
           </Flex>
           <div className="p-5 bg-yellow-100 border border-orange-400 rounded font-medium flex items-center gap-4">
             <IconInfoCircle size="32px" className="text-orange-700"/>
@@ -90,7 +98,15 @@ const ManajemenInovasiAdmin = () => {
               <h1>Ini adalah halaman preview produk inovasi</h1>
             </div>
           </div>
-          <Button colorScheme="green">Setujui Inovasi</Button>
+          {data?.status=="approved" && 
+          <div className="p-3 bg-green-100 border border-green-400 rounded font-medium flex items-center gap-4">
+            <div className="space-y-4">
+              <h1>Inovasi telah disetujui</h1>
+              <Button colorScheme="green" onClick={()=>navigate(`/inovasi/${params.id}`)}>Lihat Inovasi</Button>
+            </div>
+          </div>
+          }
+          {data?.status!="approved" && <Button colorScheme="green" onClick={handleSubmit}>Setujui Inovasi</Button>}
         </Box>
         <Flex
           direction={{ base: "column", lg: "row" }}
@@ -134,7 +150,7 @@ const ManajemenInovasiAdmin = () => {
             </Swiper>
           </Box>
 
-          <Box flex={1} className="space-y-3">
+          <Box flex={1} className="space-y-3 w-full">
             <Text fontSize="sm" fontWeight="semibold" color="gray.600">
               Nama Inovasi
             </Text>

@@ -64,7 +64,7 @@ const Navbar: React.FC = () => {
                 {/* Profile Button */}
                 <Link to={`${getProfilePath(auth.user?.role)}`}>
                   <Button colorScheme='red' borderRadius='full'>
-                    Profile
+                    Profil
                   </Button>
                 </Link>
               </>
@@ -91,16 +91,11 @@ const Navbar: React.FC = () => {
             {auth.isAuthenticated ? (
               <>
                 {/* Wishlist for mobile */}
-                <Link to={getWishlistPath(auth.user?.role)} className='text-sm'>
-                <IconButton
-                    aria-label="Wishlist"
-                    icon={<Heart size={20} />}
-                    colorScheme="red"
-                    variant="ghost"
-                  />
+                <Link to={getWishlistPath(auth.user?.role)} className='text-sm flex items-center'>
+                  <Button colorScheme='gray' size="sm" leftIcon={<Heart size={18}/>}>Wishlist</Button>
                 </Link>
                 <Link to={`${getProfilePath(auth.user?.role)}`} className='text-sm'>
-                  <Button colorScheme='red' size="sm">Profile</Button>
+                  <Button colorScheme='red' size="sm">Profil</Button>
                 </Link>
               </>
             ) : (

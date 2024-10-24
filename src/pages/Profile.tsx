@@ -25,7 +25,7 @@ import {
   Link,
   InputGroup,
   InputRightElement,
-  IconButton
+  IconButton,
 } from "@chakra-ui/react";
 import { IconEye, IconEyeOff } from "@tabler/icons-react";
 import { useFormik } from "formik";
@@ -41,6 +41,7 @@ import { ResponseUpdateUser, USER } from "@/lib/types/user.type";
 import { USER_PREFIX } from "@/lib/constants/api.contants";
 import ROLE from "@/lib/constants/role.contants";
 import { useAuth } from "@/hooks/useAuth";
+import { useNavigate } from "react-router-dom";
 
 const validationSchema = Yup.object({
   fullname: Yup.string().required("Nama is required"),
@@ -82,6 +83,7 @@ const EditProfile = () => {
   const toast = useToast();
   const auth = useAuth();
 
+  let navigate = useNavigate();
   const getProfile = async () => {
     try {
       const response = await AuthApiService.me();
@@ -90,6 +92,12 @@ const EditProfile = () => {
     } catch (error: any) {
       ErrorApiToast({ error });
     }
+  };
+
+  const handleLogout = async () => {
+    await AuthApiService.logout();
+    auth.logout();
+    navigate("/forgot-password");
   };
   useEffect(() => {
     getProfile();
@@ -242,7 +250,7 @@ const EditProfile = () => {
                 <VStack spacing={4}>
                   <img
                     src={profilePic}
-                    className="rounded-lg w-fit h-[350px] object-cover object-top"
+                    className="rounded-full w-32 h-32 md:w-48 md:h-48 lg:w-72 lg:h-72 object-cover"
                     alt="Profile"
                   />
                   <Input
@@ -268,6 +276,7 @@ const EditProfile = () => {
                     </h1>
                     <Button
                       colorScheme="blue"
+                      variant={"outline"}
                       onClick={() => setIsPasswordChangeModalOpen(true)}
                     >
                       Ubah Password
@@ -290,10 +299,8 @@ const EditProfile = () => {
                     </Box>
                   )}
                   {profileData.inovator.status === "active" && (
-                    <Box className="rounded p-3 bg-green-600 text-white font-medium space-y-2">
-                      <Badge colorScheme="" fontSize={"lg"}>
-                        Status Terverifikasi
-                      </Badge>
+                    <Box className="rounded p-3 bg-green-200 border border-green-600 text-white font-medium space-y-2">
+                      <p className="text-green-600">Status Terverifikasi</p>
                     </Box>
                   )}
                   {profileData.inovator.status === "inactive" && (
@@ -524,11 +531,7 @@ const EditProfile = () => {
                           setShowConfirmNewPassword(!showConfirmNewPassword)
                         }
                         icon={
-                          showConfirmNewPassword ? (
-                            <IconEye />
-                          ) : (
-                            <IconEyeOff />
-                          )
+                          showConfirmNewPassword ? <IconEye /> : <IconEyeOff />
                         }
                         aria-label="Toggle Confirm Password Visibility"
                       />
@@ -538,27 +541,31 @@ const EditProfile = () => {
                     {passwordChangeFormik.errors.confirmNewPassword}
                   </FormErrorMessage>
                 </FormControl>
-
-                <Box className="w-full">
-                  <Link href="/forgot-password" className="text-orange-400">Lupa password?</Link>
-                </Box>
               </VStack>
             </ModalBody>
-            <ModalFooter>
-              <Button
-                colorScheme="blue"
-                mr={3}
-                type="submit"
-                isLoading={passwordChangeFormik.isSubmitting}
-              >
-                Change Password
-              </Button>
-              <Button
-                variant="ghost"
-                onClick={() => setIsPasswordChangeModalOpen(false)}
-              >
-                Cancel
-              </Button>
+            <ModalFooter flexDir={"column"} className="gap-4">
+              <Box>
+                <Button
+                  colorScheme="blue"
+                  mr={3}
+                  type="submit"
+                  isLoading={passwordChangeFormik.isSubmitting}
+                >
+                  Ganti Password
+                </Button>
+                <Button
+                  variant="ghost"
+                  onClick={() => setIsPasswordChangeModalOpen(false)}
+                >
+                  Cancel
+                </Button>
+              </Box>
+              <Box className="w-full">
+                <Link onClick={handleLogout} color="orange.500" className="font-semibold">
+                  Anda lupa password?
+                </Link>
+                <p>Akun Anda akan logout terlebih dahulu</p>
+              </Box>
             </ModalFooter>
           </form>
         </ModalContent>

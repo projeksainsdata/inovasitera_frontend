@@ -111,16 +111,14 @@ const InnovationPage: React.FC = () => {
 
           <main className="w-full md:w-3/4">
             <div className="flex justify-between my-4 items-center">
-              <h2 className="text-base font-bold">
+              <h2 className="text-lg font-bold">
                 {!!params.q
-                  ? `Hasil Untuk ${params?.q || ""} (${
-                      data?.pagination?.total || 0
-                    })`
-                  : "Semua Inovasi"}
+                  ? `Hasil Untuk ${params?.q || ""}`
+                  : `Semua Inovasi`}
               </h2>
               <button
                 onClick={() => setFilterMobile(!filterMobile)}
-                className="md:hidden text-base flex gap-2 bg-orange-600 px-3 py-1 rounded text-white items-center"
+                className="md:hidden text-sm flex gap-2 bg-orange-400 px-3 py-1 rounded text-white items-center"
               >
                 Atur <IconAdjustmentsSearch size={16}/>
               </button>
@@ -145,7 +143,10 @@ const InnovationPage: React.FC = () => {
                     <InnovationCard key={innovation._id} inovasi={innovation} />
                   ))
                 ) : (
-                  <h1 className="text-2xl">Inovasi Tidak Ditemukan</h1>
+                  <div className="p-5 bg-orange-100 border border-orange-400 rounded w-full">
+                    <h1 className="text-xl font-semibold">Inovasi {kategoriValue} Tidak Ditemukan</h1>
+                    <p>Coba keyword lainnya</p>
+                  </div>
                 )}
               </div>
             )}

@@ -5,6 +5,7 @@ import AboutHome from './components/AboutHome';
 import Footer from './components/Footer';
 import Navbar from './components/navbar';
 import Hero from './components/Hero';
+import BlogHomeSection from './components/BlogInformation';
 
 function App() {
   return (
@@ -14,6 +15,7 @@ function App() {
     <AboutHome/>
     <KategoriHome/>
     <ProdukHome/>
+    <BlogHomeSection />
     <Footer/>
     </>
   );

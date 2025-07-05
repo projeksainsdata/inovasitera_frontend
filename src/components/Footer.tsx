@@ -13,10 +13,10 @@ const Footer: React.FC = () => {
           </div>
           <div>
             <p className="max-w-[300px] md:max-w-[400px]">
-              <strong>Alamat:</strong> Gedung C ITERA, Jl. Terusan Ryacudu, Way Huwi, Lampung Selatan, Lampung
+              <strong>Alamat:</strong> Gedung Training Center ITERA, Jl. Terusan Ryacudu, Way Huwi, Lampung Selatan, Lampung
             </p>
             <p>
-              <strong>Kontak:</strong> pusatriset@itera.ac.id
+              <strong>Kontak:</strong> pii@itera.ac.id
             </p>
           </div>
         </div>

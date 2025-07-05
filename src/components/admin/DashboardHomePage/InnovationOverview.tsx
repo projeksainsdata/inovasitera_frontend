@@ -24,21 +24,21 @@ const InnovationDashboard: React.FC = () => {
     },
     {
       title: 'Sudah Setujui',
-      value: (data?.data?.statusDistribution.find(item => item._id === 'approved')?.count || 0).toString(),
+      value: (data?.data?.statusDistribution.find((item: { _id: string; count: number }) => item._id === 'approved')?.count || 0).toString(),
       icon: FiCheckCircle,
       trend: 'neutral',
       change: 0,
     },
     {
       title: 'Belum Disetujui',
-      value: (data?.data?.statusDistribution.find(item => item._id === 'pending')?.count || 0).toString(),
+      value: (data?.data?.statusDistribution.find((item: { _id: string; count: number }) => item._id === 'pending')?.count || 0).toString(),
       icon: FiCheckCircle,
       trend: 'neutral',
       change: 0,
     },
     {
       title: 'Ditolak',
-      value: (data?.data?.statusDistribution.find(item => item._id === 'rejected')?.count || 0).toString(),
+      value: (data?.data?.statusDistribution.find((item: { _id: string; count: number }) => item._id === 'rejected')?.count || 0).toString(),
       icon: FiCheckCircle,
       trend: 'neutral',
       change: 0,
@@ -60,11 +60,11 @@ const InnovationDashboard: React.FC = () => {
   ];
 
   const categoryChartData: BaseChartData = {
-    labels: data?.data?.categoryDistribution.map(item => item._id),
+    labels: data?.data?.categoryDistribution.map((item: { _id: string; count: number }) => item._id),
     datasets: [
       {
         label: 'Total Kategori',
-        data: data?.data?.categoryDistribution.map(item => item.count),
+        data: data?.data?.categoryDistribution.map((item: { _id: string; count: number }) => item.count),
         backgroundColor: [
           'rgba(255, 99, 132, 0.6)',
           'rgba(54, 162, 235, 0.6)',
@@ -77,11 +77,11 @@ const InnovationDashboard: React.FC = () => {
   };
 
   const ratingChartData: BaseChartData = {
-    labels: data?.data?.averageRatings.map(item => item._id),
+    labels: data?.data?.averageRatings.map((item: { _id: string; averageRating: number }) => item._id),
     datasets: [
       {
         label: 'Average Ratings',
-        data: data?.data?.averageRatings.map(item => item.averageRating),
+        data: data?.data?.averageRatings.map((item: { _id: string; averageRating: number }) => item.averageRating),
         borderColor: 'rgba(75, 192, 192, 1)',
         backgroundColor: 'rgba(75, 192, 192, 0.2)',
       },

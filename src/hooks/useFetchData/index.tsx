@@ -66,3 +66,4 @@ function useDataFetch<T>(
 }
 
 export default useDataFetch;
+export type { DataFetchResult };

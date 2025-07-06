@@ -35,6 +35,10 @@ import InnovationOverviewPage from "@/pages/admin/dashboard/InnovatorOverview";
 import MyListInovasi from "@/components/admin/ManajemenProduk/MyListInovasi";
 import AdminDetailInovasi from "@/components/admin/ManajemenProduk/DetailInovasi";
 import AdminWhitelistInovasi from "@/components/admin/ManajemenProduk/WhiteListAdmin";
+import BlogAdmin from "@/pages/admin/manajemenblog";
+import EditBlog from "@/pages/admin/manajemenblog/EditBlog";
+import TambahBlog from "@/pages/admin/manajemenblog/tambahBlog";
+import DetailArtikel from "@/pages/admin/manajemenblog/DetailBlog";
 
 const AppRoutes: React.FC = () => {
   return (
@@ -229,6 +233,40 @@ const AppRoutes: React.FC = () => {
               </PublicRoute>
             }
           />
+
+          <Route
+          path="/admin/blog"
+          element={
+            <PrivateRoute role={ROLE_PERMISSION[ROLE.ADMIN]}>
+              <BlogAdmin />
+            </PrivateRoute>
+          }
+        />
+
+        <Route
+          path="/admin/tambah-blog"
+          element={
+            <PrivateRoute role={ROLE_PERMISSION[ROLE.ADMIN]}>
+              <TambahBlog />
+            </PrivateRoute>
+          }
+        />
+
+        <Route
+          path="/admin/edit-blog/:slug"
+          element={
+            <PrivateRoute role={ROLE_PERMISSION[ROLE.ADMIN]}>
+              <EditBlog />
+            </PrivateRoute>
+          }
+        />
+
+        <Route
+          path="/berita/:slug"
+          element={
+            <DetailArtikel />
+          }
+        />
 
           <Route path="*" element={<NotFoundPage />} />
         </Routes>

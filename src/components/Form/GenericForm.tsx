@@ -60,7 +60,7 @@ const GenericForm: React.FC<GenericFormProps> = ({ fields, onSubmit, initialValu
             const commonProps = {
               name: field.name,
               label: field.label,
-              placeholder: field.placeholder,
+              placeholder: field.placeholder ?? '',
               onChange: onChange ? (value: unknown) => onChange(field.name, value) : undefined,
             };
 

@@ -1,4 +1,5 @@
 export interface ResponseApi<T> {
+  url: string;
   requestId: string;
   requestTime: string;
   data: T | any | null;

@@ -64,12 +64,13 @@ const FormInovation: React.FC<PropsFormInovation> = ({
 
   const initialValuesForm: InovationCreateSchema | InovationUpdateSchema =
     initialValues || {
+      _id: '',
+      user_id: '',
       title: '',
       description: '',
       Image: '',
       category: '',
       status: 'pending',
-
     };
 
 
@@ -77,7 +78,7 @@ const FormInovation: React.FC<PropsFormInovation> = ({
     <div className="mx-auto mt-8 max-w-md">
       <GenericForm
         fields={fields}
-        onSubmit={handleSubmit}
+        onSubmit={(values) => handleSubmit(values as InovationCreateSchema | InovationUpdateSchema)}
         initialValues={initialValuesForm}
       />
     </div>

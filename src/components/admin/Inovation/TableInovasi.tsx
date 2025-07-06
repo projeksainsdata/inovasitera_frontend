@@ -23,14 +23,15 @@ const columns = [
 ];
 
 const searchFields = [
-  { key: "q", label: "Nama Inovasi" },
+  { key: "q", label: "Nama Inovasi", type: "text" as const },
   {
-    key: 'status', label: 'Status Inovasi', type: 'select', options: [
+    key: 'status', label: 'Status Inovasi', type: 'select' as const, options: [
       { value: 'pending', label: 'Pending' },
       { value: 'approved', label: 'Approved' },
       { value: 'rejected', label: 'Rejected' },
     ]
-  },];
+  },
+];
 
 const TableSemuaInovasi: React.FC = () => {
   const { data, loading, updateParams, refetch, params } = useDataFetch<

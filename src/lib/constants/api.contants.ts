@@ -58,3 +58,13 @@ export const DASHBOARD_PREFIX = {
   USER: "/api/v1/dashboard/user",
   INNOVATION: "/api/v1/dashboard/innovation",
 };
+
+export const BLOG_PREFIX = {
+  INDEX: "/api/v1/blogs",
+  CREATE: "/api/v1/blogs",
+  DELETE: "/api/v1/blogs",
+  UPDATE: "/api/v1/blogs",
+  DETAIL: (slug: string) => `/api/v1/blogs/${slug}`,
+  DETAIL_BY_ID: (id: string) => `/api/v1/blogs/${id}`,
+};
+

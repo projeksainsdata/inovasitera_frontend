@@ -1,5 +1,5 @@
 import React from 'react';
-import { IconDashboard, IconUsers, IconCategory, IconBox, IconPlus, IconHeartFilled, IconFileText } from '@tabler/icons-react';
+import { IconDashboard, IconNotes, IconUsers, IconCategory, IconBox, IconPlus, IconHeartFilled, IconFileText } from '@tabler/icons-react';
 
 export interface NavItem {
   href: string;
@@ -66,6 +66,14 @@ export const navItems: NavItem[] = [
     label: 'Inovasi Favorit',
     icon: <IconHeartFilled size={20} />,
     group: 'Manajemen Inovasi',
+    access: ['*'],
+  },
+
+  {
+    href: '/admin/blog',
+    label: 'Artikel',
+    icon: <IconNotes size={20} />,
+    group: 'Manajemen Artikel',
     access: ['*'],
   },
 

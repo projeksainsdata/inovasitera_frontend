@@ -27,7 +27,9 @@ const useFileUpload = (maxFiles: number = 10): UseFileUploadReturn => {
     const removeFile = useCallback((index: number) => {
         setFiles(prevFiles => {
             const updatedFiles = [...prevFiles];
-            URL.revokeObjectURL(updatedFiles[index].preview);
+            if (updatedFiles[index]) {
+                URL.revokeObjectURL(updatedFiles[index].preview);
+            }
             updatedFiles.splice(index, 1);
             return updatedFiles;
         });

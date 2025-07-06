@@ -11,7 +11,7 @@ import { IconStarFilled } from "@tabler/icons-react";
 interface Column {
   key: string;
   label: string;
-  type?: "image" | "status" | "rating" | "date" | "link" | any;
+  type?: "image" | "status" | "rating" | "date" | "link" | "blog" | any;
 }
 
 interface DataItem {
@@ -118,6 +118,21 @@ const Table: React.FC<TableProps> = ({
     return (<span className="text-wrap">{truncateContent(value, 10)}</span>)
   }
 
+  const renderBlog = (data: any) => {
+      let href = `/berita/${data.slug}`;
+      let linkText = "Lihat Blog";
+      if (role === "admin") {
+        href = `berita/${data.slug}`;
+        linkText = "Preview";
+      }
+      return (
+        <a href={href} target="_blank" className="flex gap-2 items-center">
+          {linkText} <IconExternalLink size={16} />
+        </a>
+      );
+    };
+
+
   const renderLink = (data: any) => {
     let href = "";
     let linkText = "Lihat Inovasi";
@@ -200,6 +215,8 @@ const Table: React.FC<TableProps> = ({
                     ? renderDate(getNestedValue(row, column?.key).toString())
                     : column?.type === "link"
                     ? renderLink(row)
+                    : column?.type === "blog"
+                    ? renderBlog(row)
                     : renderText(getNestedValue(row, column?.key).toString(),getNestedValue(row, column?.key))}
                 </td>
               ))}

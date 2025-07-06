@@ -107,7 +107,7 @@ const DetailInovasi: React.FC = () => {
     const wishlistPage =
     auth?.user?.role === "admin"
       ? "/admin/wishlist-inovasi"
-      : auth?.role === "innovator"
+      : auth?.user?.role === "innovator"
       ? "/innovator/wishlist"
       : "/wishlist";
 
@@ -200,7 +200,7 @@ const DetailInovasi: React.FC = () => {
         const res = await get(`${INNOVATION_PREFIX.INDEX}/${params.id}`);
         setData(res?.data);
       } catch (error) {
-        if (isAxiosError) {
+        if (isAxiosError(error)) {
           const { response } = error;
           if (response?.data?.message) {
             toast({

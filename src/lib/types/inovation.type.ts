@@ -6,6 +6,7 @@ export interface InovationResponse {
 }
 
 export interface Inovation {
+  status: string;
   _id: string;
   title: string;
   category: Category;

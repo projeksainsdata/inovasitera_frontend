@@ -39,6 +39,7 @@ import BlogAdmin from "@/pages/admin/manajemenblog";
 import EditBlog from "@/pages/admin/manajemenblog/EditBlog";
 import TambahBlog from "@/pages/admin/manajemenblog/tambahBlog";
 import DetailArtikel from "@/pages/admin/manajemenblog/DetailBlog";
+import AllBlogsPage from "@/pages/AllBlogs";
 
 const AppRoutes: React.FC = () => {
   return (
@@ -265,6 +266,13 @@ const AppRoutes: React.FC = () => {
           path="/berita/:slug"
           element={
             <DetailArtikel />
+          }
+        />
+
+        <Route
+          path="/informasi"
+          element={
+            <AllBlogsPage />
           }
         />
 

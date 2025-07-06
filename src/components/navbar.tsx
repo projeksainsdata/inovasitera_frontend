@@ -45,6 +45,7 @@ const Navbar: React.FC = () => {
           {/* Desktop menu */}
           <div className="hidden lg:flex items-center space-x-8 xl:space-x-16 transition-all duration-300 ease-in-out">
             <Link to={"/"}><a className="text-black hover:text-gray-600 transition duration-200">Beranda</a></Link>
+            <Link to={"/informasi"}><a className="text-black hover:text-gray-600 transition duration-200">Informasi</a></Link>
             <Link to={"/inovasi"}><a className="text-black hover:text-gray-600 transition duration-200">Semua Inovasi</a></Link>
             <Link to={"/tentang"}><a className="text-black hover:text-gray-600 transition duration-200">Tentang</a></Link>
           </div>

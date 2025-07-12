@@ -55,7 +55,7 @@ export default function BlogHomeSection() {
 
       <div className="text-center mt-10">
         <Button colorScheme="green" variant="outline">
-          <Link to="/berita" className="font-bold">
+          <Link to="/artikel" className="font-bold">
             Lihat Semua Berita
           </Link>
         </Button>
